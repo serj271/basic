@@ -76,6 +76,9 @@ class NewsController extends Controller
 		$news = News::find()->orderBy('title')->all();
 		print_r ($news[0]->title);
 		print "\n";
+		$post=News::model()->findByPk(1);
+		$post->title='Some new title';
+		$post->save();
 //		echo $model->getAttributeLabel('title');
 //		$query = 'select title from news where ID=:ID';
 		/* Yii::$app->my_db->createCommand($query)
