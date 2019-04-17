@@ -2,103 +2,323 @@
 
 namespace app\models;
 
-class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
+use Yii;
+use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveRecord;
+use yii\db\Expression;
+use yii\web\IdentityInterface;
+use yii\base\NotSupportedException;
+use yii\helpers\ArrayHelper;
+use yii\helpers\VarDumper;
+//use yii2mod\user\models\enums\UserStatus;
+//use yii2mod\user\traits\EventTrait;
+/**
+ * This is the model class for table "user".
+ *
+ * @property int $id
+ * @property string $username
+ * @property string $email
+ * @property string $pass
+ * @property string $type
+ * @property string $date_entered
+ *
+ * @property Comment[] $comments
+ * @property File[] $files
+ * @property Page[] $pages
+ */
+class User extends \yii\db\ActiveRecord implements IdentityInterface
 {
-    public $id;
-    public $username;
-    public $password;
-    public $authKey;
-    public $accessToken;
-
-    private static $users = [
-        '100' => [
-            'id' => '100',
-            'username' => 'admin',
-            'password' => 'admin',
-            'authKey' => 'test100key',
-            'accessToken' => '100-token',
-        ],
-        '101' => [
-            'id' => '101',
-            'username' => 'demo',
-            'password' => 'demo',
-            'authKey' => 'test101key',
-            'accessToken' => '101-token',
-        ],
-    ];
-
-
     /**
-     * {@inheritdoc}
+     * Event is triggered before creating a user.
+     * Triggered with \yii2mod\user\events\CreateUserEvent.
      */
-    public static function findIdentity($id)
+    const BEFORE_CREATE = 'beforeCreate';
+    /**
+     * Event is triggered after creating a user.
+     * Triggered with \yii2mod\user\events\CreateUserEvent.
+     */
+    const AFTER_CREATE = 'afterCreate';
+    /**
+     * @var string plain password
+     */
+    public $plainPassword;
+	public $password_hash;
+	public $type;
+	
+    public static function tableName()
     {
-        return isset(self::$users[$id]) ? new static(self::$users[$id]) : null;
+        return 'user';
     }
 
     /**
      * {@inheritdoc}
+     */
+    public function rules()
+    {
+        return [
+            [['username', 'email'], 'required'],
+			[['type'], 'safe'],
+			['type', 'in', 'range' => ['public','author','admin']],
+            [['date_entered'], 'safe'],
+			[['password_reset_token', 'auth_key', 'password_hash'], 'string', 'max' => 80],
+            [['username'], 'string', 'max' => 45],
+            [['email'], 'string', 'max' => 60],
+//            [['pass'], 'string', 'max' => 64],
+			[['pass'], 'string', 'length' => [2,20] ],
+            [['username'], 'unique'],
+            [['email'], 'unique'],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'username' => 'Username',
+            'email' => 'E-mail',
+            'pass' => 'Pass',
+            'type' => 'Type',
+            'date_entered' => 'Date Entered',
+        ];
+    }
+	public function beforeSave($insert)
+	{
+		if(parent::beforeSave($insert)){
+		   $this->password_hash=$this->setPassword($this->pass);
+		   return true;
+		}else{
+		   return false;
+		}
+	}
+
+	public function behaviors()
+	{
+		return [
+			[
+				'class' => TimestampBehavior::className(),
+				'attributes' => [
+					ActiveRecord::EVENT_BEFORE_INSERT => ['date_entered']
+				],
+				'value' => new Expression('NOW()'),
+			],
+			TimestampBehavior::className(),
+			
+		];
+	}
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getComments()
+    {
+        return $this->hasMany(Comment::className(), ['user_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getFiles()
+    {
+        return $this->hasMany(File::className(), ['user_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPages()
+    {
+        return $this->hasMany(Page::className(), ['user_id' => 'id']);
+    }
+	/* public function validatePassword($attribute, $params) {
+		if (!$this->hasErrors()) {
+			$user = $this->getUser();
+			if (!$user || !$user->validatePassword($this->password)) {
+				$this->addError($attribute, 'Incorrect username or
+			password.');
+			}
+		}
+	} */
+	public function create()
+    {
+            $this->setPassword($this->plainPassword);
+            $this->generateAuthKey();
+            if (!$this->save()) {
+  //              $transaction->rollBack();
+                return null;
+            }
+          
+            return $this;
+        /*  catch (\Exception $e) {
+            $transaction->rollBack();
+            Yii::warning($e->getMessage());
+            throw $e;
+        } */
+    }
+	public static function findIdentity($id)
+    {
+        return static::findOne($id);
+    }
+
+    /**
+     * Finds an identity by the given token.
+     *
+     * @param string $token the token to be looked for
+     * @return IdentityInterface|null the identity object that matches the given token.
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        foreach (self::$users as $user) {
-            if ($user['accessToken'] === $token) {
-                return new static($user);
-            }
-        }
-
-        return null;
+        return static::findOne(['access_token' => $token]);
+    }
+    /**
+     * @return string current user auth key
+     */
+    public function getAuthKey()
+    {
+        return $this->auth_key;
     }
 
     /**
-     * Finds user by username
+     * @param string $authKey
+     * @return bool if auth key is valid for current user
+     */
+    public function validateAuthKey($authKey)
+    {
+        return $this->getAuthKey() === $authKey;
+    }
+    /**
+     * Finds user (with active status) by username
      *
-     * @param string $username
+     * @param  string $username
+     *
      * @return static|null
      */
     public static function findByUsername($username)
     {
-        foreach (self::$users as $user) {
-            if (strcasecmp($user['username'], $username) === 0) {
-                return new static($user);
-            }
-        }
-
-        return null;
+        return static::findOne(['username' => $username]);
     }
-
     /**
-     * {@inheritdoc}
+     * Finds user by email
+     *
+     * @param $email
+     *
+     * @return null|static
+     */
+    public static function findByEmail($email)
+    {
+        return static::findOne(['email' => $email]);
+    }
+    /**
+     * Finds user by password reset token
+     *
+     * @param string $token password reset token
+     *
+     * @return static|null
+     */
+    public static function findByPasswordResetToken($token)
+    {
+        if (!static::isPasswordResetTokenValid($token)) {
+            return null;
+        }
+        return static::findOne([
+            'password_reset_token' => $token,
+            'status' => UserStatus::ACTIVE,
+        ]);
+    }
+    /**
+     * Finds out if password reset token is valid
+     *
+     * @param string $token password reset token
+     *
+     * @return bool
+     */
+    public static function isPasswordResetTokenValid($token)
+    {
+        if (empty($token)) {
+            return false;
+        }
+        $timestamp = (int) substr($token, strrpos($token, '_') + 1);
+        $expire = ArrayHelper::getValue(Yii::$app->params, 'user.passwordResetTokenExpire', 3600);
+        return $timestamp + $expire >= time();
+    }
+    /**
+     * @inheritdoc
      */
     public function getId()
     {
-        return $this->id;
+        return $this->getPrimaryKey();
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAuthKey()
-    {
-        return $this->authKey;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function validateAuthKey($authKey)
-    {
-        return $this->authKey === $authKey;
-    }
-
     /**
      * Validates password
      *
-     * @param string $password password to validate
+     * @param  string $password password to validate
+     *
      * @return bool if password provided is valid for current user
      */
     public function validatePassword($password)
     {
-        return $this->password === $password;
+//		Yii::info(VarDumper::export($this->getAttributes()));
+//		Yii::info(VarDumper::export($this->getOldAttributes()));
+        return Yii::$app->getSecurity()->validatePassword($password, $this->getOldAttributes()['password_hash']);
     }
+    /**
+     * Generates password hash from password and sets it to the model
+     *
+     * @param string $password
+     */
+    public function setPassword($password)
+    {
+ //       $this->password_hash = Yii::$app->getSecurity()->generatePasswordHash($password);
+		$this->setAttribute('password_hash',Yii::$app->getSecurity()->generatePasswordHash($password));
+    }
+    /**
+     * Generates "remember me" authentication key
+     */
+    public function generateAuthKey()
+    {
+        $this->auth_key = Yii::$app->getSecurity()->generateRandomString();
+    }
+    /**
+     * Generates new password reset token
+     */
+    public function generatePasswordResetToken()
+    {
+        $this->password_reset_token = Yii::$app->getSecurity()->generateRandomString() . '_' . time();
+    }
+    /**
+     * Removes password reset token
+     */
+    public function removePasswordResetToken()
+    {
+        $this->password_reset_token = null;
+    }
+    /**
+     * @param $lastLogin
+     */
+    public function setLastLogin($lastLogin)
+    {
+        $this->last_login = $lastLogin;
+    }
+    /**
+     * Update last login
+     */
+    public function updateLastLogin()
+    {
+        $this->updateAttributes(['last_login' => time()]);
+    }
+    /**
+     * Resets password.
+     *
+     * @param string $password
+     *
+     * @return bool
+     */
+    public function resetPassword($password)
+    {
+        $this->setPassword($password);
+        return $this->save(true, ['password_hash']);
+    }
+	
 }

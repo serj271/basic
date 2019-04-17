@@ -11,7 +11,6 @@ use yii\console\Controller;
 use yii\console\ExitCode;
 use yii\helpers\Console;
 use Yii;
-use yii\base;
 use yii\helpers\VarDumper;
 /**
  * This command echoes the first argument that you have entered.
@@ -21,7 +20,7 @@ use yii\helpers\VarDumper;
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @since 2.0
  */
-class HelloController extends Controller
+class UserController extends Controller
 {
     /**
      * This command echoes what you have entered as the message.
@@ -54,12 +53,47 @@ class HelloController extends Controller
 		Yii::debug('start calculating average revenue');
 //		 $this->stdout("whatever");
 		$name = $this->ansiFormat('Alex', Console::FG_YELLOW);
-		echo "Hello, my name is $name.\n";
-		
-		
-		
-		
+		echo "Hello, my name is $name.";
 		return ExitCode::OK;
     }
+	
+	public function actionGetall(){
+		$users = $users = \Yii::$app->db
+			->createCommand('SELECT * FROM user;')
+			->queryAll();
+		Yii::info(VarDumper::dumpAsString($users));
+		$count = \Yii::$app->db
+			->createCommand('SELECT COUNT(*) FROM user;')
+			->queryScalar();
+		echo "$count\n";
+//		echo $users[0]['email']."\n";
+		echo VarDumper::dumpAsString($users);
+		$user = \Yii::$app->db
+			->createCommand('SELECT email FROM user;')
+			->queryColumn();
+		$result = \Yii::$app->db
+			->createCommand("SELECT COUNT([[id]]) FROM {{user}}")
+			->queryScalar();
+		
+	}
+	
+	public function actionCreate($username){
+		\Yii::$app->db
+		->createCommand()
+		->insert('user', [
+		'email' => 'test4@example.com',
+		'password_hash' => 'changeme7',
+		'password_reset_token'=>'e',
+		'status'=>'1',
+		'role'=>'admin',
+		'username' => $username,
+		'auth_key'=>'',
+		'created_at' => time(),
+		'updated_at' => time()
+		])
+		->execute();
+	}
+	
+	
 }
 //./yii hello hello --message="hello all"

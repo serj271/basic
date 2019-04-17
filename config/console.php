@@ -22,10 +22,20 @@ $config = [
                 [
                     'class' => 'yii\log\FileTarget',
                     'levels' => ['error', 'warning','info'],
+		    'exportInterval' =>1,
                 ],
             ],
         ],
         'db' => $db,
+		'user' => [
+            'class' => 'yii\web\User',
+            'identityClass' => 'app\models\User',
+			'enableAutoLogin' => false,
+            'enableSession' => false,
+        ],
+        'session' => [ // for use session in console application
+            'class' => 'yii\web\Session'
+        ],
     ],
     'params' => $params,
     /*

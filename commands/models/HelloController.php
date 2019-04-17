@@ -5,7 +5,7 @@
  * @license http://www.yiiframework.com/license/
  */
 
-namespace app\commands;
+namespace app\commands\models;
 
 use yii\console\Controller;
 use yii\console\ExitCode;
@@ -23,17 +23,6 @@ use yii\helpers\VarDumper;
  */
 class HelloController extends Controller
 {
-    /**
-     * This command echoes what you have entered as the message.
-     * @param string $message the message to be echoed.
-     * @return int Exit code
-     */
-   /*  public function actionIndex($message = 'hello world')
-    {
-        echo $message . "\n";
-
-        return ExitCode::OK;
-    } */
 	public $message='default message';
     
     public function options($actionID)
@@ -48,13 +37,13 @@ class HelloController extends Controller
     
     public function actionIndex()
     {
-        echo $this->message . "\n";
+        /* echo $this->message . "\n";
 		Yii::info('message log');
 		Yii::info(VarDumper::dumpAsString(array('q'=>4)));
 		Yii::debug('start calculating average revenue');
-//		 $this->stdout("whatever");
-		$name = $this->ansiFormat('Alex', Console::FG_YELLOW);
-		echo "Hello, my name is $name.\n";
+
+		$name = $this->ansiFormat('Alex', Console::FG_YELLOW); */
+		echo "Hello, models .\n";
 		
 		
 		

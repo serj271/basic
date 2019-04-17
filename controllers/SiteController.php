@@ -10,6 +10,8 @@ use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
 use app\models\EntryForm;
+use app\models\SignupForm;
+use yii\helpers\VarDumper;
 
 class SiteController extends Controller
 {
@@ -62,6 +64,7 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
+		$identity = Yii::$app->user->identity;
         return $this->render('index');
     }
 
@@ -75,7 +78,6 @@ class SiteController extends Controller
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
-
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
             return $this->goBack();
@@ -144,4 +146,26 @@ class SiteController extends Controller
 			return $this->render('entry', ['model' => $model]);
 		}
 	}
+	public function actionSignup()
+    {
+        $model = new SignupForm();
+//		Yii::info('model---------'); 
+        if ($model->load(Yii::$app->request->post()) ) {
+			
+//			Yii::info(VarDumper::dumpAsString($model)); 
+			Yii::error('kk', 0);
+//			Yii::debug('start calculating average revenue');
+
+//			return $this->goHome();
+            if ($user = $model->signup()) {
+ //               if (Yii::$app->getUser()->login($user)) {
+                    return $this->goHome();
+ //               }
+            }
+        }
+ 
+        return $this->render('signup', [
+            'model' => $model,
+        ]);
+    }
 }

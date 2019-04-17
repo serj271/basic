@@ -1,0 +1,2 @@
+//./yii message/config /path/to/translation/config.php
+//./yii message /path/to/translation/config.php
