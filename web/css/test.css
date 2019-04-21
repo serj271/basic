@@ -1,0 +1,44 @@
+/*------NAVIGATOR ---*/
+.panel {
+    padding: 0 5px;
+}
+.panel > div {
+    margin: 2px auto 10px;
+    color: darkblue;
+}  
+.panel label {
+    font-size: 14px;
+    margin: 2px auto 10px;
+    color: darkblue;
+}
+
+.panel div#search {
+/*    text-align: center;*/
+}
+
+label {
+    margin-top: .5em;
+}
+
+#left select {
+    width: 100%;
+    padding: 0;
+}
+
+/* ----- CONTENT --------*/ 
+#result {
+    margin-left: 20px;
+}
+#result table td.center, th.center {
+    vertical-align: middle;
+    text-align: center;
+}
+
+#result table th{
+    color: #fff;
+    background: #5970b2;
+}
+
+div#result div#div-show{
+    margin-top: 30px;
+}

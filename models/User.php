@@ -56,7 +56,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['username', 'email'], 'required'],
+             ['username', 'required', 'message' => 'Please choose a username.'],
 			[['type'], 'safe'],
 			['type', 'in', 'range' => ['public','author','admin']],
             [['date_entered'], 'safe'],
@@ -67,6 +67,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
 			[['pass'], 'string', 'length' => [2,20] ],
             [['username'], 'unique'],
             [['email'], 'unique'],
+			['status_id', 'default', 'value' => self::STATUS_ACTIVE],
         ];
     }
 
@@ -100,7 +101,8 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
 			[
 				'class' => TimestampBehavior::className(),
 				'attributes' => [
-					ActiveRecord::EVENT_BEFORE_INSERT => ['date_entered']
+					ActiveRecord::EVENT_BEFORE_INSERT => ['date_entered'],
+					ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
 				],
 				'value' => new Expression('NOW()'),
 			],
@@ -146,7 +148,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
             $this->setPassword($this->plainPassword);
             $this->generateAuthKey();
             if (!$this->save()) {
-  //              $transaction->rollBack();
+                $transaction->rollBack();
                 return null;
             }
           
@@ -169,9 +171,9 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      * @return IdentityInterface|null the identity object that matches the given token.
      */
     public static function findIdentityByAccessToken($token, $type = null)
-    {
-        return static::findOne(['access_token' => $token]);
-    }
+	{
+	return static::findOne(['auth_key' => $token]);
+	}
     /**
      * @return string current user auth key
      */
@@ -218,15 +220,19 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      * @return static|null
      */
     public static function findByPasswordResetToken($token)
-    {
-        if (!static::isPasswordResetTokenValid($token)) {
-            return null;
-        }
-        return static::findOne([
-            'password_reset_token' => $token,
-            'status' => UserStatus::ACTIVE,
-        ]);
-    }
+	{
+		$expire = Yii::$app->params['user.passwordResetTokenExpire'];
+		$parts = explode('_', $token);
+		$timestamp = (int) end($parts);
+		if ($timestamp + $expire < time()) {
+		// token expired
+			return null;
+		}
+		return static::findOne([
+			'password_reset_token' => $token,
+			'status_id' => self::STATUS_ACTIVE,
+		]);
+	}
     /**
      * Finds out if password reset token is valid
      *
@@ -260,8 +266,9 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     public function validatePassword($password)
     {
 //		Yii::info(VarDumper::export($this->getAttributes()));
-//		Yii::info(VarDumper::export($this->getOldAttributes()));
-        return Yii::$app->getSecurity()->validatePassword($password, $this->getOldAttributes()['password_hash']);
+		Yii::info(VarDumper::export($this->getOldAttributes()),'----------------------------------', $password);
+		Yii::info('pass'.'-----------'.$password);
+        return Yii::$app->security->validatePassword($password, $this->getOldAttributes()['password_hash']);
     }
     /**
      * Generates password hash from password and sets it to the model

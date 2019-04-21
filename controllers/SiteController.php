@@ -54,7 +54,11 @@ class SiteController extends Controller
                 'class' => 'yii\captcha\CaptchaAction',
                 'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
             ],
-        ];
+			'static' => [
+				'class' => 'yii\web\ViewAction',
+				'viewPrefix' => 'static'
+			],// /basic/web/index.php?r=site/static&view=contact
+		];
     }
 
     /**
@@ -65,6 +69,8 @@ class SiteController extends Controller
     public function actionIndex()
     {
 		$identity = Yii::$app->user->identity;
+//		Yii::info('hello');
+//		Yii::info(Yii::$app->params['adminEmail'],'------------------');
         return $this->render('index');
     }
 
@@ -80,9 +86,11 @@ class SiteController extends Controller
         }
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
+			
+			
             return $this->goBack();
         }
-
+//	Yii::info('-------------------login');
         $model->password = '';
         return $this->render('login', [
             'model' => $model,
@@ -126,7 +134,11 @@ class SiteController extends Controller
      */
     public function actionAbout()
     {
-        return $this->render('about');
+//		$nameToDisplay = Yii::$app->request->get('nameToDisplay');
+// Equivalent to
+// $nameToDisplay = isset($_GET['nameToDisplay'])?$_GET['nameToDisplay']:null;
+ //       return $this->render('about',[ 'nameToDisplay' => $nameToDisplay ]);
+		return $this->render('about');
     }
 	
 	public function actionSay($message = 'Hello')
@@ -153,7 +165,7 @@ class SiteController extends Controller
         if ($model->load(Yii::$app->request->post()) ) {
 			
 //			Yii::info(VarDumper::dumpAsString($model)); 
-			Yii::error('kk', 0);
+//			Yii::error('kk', 0);
 //			Yii::debug('start calculating average revenue');
 
 //			return $this->goHome();

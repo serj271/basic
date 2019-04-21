@@ -77,6 +77,7 @@ $backgroundColor = isset($this->params['background_color'])?$this->params['backg
     ?>
 
     <div class="container">
+	<p>Responsive</p>
         <?= Breadcrumbs::widget([
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
         ]) ?>

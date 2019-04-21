@@ -8,6 +8,10 @@
 #basic/web/index.php
 class_name: FunctionalTester
 modules:
-    enabled:
-      - Filesystem
-      - Yii2
+    enaled: [Db, Filesystem, FunctionalHelper]
+    config:
+    Db:
+    dsn: 'mysql:host=localhost;dbname=crmapp'
+    user: 'root'
+    password: '665010#'
+    dump: tests/_data/dump.sql

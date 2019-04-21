@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS user (
 	`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	`username` VARCHAR(45) NOT NULL,
 	`email` VARCHAR(60) NOT NULL,
-	`pass` CHAR(64) NOT NULL,
+	`pass` CHAR(64) DEFAULT '',
 	`auth_key` varchar(32) NOT NULL,
 	`password_hash` varchar(255) NOT NULL DEFAULT '',
 	`password_reset_token` varchar(255) NOT NULL DEFAULT '',
@@ -113,6 +113,10 @@ CREATE TABLE IF NOT EXISTS `page_has_file` (
 	ON UPDATE NO ACTION
 )
 ENGINE = InnoDB;
+
+INSERT INTO user (username,email,pass,auth_key,role) VALUES('admin','admin@test.ru','1','','1'); 
+INSERT into page (user_id,title,content) values(1,'title of page','content of page');
+INSERT into comment (user_id,page_id,comment) values(1,1,'comment');
 
 
 /* DEFAULT CHARACTER SET = utf8;

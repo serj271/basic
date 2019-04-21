@@ -34,7 +34,7 @@ class HelloController extends Controller
 
         return ExitCode::OK;
     } */
-	public $message='default message';
+	public $message='default message1';
     
     public function options($actionID)
     {

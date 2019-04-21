@@ -48,15 +48,34 @@ $config = [
 			'passwordHashStrategy' => 'password_hash'
 		],
         'db' => $db,
-        /*
+		'class' => 'yii\web\UrlManager',
         'urlManager' => [
+			'class' => 'yii\web\UrlManager',
             'enablePrettyUrl' => true,
             'showScriptName' => false,
+//			'baseUrl' => '/',
+
             'rules' => [
+//				'class' => 'yii\web\UrlRule',
+				[
+				'class' => 'app\components\NewsUrlRule',
+				'pattern' => 'news/<year:\d{4}>/items-list', 'route' => 'site/index'
+				],				
+//				'class'=>'yii\filters\AccessRule',
+//				'<controller>/<year:\d{4}>/<action>' => ' <controller>/<action>',
+//				'news/<year:\d{4}>/items-list' => ' news/items-list?year=<year>',
+//				'news/<category:\w+>/items-list' => 'test-rules/items-list',
             ],
+			
         ],
-        */
+		
+        
     ],
+	/* 'modules' => [
+		'manager' => [
+			'class' => 'manager\Module',
+		],
+	], */
     'params' => $params,
 ];
 
@@ -66,7 +85,7 @@ if (YII_ENV_DEV) {
     $config['modules']['debug'] = [
         'class' => 'yii\debug\Module',
         // uncomment the following to add your IP if you are not connecting from localhost.
-        'allowedIPs' => ['127.0.0.1', '::1','192.168.1.3'],
+        'allowedIPs' => ['127.0.0.1', '::1','192.168.1.3','192.168.1.11'],
     ];
 
     $config['bootstrap'][] = 'gii';

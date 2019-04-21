@@ -2,11 +2,19 @@
 
 /* @var $this yii\web\View */
 
-$this->title = 'My Yii Application';
-$backgroundColor = isset($_REQUEST['bckg'])?$_REQUEST['bckg']:'#FFFFFF';
-$this->params['background_color'] = $backgroundColor;
-
+$this->title = 'Comment page';
 ?>
+
+<div class="site-index">
+	<div class="body-content">
+	<ul>
+		<?php foreach($comments as $key=>$value){?>
+			<li><?php echo $value ?></li>
+		<?php } ?>
+	</ul>	
+	</div>
+
+</div>
 <div class="site-index">
 
     <div class="jumbotron">

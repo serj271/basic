@@ -52,7 +52,7 @@ class UserController extends Controller
 		Yii::info(VarDumper::dumpAsString(array('q'=>4)));
 		Yii::debug('start calculating average revenue');
 //		 $this->stdout("whatever");
-		$name = $this->ansiFormat('Alex', Console::FG_YELLOW);
+		$name = $this->ansiFormat('Alexander', Console::FG_YELLOW);
 		echo "Hello, my name is $name.";
 		return ExitCode::OK;
     }
@@ -77,12 +77,12 @@ class UserController extends Controller
 		
 	}
 	
-	public function actionCreate($username){
+	public function actionCreate($username,$password='1'){
 		\Yii::$app->db
 		->createCommand()
 		->insert('user', [
-		'email' => 'test4@example.com',
-		'password_hash' => 'changeme7',
+		'email' => $username.'@example.com',
+		'password_hash' => Yii::$app->security->generatePasswordHash($password),
 		'password_reset_token'=>'e',
 		'status'=>'1',
 		'role'=>'admin',
@@ -93,7 +93,32 @@ class UserController extends Controller
 		])
 		->execute();
 	}
+	public function actionDetail($id){
+		$user = \Yii::$app->db
+			->createCommand("SELECT * FROM user where id=:id;")
+			->bindValue(':id', $id)
+			->queryOne();
+		Yii::info(VarDumper::dumpAsString($user));		
+		echo VarDumper::dumpAsString($user);
+	}
+	public function actionDelete($id){
+		$user =  \Yii::$app->db
+			->createCommand()
+			->delete('user','id=:id',[':id'=>$id])//table condition params
+			->execute();
+		Yii::info(VarDumper::dumpAsString($user));//0 or 1		
+		echo VarDumper::dumpAsString($user);
+	}
+	public function actionLogin($id, $password='1'){
+		$user = \Yii::$app->db
+			->createCommand("SELECT * FROM user where id=:id;")
+			->bindValue(':id', $id)
+			->queryOne();
+		echo VarDumper::dumpAsString($user['username']);
+		$validatePassword= Yii::$app->security->validatePassword($password, $user['password_hash']);
+		echo VarDumper::dumpAsString($validatePassword)."\n";
+	}
 	
 	
 }
-//./yii hello hello --message="hello all"
+//./yii hello user/index --message="hello all"

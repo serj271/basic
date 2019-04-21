@@ -3,6 +3,17 @@
 namespace app\models;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveRecord;
+use yii\db\Expression;
+use yii\web\IdentityInterface;
+use yii\base\NotSupportedException;
+use yii\helpers\ArrayHelper;
+use yii\helpers\VarDumper;
+//use yii2mod\user\models\enums\UserStatus;
+//use yii2mod\user\traits\EventTrait; 
+use yii\base\Model;
+use app\models\CommentModel;
 
 /**
  * This is the model class for table "comment".
@@ -16,7 +27,7 @@ use Yii;
  * @property Page $page
  * @property User $user
  */
-class Comment extends \yii\db\ActiveRecord
+class CommentModel extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -29,6 +40,11 @@ class Comment extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+	public $user_id;
+	public $page_id;
+	public $comment;
+	public $date_entered;
+	
     public function rules()
     {
         return [
@@ -54,7 +70,7 @@ class Comment extends \yii\db\ActiveRecord
             'date_entered' => 'Date Entered',
         ];
     }
-	public function behaviors()
+	/* public function behaviors()
 	{
 		return [
 			[
@@ -62,13 +78,14 @@ class Comment extends \yii\db\ActiveRecord
 				'attributes' => [
 					ActiveRecord::EVENT_BEFORE_INSERT => ['date_entered']
 				],
+				'value' => new Expression('NOW()'),
 			],
 			[
 				'class' => BlameableBehavior::className(),
 				'createdByAttribute' => 'user_id'
 			],
 		];
-	}
+	} */
 
     /**
      * @return \yii\db\ActiveQuery
