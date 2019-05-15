@@ -19,12 +19,13 @@ $config = [
         ],
         'log' => [
             'targets' => [
-                [
-                    'class' => 'yii\log\FileTarget',
-                    'levels' => ['error', 'warning','info'],
-		    'exportInterval' =>1,
-                ],
-            ],
+				[
+					'class' => 'yii\log\FileTarget',
+					'logFile' => '@app/runtime/logs/'.date("Y").'/'.date("m").'/'.date("d").'.log',
+					'levels' => ['error', 'warning', 'info'],
+					'logVars' => [], // don't log global vars
+				],
+			],
         ],
         'db' => $db,
 		'user' => [
