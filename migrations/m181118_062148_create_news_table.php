@@ -28,6 +28,9 @@ class m181118_062148_create_news_table extends Migration
      */
     public function down()
     {
-        $this->dropTable('news');
+        $tableName = $this->db->tablePrefix . 'news';
+		if ($this->db->getTableSchema($tableName, true) != null){
+			$this->dropTable('news');
+		}
     }
 }

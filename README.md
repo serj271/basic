@@ -231,3 +231,8 @@ vendor/bin/codecept run functional,unit -- --coverage-html --coverage-xml
 ```
 
 You can see code coverage output under the `tests/_output` directory.
+
+We'll start by creating a new migration:
+#./yii migrate/create user_table --interactive=0
+Running our migrations
+#./yii migrate/up

@@ -12,7 +12,8 @@ class m181118_053059_create_user_table extends Migration
      */
     public function safeUp()
     {
-        $this->createTable('user', [
+		
+        $this->createTable('users', [
             'id' => $this->primaryKey(),
         ]);
     }
@@ -22,6 +23,10 @@ class m181118_053059_create_user_table extends Migration
      */
     public function safeDown()
     {
-//        $this->dropTable('user');
+		$tableName = $this->db->tablePrefix . 'users';
+		if ($this->db->getTableSchema($tableName, true) === null){
+			$this->dropTable('users');
+		}
+//        
     }
 }
