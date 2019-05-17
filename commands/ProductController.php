@@ -12,6 +12,7 @@ use yii\console\ExitCode;
 use yii\helpers\Console;
 use Yii;
 use yii\base;
+use yii\db\Query;
 use yii\helpers\VarDumper; 
 use app\models\Product;
 //use yii\console\ErrorHandler;
@@ -64,8 +65,20 @@ class ProductController extends Controller
 	
 	public function actionGetAll() {//product/get-all
 //		$products = Product::find();
-		$products = Yii::$app->db->createCommand('SELECT * FROM `products`')
+		$products = Yii::$app->db->createCommand('SELECT * FROM `products`')			
 			->queryAll();//get array || queryOne(); 
+		foreach ($products as $product){
+			$product_name = $this->ansiFormat($product['name'], Console::FG_YELLOW);
+			$product_uri = $this->ansiFormat($product['uri'], Console::FG_YELLOW);
+			echo "product name $product_name id ".$product['id']." product uri ".$product_uri."\n";
+		}
+		return ExitCode::OK;
+	}
+	public function actionGetNames() {//product/get-names
+		$query = (new \yii\db\Query());
+		$query->from('products')
+			->orderBy('name ASC');
+		$products = $query->all();
 		foreach ($products as $product){
 			$product_name = $this->ansiFormat($product['name'], Console::FG_YELLOW);
 			echo "product name $product_name id ".$product['id']."\n";
@@ -79,13 +92,19 @@ class ProductController extends Controller
 		return ExitCode::OK;
 	}
 	
-	public function actionGetNames(array $array){//product/get-name <name1, name2>
-		foreach ($array as $name){
-			$product = Product::findOne(['name'=>$name]);
-			$product_id = $this->ansiFormat($product['id'], Console::BOLD);
-			echo "product id $product_id\n";
-		}
-					
+	public function actionGetUri($uri){//product/get-name <name1, name2>
+		$query = (new \yii\db\Query());
+		$query->select([
+			'product_id' => 'id',
+			'name_product' => 'name']
+			)
+			->from('products')
+			->where(['=','uri',$uri]);
+			
+//			->addParams([':id' => 1]);
+		$product = $query->one();//all
+ 		$nameProduct = $this->ansiFormat($product['name_product'], Console::FG_YELLOW);
+		echo "name-product $nameProduct  id ".$product['product_id']."\n";
 		return ExitCode::OK;
 	}
 	
@@ -115,15 +134,17 @@ class ProductController extends Controller
 		}			
 		return ExitCode::OK;
 	}
-	public function actionUpdateName($id=1){//product/add-one <id>
-		if($id){
+	public function actionUpdateName(array $array){//product/add-one <id,name>
+//		if($id){
 			try{
 					\Yii::$app->db
 						->createCommand()
 						->update('products', [
+						'name'=>$array[1]
 						
-					], '1 = 1')
-				->execute();
+						], "id=:id")
+					->bindValue(':id', (int) $array[0])
+					->execute();
 				echo "product update\n";
 			} catch(IntegrityException $e){
 //				Yii::info(VarDumper::dumpAsString($e));
@@ -132,7 +153,7 @@ class ProductController extends Controller
 				$message_error = $this->ansiFormat($e->errorInfo[2], Console::BOLD);
 				echo $message_error."\n";
 			}			
-		}			
+//		}			
 		return ExitCode::OK;
 	}
 	public function actionDeleteOne($id=1){//product/add-one <id>
