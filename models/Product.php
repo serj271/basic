@@ -24,6 +24,7 @@ class Product extends \yii\db\ActiveRecord
     {
         return 'products';
     }
+	public $title = 'product';
 
     /**
      * {@inheritdoc}

@@ -263,8 +263,14 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      *
      * @return bool if password provided is valid for current user
      */
-    public function validatePassword($password)
+    public function validatePassword($password)//validatePassword($attribute, $params)
     {
+		/* if (!$this->hasErrors()) {
+			$user = $this->getUser();
+		if (!$user || !$user->validatePassword($this->password)) {
+			$this->addError($attribute, 'Incorrect username or password.');
+			}
+		} */
 //		Yii::info(VarDumper::export($this->getAttributes()));
 		Yii::info(VarDumper::export($this->getOldAttributes()),'----------------------------------', $password);
 		Yii::info('pass'.'-----------'.$password);

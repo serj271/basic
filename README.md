@@ -236,3 +236,7 @@ We'll start by creating a new migration:
 #./yii migrate/create user_table --interactive=0
 Running our migrations
 #./yii migrate/up
+create controller
+#yii  gii/controller --actions=index,edit,view --controllerClass=app\\controllers\\PosterController
+create module
+#php  yii  gii/module --moduleClass=TestModule --moduleID=test 

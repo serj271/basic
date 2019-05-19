@@ -40,6 +40,14 @@ class ProductController extends Controller
     {
         return ['id' => 'id'];
     }
+	protected function beforeSave($insert) {
+// Do whatever.
+	return parent::beforeSave($insert);
+	}
+	protected function beforeValidate() {
+		$this->content = trim($this->content);
+		return parent::beforeValidate();
+	}
     // The command "yii example/create test" will call "actionCreate('test')"
     public function actionCreate() {}
 
