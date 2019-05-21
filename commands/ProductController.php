@@ -247,11 +247,7 @@ class ProductController extends Controller
     // The command "yii example/add test" will call "actionAdd(['test'])"
     // The command "yii example/add test1,test2" will call "actionAdd(['test1', 'test2'])"
     public function actionAdd(array $name) { }
-	
-	public function getProductPhotos() { 
-		return $this->hasMany(Product::className(), ['product_id' => 'id']); 
-	}
-	
+		
 	public function getProduct()
     {
         return $this->_product;
@@ -265,4 +261,31 @@ class ProductController extends Controller
             $this->_product->setAttributes($product);
         }
     }
+	
+	public function actionGetOne($id){
+		try {
+			$product = Product::findOne($id);
+			if($product){
+				$product_name = $this->ansiFormat($product['name'], Console::FG_YELLOW);
+				$product_uri = $this->ansiFormat($product['uri'], Console::FG_YELLOW);
+				$product_desc = $this->ansiFormat($product['description'], Console::FG_YELLOW);
+				$product_foto_id = $this->ansiFormat($product['primary_photo_id'], Console::FG_YELLOW);
+//				$product_model = Product::findOne($id);
+				$photos = $product->getProductPhotos()->asArray()->all();
+				/* Yii::info(VarDumper::dumpAsString($photos[0]['id']));
+				Yii::info($photos[0]['id']); */
+				echo "product name $product_name id ".$product['id']." product uri ".$product_uri.' description '.$product_desc.' foto_id '.$product_foto_id."\n";
+				echo "photo id ".$photos[0]['id']."\n";
+			} else {
+				echo "product $id not found\n";
+			}
+		} catch(IntegrityException $e){
+			Yii::info(VarDumper::dumpAsString($e));
+//				echo $e->getCode();
+//				echo $e->getMessage()."\n";
+			$message_error = $this->ansiFormat($e->errorInfo[2], Console::BOLD);
+			echo $message_error."\n";
+		}
+		return ExitCode::OK;
+	}
 }
