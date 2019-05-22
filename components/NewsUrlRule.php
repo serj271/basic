@@ -12,7 +12,7 @@ class NewsUrlRule extends BaseObject  implements UrlRuleInterface
 
     public function createUrl($manager, $route, $params)
     {
-		Yii::info(VarDumper::dumpAsString($params,$manager, $route));
+//		Yii::info(VarDumper::dumpAsString($params,$manager, $route));
         if ($route === 'car/index') {
             if (isset($params['manufacturer'], $params['model'])) {
                 return $params['manufacturer'] . '/' . $params['model'];

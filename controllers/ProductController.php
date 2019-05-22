@@ -20,27 +20,37 @@ class ProductController extends \yii\web\Controller
         return $this->render('edit');
     }
 
-    public function actionIndex($id)
+    public function actionIndex_()
     {
 		$test_tmp = $this->render('index.tpl',['param1'=>0, 'param2'=>22]);
-		if($id){
-			$product = Product::findOne($id);
+//		if($id){
+//			$product = Product::findOne(1);
 			$products = Product::find()
 				->orderBy('id')
 				->all();
-			$this->view->title = $product->title;
+			$this->view->title = 'product';
 //			Yii::info(VarDumper::dumpAsString($products));
-			return $this->render('index',['product'=>$product,'products'=>$products,'tmp'=>$test_tmp]);
-		} else {
-			return $this->render('index');
-		}
-		
+			return $this->render('index',['products'=>$products,'tmp'=>$test_tmp]);
+//		} else {			
+//			return $this->render('index');
+//		}		
     }
+	public function actionIndex(){
+		$products = [];
+		$products = Product::find()
+				->orderBy('id')
+				->all();
+		$this->view->title = 'product';
+		$test_tmp = $this->render('index.tpl',['param1'=>0, 'param2'=>22]);
+		
+		return $this->render('index', ['products'=>$products,'tmp'=>$test_tmp]);
+	}
 
-    public function actionView()
+    public function actionView($id)
     {
 //		$this->layout = 'home';
-        return $this->render('view');
+		$product = Product::findOne($id);
+        return $this->render('view',['product'=>$product]);
     }
 	public function actionCreate()
     {

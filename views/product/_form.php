@@ -83,7 +83,7 @@ use yii\widgets\ActiveForm;
                   .append('<tr>' + $('#product-new-parcel-block').html().replace(/__id__/g, 'new' + parcel_k) + '</tr>');
                 
                 // OPTIONAL: datepicker on copied row
-                $('#Parcels_new' + parcel_k + '_date_ordered').datepicker({
+               /*  $('#Parcels_new' + parcel_k + '_date_ordered').datepicker({
                     "autoclose": true,
                     "todayHighlight": true,
                     "format": "yyyy-mm-dd",
@@ -96,7 +96,7 @@ use yii\widgets\ActiveForm;
                     placeholder: '',
                     language: 'en',
                     tags: true
-                });
+                }); */
                 
             });
             
@@ -111,21 +111,21 @@ use yii\widgets\ActiveForm;
               echo "$('#product-new-parcel-button').click();";
             ?>
             
-            // OPTIONAL: datepicker on existing rows
+          /*   // OPTIONAL: datepicker on existing rows
             $('#product-parcels').find('input.addDatepicker').datepicker({
                 "autoclose": true,
                 "todayHighlight": true,
                 "format": "yyyy-mm-dd",
                 "orientation": "top left"
-            });
+            }); */
             
             // OPTIONAL: select2 on existing rows
-            $('#product-parcels').find('select.addSelect2:visible').select2({
+           /*  $('#product-parcels').find('select.addSelect2:visible').select2({
                 theme: 'krajee',
                 placeholder: '',
                 language: 'en',
                 tags: true
-            });
+            }); */
             
         </script>
         <?php $this->registerJs(str_replace(['<script>', '</script>'], '', ob_get_clean())); ?>

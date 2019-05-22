@@ -90,7 +90,7 @@ class NewsController extends Controller
 		$data = $this->data();
 		$filteredData = [];
 		
-		Yii::info(VarDumper::dumpAsString($data)); 
+//		Yii::info(VarDumper::dumpAsString($data)); 
 		foreach($data as $d)
 		{
 			if(($year != null)&&(date('Y', strtotime($d['date'])) == $year)) $filteredData[] =	$d;

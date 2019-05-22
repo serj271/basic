@@ -9,11 +9,12 @@ use yii\helpers\Html;
     You may change the content of this page by modifying
     the file <code><?= __FILE__; ?></code>.
     <?php 
-	echo Html::a('Home', ['site/index']);
-		echo $product->id.'--'.$product->name;
+		echo Html::a('Home', ['site/index']);
+		
 		foreach($products as $p){
-			echo Html::a($p->name, ['product/index','id' => $p->id],['class' => 'btn btn-info']);
+			echo Html::a($p->name, ['product/view','id' => $p->id],['class' => 'btn btn-info']);
 		}
+		
 		echo $tmp;
 	
 	?>

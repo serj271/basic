@@ -54,19 +54,18 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
 //			'baseUrl' => '/',
-
-//            'rules' => [
+			'rules' => [
 //				'class' => 'yii\web\UrlRule',
-//				[
-//				'class' => 'app\components\NewsUrlRule',
-//				'pattern' => 'news/<year:\d{4}>/items-list', 'route' => 'site/index'
-//				],				
-//				'class'=>'yii\filters\AccessRule',
-//				'<controller>/<year:\d{4}>/<action>' => ' <controller>/<action>',
-//				'news/<year:\d{4}>/items-list' => ' news/items-list?year=<year>',
-//				'news/<category:\w+>/items-list' => 'test-rules/items-list',
-//            ],
-			
+				[
+					'class' => 'app\components\NewsUrlRule',
+//					'pattern' => 'news/<year:\d{4}>/items-list',
+//					'route' => 'site/index'
+				],			
+		/* 		'class'=>'yii\filters\AccessRule',
+				'<controller>/<year:\d{4}>/<action>' => ' <controller>/<action>',
+				'news/<year:\d{4}>/items-list' => ' news/items-list?year=<year>',
+				'news/<category:\w+>/items-list' => 'test-rules/items-list', */
+			],			
         ],
 		'view' => [
             'renderers' => [
