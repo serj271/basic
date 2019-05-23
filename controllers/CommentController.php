@@ -49,8 +49,8 @@ class CommentController extends Controller
     public function actionIndex()
     {
 		$model = new CommentModel();
-		Yii::info($model->getAttributeLabel('user_id'));
-		Yii::info($model->find()->all()[0]['comment']);//find()->asArray()->all();$pages = Page::find()->joinWith('comments')
+//		Yii::info($model->getAttributeLabel('user_id'));
+//		Yii::info($model->find()->all()[0]['comment']);//find()->asArray()->all();$pages = Page::find()->joinWith('comments')
 //->orderBy('comment.date_entered DESC')->all();
 //		Yii::info(VarDumper::dumpAsString($model->find()->all()[0]->oldattributes['comment']));
 		$num = 23;

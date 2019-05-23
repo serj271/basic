@@ -40,10 +40,11 @@ class ProductController extends \yii\web\Controller
 		$products = Product::find()
 				->orderBy('id')
 				->all();
+		$model = Product::findOne(1);
 		$this->view->title = 'product';
 		$test_tmp = $this->render('index.tpl',['param1'=>0, 'param2'=>22]);
 		
-		return $this->render('index', ['products'=>$products,'tmp'=>$test_tmp]);
+		return $this->render('index', ['products'=>$products,'tmp'=>$test_tmp,'model'=>$model]);
 	}
 
     public function actionView($id)
@@ -86,5 +87,14 @@ class ProductController extends \yii\web\Controller
         }
         throw new HttpException(404, 'The requested page does not exist.');
     }
+	public function actionJson()
+	{
+		$models = Product::find()->all();
+		$data = array_map(function ($model) {return $model->attributes;},$models);		
+		$response = Yii::$app->response;
+		$response->format = Response::FORMAT_JSON;
+		$response->data = $data;
+		return $response;
+	}
 
 }

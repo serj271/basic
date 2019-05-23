@@ -48,33 +48,33 @@ class UserController extends Controller
     public function actionIndex()
     {
         echo $this->message . "\n";
-		Yii::info('message log');
-		Yii::info(VarDumper::dumpAsString(array('q'=>4)));
-		Yii::debug('start calculating average revenue');
+//		Yii::info('message log');
+//		Yii::info(VarDumper::dumpAsString(array('q'=>4)));
+//		Yii::debug('start calculating average revenue');
 //		 $this->stdout("whatever");
-		$name = $this->ansiFormat('Alexander', Console::FG_YELLOW);
-		echo "Hello, my name is $name.";
+///		$name = $this->ansiFormat('Alexander', Console::FG_YELLOW);
+//		echo "Hello, my name is $name.";
 		return ExitCode::OK;
     }
 	
-	public function actionGetall(){
+	public function actionGetAll(){
 		$users = $users = \Yii::$app->db
 			->createCommand('SELECT * FROM user;')
 			->queryAll();
 		Yii::info(VarDumper::dumpAsString($users));
 		$count = \Yii::$app->db
-			->createCommand('SELECT COUNT(*) FROM user;')
+			->createCommand('SELECT COUNT(*) FROM user')
 			->queryScalar();
 		echo "$count\n";
 //		echo $users[0]['email']."\n";
 		echo VarDumper::dumpAsString($users);
 		$user = \Yii::$app->db
-			->createCommand('SELECT email FROM user;')
+			->createCommand('SELECT email FROM user')
 			->queryColumn();
 		$result = \Yii::$app->db
 			->createCommand("SELECT COUNT([[id]]) FROM {{user}}")
 			->queryScalar();
-		
+		return ExitCode::OK;
 	}
 	
 	public function actionCreate($username,$password='1'){
@@ -85,17 +85,18 @@ class UserController extends Controller
 		'password_hash' => Yii::$app->security->generatePasswordHash($password),
 		'password_reset_token'=>'e',
 		'status'=>'1',
-		'role'=>'admin',
+		'role'=>'1',
 		'username' => $username,
 		'auth_key'=>'',
 		'created_at' => time(),
 		'updated_at' => time()
 		])
 		->execute();
+		return ExitCode::OK;
 	}
 	public function actionDetail($id){
 		$user = \Yii::$app->db
-			->createCommand("SELECT * FROM user where id=:id;")
+			->createCommand("SELECT * FROM user where id=:id")
 			->bindValue(':id', $id)
 			->queryOne();
 		Yii::info(VarDumper::dumpAsString($user));		
@@ -108,15 +109,22 @@ class UserController extends Controller
 			->execute();
 		Yii::info(VarDumper::dumpAsString($user));//0 or 1		
 		echo VarDumper::dumpAsString($user);
+		return ExitCode::OK;
 	}
 	public function actionLogin($id, $password='1'){
 		$user = \Yii::$app->db
-			->createCommand("SELECT * FROM user where id=:id;")
+			->createCommand("SELECT * FROM user where id=:id")
 			->bindValue(':id', $id)
 			->queryOne();
-		echo VarDumper::dumpAsString($user['username']);
-		$validatePassword= Yii::$app->security->validatePassword($password, $user['password_hash']);
-		echo VarDumper::dumpAsString($validatePassword)."\n";
+		if($user == null){
+			echo "user not found";
+		} else {
+			echo VarDumper::dumpAsString($user['username']);
+			$validatePassword= Yii::$app->security->validatePassword($password, $user['password_hash']);
+			echo VarDumper::dumpAsString($validatePassword)."\n";
+		}
+		
+		return ExitCode::OK;
 	}
 	
 	

@@ -58,4 +58,5 @@ class ProductPhotos extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Products::className(), ['id' => 'product_id']);
     }
+	
 }

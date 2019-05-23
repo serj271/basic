@@ -56,7 +56,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-             ['username', 'required', 'message' => 'Please choose a username.'],
+            ['username', 'required', 'message' => 'Please choose a username.'],
 			[['type'], 'safe'],
 			['type', 'in', 'range' => ['public','author','admin']],
             [['date_entered'], 'safe'],
@@ -64,10 +64,10 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
             [['username'], 'string', 'max' => 45],
             [['email'], 'string', 'max' => 60],
 //            [['pass'], 'string', 'max' => 64],
-			[['pass'], 'string', 'length' => [2,20] ],
+//			[['pass'], 'string', 'length' => [2,20] ],
             [['username'], 'unique'],
             [['email'], 'unique'],
-			['status_id', 'default', 'value' => self::STATUS_ACTIVE],
+			['status', 'default', 'value' => self::STATUS_ACTIVE],
         ];
     }
 

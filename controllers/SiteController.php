@@ -12,6 +12,7 @@ use app\models\ContactForm;
 use app\models\EntryForm;
 use app\models\SignupForm;
 use yii\helpers\VarDumper;
+use yii\web\ForbiddenHttpException;
 
 class SiteController extends Controller
 {
@@ -28,7 +29,7 @@ class SiteController extends Controller
                     [
                         'actions' => ['logout'],
                         'allow' => true,
-                        'roles' => ['@'],
+                        'roles' => ['@'],//for authorized users only
                     ],
                 ],
             ],
@@ -116,6 +117,8 @@ class SiteController extends Controller
      */
     public function actionContact()
     {
+		if (Yii::$app->user->isGuest)
+			throw new ForbiddenHttpException;
         $model = new ContactForm();
         if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
             Yii::$app->session->setFlash('contactFormSubmitted');
@@ -161,7 +164,7 @@ class SiteController extends Controller
 	public function actionSignup()
     {
         $model = new SignupForm();
-//		Yii::info('model---------'); 
+		Yii::info('model---------'); 
         if ($model->load(Yii::$app->request->post()) ) {
 			
 //			Yii::info(VarDumper::dumpAsString($model)); 
