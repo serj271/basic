@@ -6,13 +6,14 @@ use Yii;
 use yii\console\Controller;
 use yii\console\ExitCode;
 use yii\helpers\Console;
-use common\components\rbac\UserRoleRule;
+use \app\rbac\UserGroupRule;
+use \app\rbac\UserProfileOwnerRule;
 
 class RbacController extends Controller
 {
     public function actionInit()
     {
-       $authManager = \Yii::$app->authManager;
+        $authManager = \Yii::$app->authManager;
  
         // Create roles
         $guest  = $authManager->createRole('guest');
@@ -78,5 +79,21 @@ class RbacController extends Controller
         $authManager->addChild($admin, $delete);
         $authManager->addChild($admin, $talent);
         $authManager->addChild($admin, $brand);
+    
     }
+	public function actionAddUserProfile(){
+		$userGroupRule = new UserGroupRule();
+		$brand->ruleName  = $userGroupRule->name;
+        $talent->ruleName = $userGroupRule->name;
+		$authManager = \Yii::$app->authManager;
+		$userProfileOwnerRule = new UserProfileOwnerRule();
+		$authManager->add($userProfileOwnerRule);
+		 
+		$updateOwnProfile = $authManager->createPermission('updateOwnProfile');
+		$updateOwnProfile->ruleName = $userProfileOwnerRule->name;
+		$authManager->add($updateOwnProfile);
+		 
+		$authManager->addChild($brand, $updateOwnProfile);
+		$authManager->addChild($talent, $updateOwnProfile);
+	}
 }

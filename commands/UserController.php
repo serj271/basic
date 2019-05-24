@@ -126,6 +126,19 @@ class UserController extends Controller
 		
 		return ExitCode::OK;
 	}
+	public function actionUpdate($id){
+		if (!\Yii::$app->user->can('updateOwnProfile', ['profileId' => \Yii::$app->user->id])) {
+			throw new ForbiddenHttpException('Access denied');
+		}
+		/* 
+		$user =  \Yii::$app->db
+			->createCommand()
+			->delete('user','id=:id',[':id'=>$id])//table condition params
+			->execute();
+		Yii::info(VarDumper::dumpAsString($user));//0 or 1		
+		echo VarDumper::dumpAsString($user); */
+		return ExitCode::OK;
+	}
 	
 	
 }

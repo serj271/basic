@@ -22,17 +22,43 @@ class SiteController extends Controller
     public function behaviors()
     {
         return [
-            'access' => [
+			'access' => [
+				'class' => AccessControl::className(),
+				'rules' => [
+					[
+						'allow' => false,
+						'actions' => [ 'login'],
+						'roles' => ['guest'],
+					],
+					/* [
+                        'actions' => ['about','index'],
+                        'allow' => true,
+                        'matchCallback' => function ($rule, $action) {
+							return false;
+                            return date('d-m') === '31-10';
+                        }
+                    ], */
+				],
+			],
+           /*  'access' => [
                 'class' => AccessControl::className(),
                 'only' => ['logout'],
                 'rules' => [
-                    [
+                     [
                         'actions' => ['logout'],
                         'allow' => true,
                         'roles' => ['@'],//for authorized users only
                     ],
+					[
+                        'actions' => ['about'],
+                        'allow' => true,
+                        'matchCallback' => function ($rule, $action) {
+							return false;
+                            return date('d-m') === '31-10';
+                        }
+                    ], 
                 ],
-            ],
+            ], */
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -141,6 +167,10 @@ class SiteController extends Controller
 // Equivalent to
 // $nameToDisplay = isset($_GET['nameToDisplay'])?$_GET['nameToDisplay']:null;
  //       return $this->render('about',[ 'nameToDisplay' => $nameToDisplay ]);
+//		Yii::info(VarDumper::dump('----------------',\Yii::$app->user->can('admin')));
+		/* if (!\Yii::$app->user->can('admin')) {
+			throw new ForbiddenHttpException('Access denied');
+		} */
 		return $this->render('about');
     }
 	

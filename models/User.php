@@ -44,6 +44,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     public $plainPassword;
 	public $password_hash;
 	public $type;
+	public $group;
 	
     public static function tableName()
     {
