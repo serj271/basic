@@ -241,3 +241,5 @@ create controller
 create module
 #php  yii  gii/module --moduleClass=TestModule --moduleID=test 
 #php yii migrate --migrationPath=@yii/rbac/migrations/
+#./yii migrate/mark m160101_185401_initial_migration
+# migrate /down --migrationPath=migrtions/

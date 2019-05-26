@@ -1,0 +1,1 @@
+<h1>View static page Index pages</h1>

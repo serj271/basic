@@ -83,7 +83,7 @@ class ProductForm extends Model
     public function getParcels()
     {
         if ($this->_parcels === null) {
-            $this->_parcels = $this->product->isNewRecord ? [] : $this->product->parcels;
+            $this->_parcels = $this->product->isNewRecord ? [] : $this->product->getParcels()->asArray()->all();
         }
         return $this->_parcels;
     }

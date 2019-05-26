@@ -5,7 +5,7 @@ namespace app\models;
 use Yii;
 
 /**
- * This is the model class for table "product_photos".
+ * This is the model class for table "product_photo".
  *
  * @property int $id
  * @property int $product_id
@@ -14,14 +14,14 @@ use Yii;
  *
  * @property Products $product
  */
-class ProductPhotos extends \yii\db\ActiveRecord
+class ProductPhoto extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'product_photos';
+        return 'product_photo';
     }
 
     /**
@@ -30,11 +30,11 @@ class ProductPhotos extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['product_id', 'path_fullsize', 'path_thumbnail'], 'required'],
-            [['product_id'], 'integer'],
+//            [['product_id', 'path_fullsize', 'path_thumbnail'], 'required'],
+ //          [['product_id'], 'integer'],
             [['path_fullsize', 'path_thumbnail'], 'string', 'max' => 255],
-            [['product_id', 'path_fullsize'], 'unique', 'targetAttribute' => ['product_id', 'path_fullsize']],
-            [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Products::className(), 'targetAttribute' => ['product_id' => 'id']],
+//            [['product_id', 'path_fullsize'], 'unique', 'targetAttribute' => ['product_id', 'path_fullsize']],
+ //           [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => ProductPhoto::className(), 'targetAttribute' => ['product_id' => 'id']],
         ];
     }
 

@@ -26,7 +26,7 @@ class Product extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'products';
+        return 'product';
     }
 	public $title = 'product';
 
@@ -77,7 +77,11 @@ class Product extends \yii\db\ActiveRecord
 	}
 	
 	public function getProductPhotos() { 
-		return $this->hasMany(ProductPhotos::className(), ['product_id' => 'id']); 
+		return $this->hasMany(ProductPhoto::className(), ['product_id' => 'id']); 
 	}
+	public function getParcels() { 
+		return $this->hasMany(Parcel::className(), ['product_id' => 'id']); 
+	}
+	
 	
 }

@@ -14,15 +14,20 @@ class m190516_062411_user_table extends Migration
     public function safeUp()
     {
 		$this->createTable('user', [
-			'id' => Schema::TYPE_PK,
+			'id' => Schema::TYPE_PK. ' NOT NULL AUTO_INCREMENT',
 			// $this->primaryKey()
-			'email' => Schema::TYPE_STRING,
+			'username' => $this->string(64)->notNull(),
+			'email' => $this->string(64)->notNull(),
+			'auth_key' => $this->string(64),
+			'password_hash' => $this->string(64),
+			'password_reset_token' => $this->string(64)->notNull(),
+			'status' => Schema::TYPE_STRING,// String with 255 characters
 			// $this->string(255) // String with 255 characters
-			'password' => Schema::TYPE_STRING,
-			'name' => Schema::TYPE_STRING,
+			'role' => Schema::TYPE_SMALLINT,
 			'created_at' => Schema::TYPE_INTEGER,
 			// $this->integer()
-			'updated_at' => Schema::TYPE_INTEGER
+			'updated_at' => Schema::TYPE_INTEGER,
+			'PRIMARY KEY ([[id]])',
 		]);
     }
 
@@ -38,19 +43,4 @@ class m190516_062411_user_table extends Migration
 			$this->dropTable('users');
 		}
     }
-
-    /*
-    // Use up()/down() to run migration code without a transaction.
-    public function up()
-    {
-
-    }
-
-    public function down()
-    {
-        echo "m190516_062411_user_table cannot be reverted.\n";
-
-        return false;
-    }
-    */
 }

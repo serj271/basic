@@ -22,25 +22,25 @@ class SiteController extends Controller
     public function behaviors()
     {
         return [
-			'access' => [
+		/*	'access' => [
 				'class' => AccessControl::className(),
 				'rules' => [
 					[
-						'allow' => false,
+						'allow' => true,
 						'actions' => [ 'login'],
 						'roles' => ['guest'],
 					],
-					/* [
+					[
                         'actions' => ['about','index'],
                         'allow' => true,
                         'matchCallback' => function ($rule, $action) {
 							return false;
                             return date('d-m') === '31-10';
                         }
-                    ], */
+                    ],
 				],
-			],
-           /*  'access' => [
+			],*/
+            'access' => [
                 'class' => AccessControl::className(),
                 'only' => ['logout'],
                 'rules' => [
@@ -58,7 +58,7 @@ class SiteController extends Controller
                         }
                     ], 
                 ],
-            ], */
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -85,6 +85,11 @@ class SiteController extends Controller
 				'class' => 'yii\web\ViewAction',
 				'viewPrefix' => 'static'
 			],// /basic/web/index.php?r=site/static&view=contact
+			'page' => [
+				'class' => 'yii\web\ViewAction',
+//				'viewPrefix' => 'static'
+			],// /basic/web/index.php?r=site/static&view=contact
+
 		];
     }
 

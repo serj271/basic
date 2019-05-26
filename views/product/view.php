@@ -14,10 +14,12 @@ use yii\helpers\Html;
 		if($product){
 			echo $product->id.'--'.$product->name;
 		}
-		
+		foreach($photos as $photo){
+			echo $photo['path_fullsize'];
+		}
 	
 	?>
 	
-	
+	<img src="<?php echo Yii::getAlias('@web').'/'.$photos[0]['path_fullsize'] ?>" width=200 height=100>
 	
 </p>
