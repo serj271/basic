@@ -64,11 +64,12 @@ $config = [
 				'class' => 'yii\web\UrlRule',
 				[
 					'class' => 'app\components\NewsUrlRule',
-//					'news/<year:\d{4}/>' => ' news/items-list',
-//					'news/<category:\w+>/items-list' => 'test-rules/items-list',
-					/* 'pattern' => 'news/<year:\d{4}>/items-list',
-					'route' => 'site/index' */
-				],			
+				],
+				[
+					'pattern' => 'news/items-list/<category:\w+>',
+					'route' => 'news/items-list',
+					'defaults' => ['category' => 'shopping']
+				],				
 //				'class'=>'yii\filters\AccessRule',
 //				'<controller>/<year:\d{4}>/<action>' => ' <controller>/<action>',
 //				'<view:(break)>' => 'site/page',

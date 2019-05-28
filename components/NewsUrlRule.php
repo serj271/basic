@@ -30,14 +30,14 @@ class NewsUrlRule extends BaseObject  implements UrlRuleInterface
           return false;
        }
         //If a parameter is defined and not empty - add it to the URL
-        $url = 'news/';
+        $url = 'news/items-list/';
         if (array_key_exists('year', $params) && !empty($params['year'])) {
             $url .= $params['year'];
         }
-		/* if (array_key_exists('category', $params) && !empty($params['category'])) {
+		if (array_key_exists('category', $params) && !empty($params['category'])) {
             $url .= $params['category'];
         }
-        if (array_key_exists('subcategory', $params) && !empty($params['subcategory'])) {
+       /*  if (array_key_exists('subcategory', $params) && !empty($params['subcategory'])) {
             $url .= ',' . $params['subcategory'];
         } */
 		return $url;
@@ -48,7 +48,7 @@ class NewsUrlRule extends BaseObject  implements UrlRuleInterface
     {
         $pathInfo = $request->getPathInfo();
 //		Yii::info(VarDumper::dumpAsString($pathInfo));
-        if (preg_match('%^news(/(\d{4}))$%', $pathInfo, $matches)) {
+        if (preg_match('%^news/items-list(/(\d{4}))$%', $pathInfo, $matches)) {
 //			Yii::info(VarDumper::dumpAsString($matches));
             // check $matches[1] and $matches[3] to see
             // if they match a manufacturer and a model in the database
@@ -56,6 +56,15 @@ class NewsUrlRule extends BaseObject  implements UrlRuleInterface
             // and return ['car/index', $params]
 //			return ['news/index',[]];
 			return ['news/items-list',['year'=>$matches[2]]];
+        }
+		if (preg_match('%^news/items-list(/(\w+))$%', $pathInfo, $matches)) {
+//			Yii::info(VarDumper::dumpAsString($matches)); news/items-list/business
+            // check $matches[1] and $matches[3] to see
+            // if they match a manufacturer and a model in the database
+            // If so, set $params['manufacturer'] and/or $params['model']
+            // and return ['car/index', $params]
+//			return ['news/index',[]];
+			return ['news/items-list',['category'=>$matches[2]]];
         }
 		/* if (preg_match('%^([^\/]*)\/([^\/]*)$%', $pathInfo, $matches)) {
 			if($matches[1] == 'news')
