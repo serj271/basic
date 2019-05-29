@@ -19,6 +19,7 @@ use app\models\ProductPhoto;
 use yii\db\ActiveRecord;
 //use yii\console\ErrorHandler;
 use yii\db\IntegrityException;
+//   \yii\helpers\VarDumper::dump
 
 /**
  * This command echoes the first argument that you have entered.
@@ -69,6 +70,11 @@ class ProductPhotoController extends Controller
 	}
 	
 	public function actionGetAll() {//product/get-all
+//		$model = new ProductPhoto();
+//		$attributes = $model->getAttributes();
+//		Yii::info(VarDumper::dumpAsString($model->getAttributes()));
+//		Yii::info(VarDumper::dumpAsString($model->attributeTypes));
+		
 		$photos = ProductPhoto::find()
 			->indexBy('id')
 			->all();
@@ -88,14 +94,19 @@ class ProductPhotoController extends Controller
 		if($product == NULL){
 			echo "not product found $id\n";
 			return ExitCode::OK;
-		}	
+		}
 		if($id){
 			try{
 				$photo = new ProductPhoto();
+				$modelAttributes = $photo->attributeTypes;
 				$attributes = array_keys($photo->getAttributes());
-				$photo->product_id = $id;
-				$photo->path_fullsize = 'path_fullsize';
-				$photo->path_thumbnail = 'path_thumbnail';
+				foreach($modelAttributes as $key=>$value){
+					if($value == 'integer'){
+						$photo[$key] = $id;
+					} else if($value == 'string'){
+						$photo[$key] = $key.$id;
+					}
+				}
 				if ($photo->validate()) {
 					$photo->save();
 					echo "photo add $photo->id\n";
@@ -107,8 +118,7 @@ class ProductPhotoController extends Controller
 					/* $message_error = $this->ansiFormat($errors['path_fullsize'][0], Console::BOLD);
 					echo $message_error."\n";
 					Yii::info(VarDumper::dumpAsString($attributes)); */					
-				}
-				
+				}				
 			} catch(IntegrityException $e){
 				Yii::info(VarDumper::dumpAsString($e));
 //				echo $e->getCode();
@@ -138,7 +148,8 @@ class ProductPhotoController extends Controller
 				$message_error = $this->ansiFormat($e->errorInfo[2], Console::BOLD);
 				echo $message_error."\n";
 			}			
-					
+		$this->stdout("Waiting on important thing to happen...\n",
+		Console::BOLD);			
 		return ExitCode::OK;
 	}
     // The command "yii example/add test" will call "actionAdd(['test'])"
@@ -166,7 +177,26 @@ class ProductPhotoController extends Controller
 			echo "id photo not found\n";
 			return ExitCode::OK;
 		}
-			
+		$model = new ProductPhoto();
+		$attributes = $model->getAttributes();
+		foreach(array_keys($attributes) as $key){
+			echo "$key => ".$this->ansiFormat($photo[$key], Console::FG_YELLOW).".\n";
+		}
+		
+//		Yii::info(VarDumper::dumpAsString($photo->getProduct()));
+		$product = $photo->getProduct()->one();//active query to single row result
+
+		$attributes = $product->attributes;
+		if(count($attributes) != 0){
+			echo "product name -----$photo->product->name\n";//from public method name
+			foreach($attributes as $key=>$value){
+				echo "$key => ".$this->ansiFormat($value, Console::FG_YELLOW).".\n";
+			}	
+		}
+//		Yii::info(VarDumper::dumpAsString($photo->product->name));
+		
+//		$product = $photo->getProduct();
+		/* 	
 		try {						
 			$product_id = $this->ansiFormat($photo['product_id'], Console::FG_YELLOW);
 			$path_fullsize = $this->ansiFormat($photo['path_fullsize'], Console::FG_YELLOW);
@@ -181,7 +211,7 @@ class ProductPhotoController extends Controller
 				echo $e->getMessage()."\n";
 			$message_error = $this->ansiFormat($e->errorInfo[2], Console::BOLD);
 			echo $message_error."\n";
-		}
+		} */
 		return ExitCode::OK;
 	}
 }

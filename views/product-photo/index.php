@@ -14,5 +14,11 @@ echo Html::endForm();
 <p>
     You may change the content of this page by modifying
     the file <code><?= __FILE__; ?></code>.
+	<?php foreach($photos as $photo) { ?>
+	<dl>
+		<dt><?php echo $photo['product_id'] ?></dt>
+		<dd><img src="<?php echo Yii::getAlias('@web').'/'.$photo['path_thumbnail'] ?>" width=<?=$width?> height=<?=$height?>> </dd>
 	
+	</dl>
+	<?php } ?> 
 </p>

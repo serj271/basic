@@ -11,12 +11,21 @@ class ProductForm extends Model
 {
     private $_product;
     private $_parcels;
+	public $product_id;
+	public $path_thumbnail;
+	public $path_fullsize;
 
     public function rules()
     {
         return [
-            [['Product'], 'required'],
-            [['Parcels'], 'safe'],
+			['path_fullsize', 'string', 'min' => 2, 'max' => 255],
+            ['path_thumbnail', 'string', 'min' => 2, 'max' => 255],	
+			['product_id', 'integer'],
+            ['product_id', 'required'],
+//            ['username', 'unique', 'targetClass' => UserModel::class, 'message' => Yii::t('yii2mod.user', 'This username has already been taken.')],
+            [['path_fullsize','path_thumbnail'], 'trim'],
+//			['email', 'unique'],
+ //           ['email', 'unique', 'targetClass' => UserModel::class, 'message' => Yii::t('yii2mod.user', 'This email address has already been taken.')],
         ];
     }
 
@@ -34,14 +43,14 @@ class ProductForm extends Model
             return false;
         }
         $transaction = Yii::$app->db->beginTransaction();
-        if (!$this->product->save()) {
+       /*  if (!$this->product->save()) {
             $transaction->rollBack();
             return false;
         }
         if (!$this->saveParcels()) {
             $transaction->rollBack();
             return false;
-        }
+        } */
         $transaction->commit();
         return true;
     }

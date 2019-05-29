@@ -93,7 +93,7 @@ class Product extends \yii\db\ActiveRecord
 	}
 	
 	public function getProductPhotos() { 
-		return $this->hasMany(ProductPhoto::className(), ['product_id' => 'id']); 
+		return $this->hasMany(ProductPhoto::className(), ['product_id' => 'id']); //get active query
 	}
 	public function getParcels() { 
 		return $this->hasMany(Parcel::className(), ['product_id' => 'id']); 

@@ -59,6 +59,7 @@ $backgroundColor = isset($this->params['background_color'])?$this->params['backg
             ['label' => 'Signup', 'url' => ['/site/signup']],
 			['label' => 'News', 'url' => ['/news/index']],
 			['label' => 'Comment', 'url' => ['/comment/index']],
+			['label' => 'Photo', 'url' => ['/product-photo/index']],
             Yii::$app->user->isGuest ? (
                 ['label' => 'Login', 'url' => ['/site/login']]
             ) : (

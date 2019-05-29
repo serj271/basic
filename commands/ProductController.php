@@ -48,26 +48,17 @@ class ProductController extends Controller
 			->indexBy('id')
 			->all();
 		$attributes = $model->getAttributes();
-		Yii::info(VarDumper::dumpAsString($model->attributeTypes));
-		
-		Yii::info(VarDumper::dumpAsString($model->getActiveValidators()));//rules()
+//		Yii::info(VarDumper::dumpAsString($model->attributeTypes));		
+//		Yii::info(VarDumper::dumpAsString($model->getActiveValidators()));//rules()
 		$message = '';
 		if(count($products) !== 0){
-			foreach(array_keys($attributes) as $key){
-				$message .= $products[0][$key];
+			foreach ($products as $product){
+				foreach(array_keys($attributes) as $key){
+					echo "$key => ".$this->ansiFormat($product[$key], Console::FG_YELLOW).".\n";
+				}	
 			}
 		}
-		
-//		Yii::info(VarDumper::dumpAsString($photos));
-		/* foreach ($products as $product){
-			$id = $this->ansiFormat($product['id'], Console::FG_YELLOW);
-			$name = $this->ansiFormat($product['name'], Console::FG_YELLOW);
-			$uri = $this->ansiFormat($uri['path_fullsize'], Console::FG_YELLOW);
-			$path_thumbnail = $this->ansiFormat($product['path_thumbnail'], Console::FG_YELLOW);
-			$path_thumbnail = $this->ansiFormat($product['path_thumbnail'], Console::FG_YELLOW);
-			$path_thumbnail = $this->ansiFormat($product['path_thumbnail'], Console::FG_YELLOW);
-			echo "photo_id ".$id." product_id ".$product_id.' path_fullsize '.$path_fullsize.' path_thumbnail '.$path_thumbnail."\n";
-		} */
+//		Yii::info(VarDumper::dumpAsString(\Yii::$app->params['thumbnail.size']));//from params config
 		return ExitCode::OK;
 	}
 	
@@ -114,7 +105,7 @@ class ProductController extends Controller
 	public function actionDeleteOne($id=1){//product/add-one <id>
 		
 			try{
-				$model = ProductPhoto::findOne($id);
+				$model = Product::findOne($id);
 				if($model){
 					$model->delete();
 					echo "model delete $id\n";
@@ -150,29 +141,29 @@ class ProductController extends Controller
         }
     } */
 	
-	public function actionGetOne($id){			
-//		Yii::info(VarDumper::dumpAsString($model));
-		$photo = ProductPhoto::findOne($id);
-		if($photo == NULL){
-			echo "id photo not found\n";
+	public function actionGetOne($id){
+		$product = Product::findOne($id);	
+		if($product == NULL){
+			echo "not found product id $id\n";
 			return ExitCode::OK;
 		}
-			
-		try {						
-			$product_id = $this->ansiFormat($photo['product_id'], Console::FG_YELLOW);
-			$path_fullsize = $this->ansiFormat($photo['path_fullsize'], Console::FG_YELLOW);
-			$path_thumbnail = $this->ansiFormat($photo['path_thumbnail'], Console::FG_YELLOW);
-			
-			echo "photo id $id product_id uri ".$product_id.' path_fullsize '.$path_fullsize.' path_thumbnail '.$path_thumbnail."\n";
-//			echo "photo id ".$photos[0]['id']."\n";
-			
-		} catch(IntegrityException $e){
-			Yii::info(VarDumper::dumpAsString($e));
-				echo $e->getCode();
-				echo $e->getMessage()."\n";
-			$message_error = $this->ansiFormat($e->errorInfo[2], Console::BOLD);
-			echo $message_error."\n";
+		$model = new Product();
+		$attributes = $model->getAttributes();
+		foreach(array_keys($attributes) as $key){
+			echo "$key => ".$this->ansiFormat($product[$key], Console::FG_YELLOW).".\n";
 		}
+//		Yii::info(VarDumper::dumpAsString($model->attributeTypes));		
+//		Yii::info(VarDumper::dumpAsString($model->getActiveValidators()));//rules()
+		
+		$photos = $product->getProductPhotos()->all();//active query
+	
+		foreach($photos as $photo){
+			$attributes = $photo->attributes;
+			foreach($attributes as $key=>$value){
+				echo "$key => ".$this->ansiFormat($value, Console::FG_YELLOW).".\n";
+			}
+		}
+		
 		return ExitCode::OK;
 	} 
 
