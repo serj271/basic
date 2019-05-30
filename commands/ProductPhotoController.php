@@ -182,18 +182,19 @@ class ProductPhotoController extends Controller
 		foreach(array_keys($attributes) as $key){
 			echo "$key => ".$this->ansiFormat($photo[$key], Console::FG_YELLOW).".\n";
 		}
-		
+//		Yii::info(VarDumper::dumpAsString($photo->product->attributes['name']));
+//		Yii::info(VarDumper::dumpAsString($photo->getDirtyAttributes()));
 //		Yii::info(VarDumper::dumpAsString($photo->getProduct()));
 		$product = $photo->getProduct()->one();//active query to single row result
 
 		$attributes = $product->attributes;
 		if(count($attributes) != 0){
-			echo "product name -----$photo->product->name\n";//from public method name
+			echo "product name -----".$photo->product->attributes['name']."\n";//from public method name
 			foreach($attributes as $key=>$value){
 				echo "$key => ".$this->ansiFormat($value, Console::FG_YELLOW).".\n";
 			}	
 		}
-//		Yii::info(VarDumper::dumpAsString($photo->product->name));
+//		Yii::info(VarDumper::dumpAsString($photo->product-->attributes['name']));
 		
 //		$product = $photo->getProduct();
 		/* 	

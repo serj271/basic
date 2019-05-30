@@ -29,6 +29,9 @@ class ProductPhoto extends \yii\db\ActiveRecord
     {
         return 'product_photo';
     }
+	
+	public $upload;
+	
 	public function behaviors()
 	{
 		return [
@@ -60,10 +63,11 @@ class ProductPhoto extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-//            [['product_id', 'path_fullsize', 'path_thumbnail'], 'required'],
+            [['product_id', 'path_fullsize', 'path_thumbnail'], 'required'],
 			[['product_id'], 'integer'],
-            [['path_fullsize', 'path_thumbnail'], 'string', 'max' => 255],
+            [['path_fullsize', 'path_thumbnail'], 'string', 'max' => 255, 'min'=>2],
             [['product_id', 'path_fullsize'], 'unique', 'targetAttribute' => ['product_id', 'path_fullsize']],
+			/* [['upload'], 'file', 'extensions' => 'png, jpg, gif'], */
  //           [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => ProductPhoto::className(), 'targetAttribute' => ['product_id' => 'id']],
         ];//function ($attribute, $params)
     }

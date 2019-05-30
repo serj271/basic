@@ -17,7 +17,10 @@ echo Html::endForm();
 	<?php foreach($photos as $photo) { ?>
 	<dl>
 		<dt><?php echo $photo['product_id'] ?></dt>
-		<dd><img src="<?php echo Yii::getAlias('@web').'/'.$photo['path_thumbnail'] ?>" width=<?=$width?> height=<?=$height?>> </dd>
+		<dd>
+			<img src="<?php echo Yii::getAlias('@web').'/'.$photo['path_thumbnail'] ?>" width=<?=$width?> height=<?=$height?>> 
+			<?= Html::a( "Edit ",['product-photo/edit','id'=>$photo['id']]) ?> 
+		</dd>
 	
 	</dl>
 	<?php } ?> 

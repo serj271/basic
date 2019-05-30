@@ -12,10 +12,9 @@ Model ready to be saved!
 <?php $form = ActiveForm::begin(); ?>
 <div class="row">
 <div class="col-lg-12">
-<h1>ProductForm form</h1>
-<?= $form->field($model, 'path_fullsize')->textInput() ?>
-<?= $form->field($model, 'path_thumbnail')->textInput() ?>
-<?= $form->field($model, 'product_id')->textInput() ?>
+<h1>ProductPhotoForm form</h1>
+
+<?= $form->field($model_upload, 'imageFile')->fileInput() ?>
 
 </div>
 </div>

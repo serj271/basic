@@ -14,6 +14,7 @@ class ProductForm extends Model
 	public $product_id;
 	public $path_thumbnail;
 	public $path_fullsize;
+	public $upload;
 
     public function rules()
     {
