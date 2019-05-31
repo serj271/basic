@@ -11,6 +11,7 @@ use yii\helpers\VarDumper;
 use yii\helpers\ArrayHelper;
 use app\models\UploadForm;
 use yii\web\UploadedFile;
+use dastanaron\translit\Translit;
 
 class ProductPhotoController extends \yii\web\Controller
 {
@@ -34,11 +35,21 @@ class ProductPhotoController extends \yii\web\Controller
 		$modelCanSave = false;
 		$model = new ProductPhotoForm();
 		$model_upload = new UploadForm();
+		$translit = new Translit();
+
 		if (Yii::$app->request->isPost) {
             $model_upload->imageFile = UploadedFile::getInstance($model_upload, 'imageFile');//$model_upload->imageFile->baseName type size error
-			Yii::info(VarDumper::dumpAsString($model_upload));
+			
+//			Yii::info(VarDumper::dumpAsString($model_upload));
 			if ($model_upload->imageFile && $model_upload->validate()){
-				$model_upload->imageFile->saveAs('uploads/' . 'file' . '.' . $model_upload->imageFile->extension);
+				$file_name = $translit->translit($model_upload->imageFile->baseName, true, 'ru-en');
+				$path_fullsize = 'uploads/'.$file_name . '.' . $model_upload->imageFile->extension;
+				$model_upload->imageFile->saveAs($path_fullsize);
+				$model->product_id = 1;
+				$model->path_fullsize = $path_fullsize;
+				$model->path_thumbnail = $path_fullsize;
+				
+				$model->product_id = 1;
 				if ($model->save(false)) {
 					return $this->redirect(['view', 'id' => $model->id]);
 				}
@@ -115,6 +126,42 @@ class ProductPhotoController extends \yii\web\Controller
 			'photo'=>$photo,
 			'products'=>$products
 		]);
+	}
+	public function actionDelete($id){
+		$photo = ProductPhoto::findOne($id);
+		if($photo == NULL){
+			throw new \yii\web\HttpException(404,
+          "$id photo not found");
+		}
+		if (Yii::$app->request->post()){
+			$action = Yii::$app->request->post()['action'];
+//			Yii::info(VarDumper::dumpAsString(Yii::$app->request->post()));
+			if($action =='yes'){	
+				$photo->delete();			
+			}
+			return $this->redirect(['index']);					
+		}
+		return $this->render('delete', [
+			'photo'=>$photo,
+			'width'=>\Yii::$app->params['thumbnail.size'][0],
+			'height'=>\Yii::$app->params['thumbnail.size'][1]
+		]);
+		/* $model = new ProductPhoto();
+		$attributes = $model->getAttributes();
+		foreach(array_keys($attributes) as $key){
+			echo "$key => ".$this->ansiFormat($photo[$key], Console::FG_YELLOW).".\n";
+		}
+		
+//		Yii::info(VarDumper::dumpAsString($photo->getProduct()));
+		$product = $photo->getProduct()->one();//active query to single row result
+
+		$attributes = $product->attributes;
+		if(count($attributes) != 0){
+			echo "product name -----$photo->product->name\n";//from public method name
+			foreach($attributes as $key=>$value){
+				echo "$key => ".$this->ansiFormat($value, Console::FG_YELLOW).".\n";
+			}	
+		} */
 	}
 	protected function handlePostSave(ProductPhotoForm $model)
 	{

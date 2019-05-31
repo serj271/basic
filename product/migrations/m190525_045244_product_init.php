@@ -11,6 +11,7 @@ class m190525_045244_product_init extends Migration
     /**
      * {@inheritdoc}
      */
+	public $product_categories = 'product_categories';
 	public $table_product = 'product';
 	public $table_product_photo = 'product_photo';
 	public $table_parcel = 'parcel';
@@ -27,7 +28,27 @@ class m190525_045244_product_init extends Migration
 		if($this->tableExists($this->table_product_photo)){
 			 $this->dropTable($this->table_product_photo);
 		} */
-  
+		$this->createTable($this->product_categories, [
+			'id'=>Schema::TYPE_INTEGER  . ' NOT NULL AUTO_INCREMENT',
+			'uri' => $this->string(64)->notNull(),
+            'name' => $this->string(64)->notNull(),
+        /*     'data' => $this->binary(), */
+			'description'=>$this->text(),
+			'order'=>$this->string(64)->notNull(), 
+			'parent_id'=>Schema::TYPE_INTEGER,
+			'primary_photo_id'=>$this->string(64),
+			'image'=>$this->string(64),
+            'KEY  ([parent_id])',
+            'PRIMARY KEY ([[id]])',
+        ], $tableOptions);
+		/*  $this->addForeignKey(
+            'fk-post_tag-tag_id',
+            'post_tag',
+            'tag_id',
+            'tag',
+            'id',
+            'CASCADE'
+        ); */
         $this->createTable($this->table_product, [
 			'id'=>Schema::TYPE_INTEGER  . ' NOT NULL AUTO_INCREMENT',
 			'uri' => $this->string(64)->notNull(),
@@ -36,8 +57,8 @@ class m190525_045244_product_init extends Migration
 			'description'=>$this->text(),
 			'primary_photo_id'=>$this->string(64),
 			'visible'=>$this->tinyInteger(1),
-            'created_at' => $this->integer(),
-            'updated_at' => $this->integer(),
+            'created_at' => Schema::TYPE_TIMESTAMP.' NOT NULL DEFAULT CURRENT_TIMESTAMP',
+            'updated_at' => Schema::TYPE_TIMESTAMP.' NOT NULL DEFAULT CURRENT_TIMESTAMP',
             'PRIMARY KEY ([[id]])',
         ], $tableOptions);
 		/*  $this->addForeignKey(
@@ -90,14 +111,14 @@ class m190525_045244_product_init extends Migration
 //        $this->execute('DROP TRIGGER {$schema}.trigger_auth_item_child;');
 		if($this->tableExists($this->table_product_photo)){
 			 $this->dropTable($this->table_product_photo);
-		}     
+		} 
+		if($this->tableExists($this->table_parcel)){
+			 $this->dropTable($this->table_parcel);
+		}		
 		if($this->tableExists($this->table_product)){
 			 $this->dropTable($this->table_product);
 		}
 		
-		if($this->tableExists($this->table_parcel)){
-			 $this->dropTable($this->table_parcel);
-		}
 		/* $this->dropTable($this->table_product);
 		$this->dropTable($this->table_product_photo); */
 		

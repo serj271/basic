@@ -38,7 +38,7 @@ class Product extends \yii\db\ActiveRecord
             [['name', 'description','uri'], 'required', 'message' => 'Please choose a value.'],
             [['description'], 'string'],
 			[['visible'], 'number'],
-            [['primary_photo_id','visible'],  'number', 'integerOnly' => true, 'min' => 13, 'max' => 120,
+            [['primary_photo_id','visible'],  'number', 'integerOnly' => true, 'min' => 1, 'max' => 120,
 'tooSmall' => 'You must be at least 13 to use this site.'],      
             [['name','uri'], 'string', 'max' => 255],
 			[['name','description'], 'filter', 'filter' => 'trim'],

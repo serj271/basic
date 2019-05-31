@@ -1,5 +1,18 @@
 use yii2basic;
 
+CREATE TABLE `product_categories` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `description` text COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `order` int(10) unsigned NOT NULL,
+  `parent_id` int(10) unsigned DEFAULT NULL,
+  `image` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `parent_id` (`parent_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+ 
+
+
 DROP TABLE IF EXISTS `product`;
 CREATE TABLE `product` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,

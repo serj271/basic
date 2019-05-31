@@ -9,20 +9,20 @@ use yii\helpers\ArrayHelper;
         'prompt' => 'Выберите статус...'
     ];
 ?>
-<h1>product-photo/edit</h1>
+<h1>product-photo/delete</h1>
+<img src="<?php echo Yii::getAlias('@web').'/'.$photo['path_thumbnail'] ?>" width=<?=$width?> height=<?=$height?>> 
 <?php $form = ActiveForm::begin(); ?>
 <div class="row">
 	<div class="col-lg-12">
 	<h1>ProductPhotoForm form</h1>
-	<?= $form->field($photo, 'path_fullsize')->textInput() ?>
-	<?= $form->field($photo, 'path_thumbnail')->textInput() ?>
-	<?= $form->field($photo, 'product_id')->dropDownList($products,$params);?>
-
+	<?= $form->field($photo, 'path_fullsize')->textInput(['disabled' => true]) ?>
+	<?= $form->field($photo, 'id')->textInput([ 'disabled' => true]) ?>
 
 	</div>
 </div>
 <div class="form-group">
-<?= Html::submitButton('Update' , ['class' => 'btn btn-success']) ?>
+<?= Html::submitButton('Yes' , ['value'=>'yes','class' => 'btn btn-success','name'=>'action']) ?>
+<?= Html::submitButton('No' , ['value'=>'no','class' => 'btn btn-success','name'=>'action']) ?>
 </div>
 <?php ActiveForm::end(); ?>
 <p>

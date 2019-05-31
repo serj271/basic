@@ -35,7 +35,7 @@ class ProductPhotoForm extends \yii\db\ActiveRecord
             [['product_id', 'path_fullsize', 'path_thumbnail'], 'required'],
             [['product_id'], 'integer'],
             [['path_fullsize', 'path_thumbnail'], 'string', 'max' => 64],
-			[['imageFile'], 'file', 'skipOnEmpty' => false, 'extensions' => ['png, jpg'],'checkExtensionByMimeType'=>false],
+			[['imageFile'], 'file', 'skipOnEmpty' => false, 'extensions' => ['png, jpg, gif'],'checkExtensionByMimeType'=>false],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::className(), 'targetAttribute' => ['product_id' => 'id']],
         ];
     }
