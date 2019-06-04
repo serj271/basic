@@ -3,8 +3,7 @@
 use yii\grid\GridView;
 use yii\helpers\Html;
 ?>
-<h1>customer/grid</h1>
-<h2>Customers</h2>
+<h1>reservation/grid</h1>
 
 <p>
     You may change the content of this page by modifying
@@ -12,11 +11,19 @@ use yii\helpers\Html;
 </p>
 <?= GridView::widget([
 		'dataProvider' => $dataProvider,
-		'caption'=>$table_name,
+		'caption'=>'reservation',
+		'filterModel' => $searchModel,
 		'columns' => [
 			'id',
+			'room_id',
+			'customer_id',
+			'price_per_day',
+			'date_from',
+			'date_to',
+			'reservation_date'
+			
 		/* 	'name', */
-			[
+			/* [
 				'header' => 'Name',
 				'content'=>function ($model, $key, $index, $column) {
 					return ucfirst($model->name);
@@ -27,15 +34,11 @@ use yii\helpers\Html;
 			[
 				'header' => 'Reservations',
 				'content' => function ($model, $key, $index, $column) {
-						$title = sprintf('Reservations (%d)', $model->reservationsCount);
-						return Html::a($title, ['reservations/grid', 'Reservation[customer_id]'=> $model->id]);
+						return Html::a('Reservations', ['reservations/grid',
+							'Reservation[customer_id]' => $model->id]);
 				}
-			],
-			[
-			'class' => 'yii\grid\ActionColumn',
-			'template' => '{delete}',
-			'header' => 'Actions',
-			],
+			], */
+			
 		],
 	]) 
 ?>

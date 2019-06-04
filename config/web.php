@@ -65,6 +65,9 @@ $config = [
 				[
 					'class' => 'app\components\NewsUrlRule',
 				],
+				/* [
+					'class' => 'app\components\CustomerUrlRule',
+				], */
 				[
 					'pattern' => 'news/items-list/<category:\w+>',
 					'route' => 'news/items-list',

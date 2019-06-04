@@ -45,4 +45,9 @@ class Customer extends \yii\db\ActiveRecord
             'phone_number' => 'Phone Number',
         ];
     }
+	public function getReservationsCount()
+	{
+		return $this->hasMany(\app\models\Reservation::className(), ['customer_id' =>
+		'id'])->count();
+	}
 }

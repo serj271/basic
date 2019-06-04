@@ -18,13 +18,15 @@ class CustomerController extends \yii\web\Controller
     public function actionGrid()
 	{
 		$query = Customer::find();
+
+//		Yii::info(VarDumper::dumpAsString(Customer::tableName()));
 		$dataProvider = new ActiveDataProvider([
 			'query' => $query,
 			'pagination' => [
 				'pageSize' => 10,
 			],
 		]);
-		return $this->render('grid', [ 'dataProvider' => $dataProvider ]);
+		return $this->render('grid', [ 'dataProvider' => $dataProvider,'table_name'=>Customer::tableName() ]);
 	}
 
     public function actionIndex()
