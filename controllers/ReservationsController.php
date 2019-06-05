@@ -18,22 +18,34 @@ class ReservationsController extends \yii\web\Controller
     public function actionGrid()
     {
         $query = Reservation::find();
-		$searchModel = new \app\models\Reservation();
+//		$searchModel = new \app\models\Reservation();
+		$searchModel = new \app\models\ReservationSearch();
 //		Yii::info(VarDumper::dumpAsString($_GET));
-		if(isset($_GET['Reservation']))
+		Yii::info(VarDumper::dumpAsString($searchModel));
+		if(isset($_GET['ReservationSearch']))
 		{
 //			Yii::info(VarDumper::dumpAsString($_GET['Reservation']));
 			$searchModel->load( \Yii::$app->request->get() );
+			/* $query->andFilterWhere([
+				'id' => $searchModel->id,
+				'customer_id' => $searchModel->customer_id,
+				'room_id' => $searchModel->room_id,
+				'price_per_day' => $searchModel->price_per_day,
+			]); */
+			/* $query->andFilterWhere([
+			'customer_id' => isset($_GET['Reservation']['customer_id'])?
+			$_GET['Reservation']['customer_id']:null,
+			]); */
+			$query->joinWith(['customer']);
+			$query->andFilterWhere(
+				['LIKE', 'customer.surname', $searchModel->getAttribute('customer.surname')]
+			);
 			$query->andFilterWhere([
 				'id' => $searchModel->id,
 				'customer_id' => $searchModel->customer_id,
 				'room_id' => $searchModel->room_id,
 				'price_per_day' => $searchModel->price_per_day,
 			]);
-			/* $query->andFilterWhere([
-			'customer_id' => isset($_GET['Reservation']['customer_id'])?
-			$_GET['Reservation']['customer_id']:null,
-			]); */
 		}
 		$dataProvider = new ActiveDataProvider([
 			'query' => $query,

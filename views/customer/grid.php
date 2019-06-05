@@ -23,6 +23,7 @@ use yii\helpers\Html;
 				}
 			],
 			'surname',
+			
 			'phone_number',
 			[
 				'header' => 'Reservations',

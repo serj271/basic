@@ -6,7 +6,7 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\IntegrityException;
 use yii\db\Expression;
 use yii\behaviors\AttributeTypecastBehavior;
-
+use app\models\Customer;
 
 /**
  * This is the model class for table "reservation".
@@ -78,5 +78,9 @@ class Reservation extends \yii\db\ActiveRecord
             'date_to' => 'Date To',
             'reservation_date' => 'Reservation Date',
         ];
+    }
+	public function getCustomer()
+    {
+        return $this->hasOne(Customer::className(), ['id' => 'customer_id']);
     }
 }
