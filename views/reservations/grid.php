@@ -22,16 +22,24 @@ use yii\helpers\Html;
 				'header' => 'Customer',
 				'attribute' => 'customer.nameAndSurname'
 			],
-			'price_per_day',
+			[
+				'attribute'=>'price_per_day',
+				'value'=>'price_per_day'
+			],
+//			'price_per_day',
 			'date_from',
 			'date_to',
 			'reservation_date',
 			['content'=>function ($model, $key, $index, $column) {
-				return Html::button('&lt;i class="glyphicon glyphicon-plus">&lt;/i>', ['type'=>'button', 'title'=>'Add Book', 'class'=>'btn btn-success',
+				return Html::button('<span class="glyphicon glyphicon-align-left" aria-hidden="true"></span>'.'test', ['type'=>'button', 'title'=>'Add Book', 'class'=>'btn btn-success',
 					'onclick'=>'alert("This will launch the book creation form.\n\nDisabled for this demo!");']) . ' '.
 					Html::a('&lt;i class="glyphicon glyphicon-repeat">&lt;/i>', ['grid-demo'], ['data-pjax'=>0, 'class' => 'btn btn-default', 
 					'title'=>'Reset Grid']);
 				}			
+			],
+			[
+				'class'=>'yii\grid\ActionColumn',
+				'template'=>'{update}{delete}'
 			],
 			
 		/* 	'name', */
