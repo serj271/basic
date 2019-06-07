@@ -43,6 +43,7 @@ class Customer extends \yii\db\ActiveRecord
             'name' => 'Name',
             'surname' => 'Surname',
             'phone_number' => 'Phone Number',
+			'nameAndSurname'=>'Name and surname'
         ];
     }
 	public function getReservationsCount()

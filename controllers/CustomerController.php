@@ -12,21 +12,27 @@ use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\VerbFilter;
 use yii\data\ActiveDataProvider;
+use app\models\CustomerSearch;
 
 class CustomerController extends \yii\web\Controller
 {
     public function actionGrid()
 	{
 		$query = Customer::find();
-
-//		Yii::info(VarDumper::dumpAsString(Customer::tableName()));
+		$searchModel = new \app\models\CustomerSearch();
+//		Yii::info(VarDumper::dumpAsString($_GET));
+		
 		$dataProvider = new ActiveDataProvider([
 			'query' => $query,
 			'pagination' => [
 				'pageSize' => 10,
 			],
 		]);
-		return $this->render('grid', [ 'dataProvider' => $dataProvider,'table_name'=>Customer::tableName() ]);
+		if(isset($_GET['CustomerSearch'])){
+			$dataProvider = $searchModel->search($_GET['CustomerSearch']);
+		}
+		
+		return $this->render('grid', [ 'dataProvider' => $dataProvider,'table_name'=>Customer::tableName(),'searchModel'=>$searchModel ]);
 	}
 
     public function actionIndex()

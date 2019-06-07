@@ -12,6 +12,7 @@ use yii\helpers\Html;
 </p>
 <?= GridView::widget([
 		'dataProvider' => $dataProvider,
+		'filterModel' => $searchModel,
 		'caption'=>$table_name,
 		'columns' => [
 			'id',
@@ -23,6 +24,7 @@ use yii\helpers\Html;
 				}
 			],
 			'surname',
+			'nameAndSurname',
 			
 			'phone_number',
 			[
