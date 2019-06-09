@@ -5,6 +5,7 @@ namespace app\models;
 use Yii;
 use app\models\Customer;
 use yii\data\ActiveDataProvider;
+use yii\helpers\VarDumper;
 /**
  * This is the model class for table "customer".
  *
@@ -30,7 +31,7 @@ class CustomerSearch extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-           /*  [['name', 'surname'], 'required'],
+          /*   [['name', 'surname'], 'required'],
             [['name', 'surname', 'phone_number'], 'string', 'max' => 64], */
 			[['nameAndSurname'], 'safe']
         ];
@@ -74,16 +75,16 @@ class CustomerSearch extends \yii\db\ActiveRecord
 			return $dataProvider;
 		}
 	 
-		$this->addCondition($query, 'id');
+		/* $this->addCondition($query, 'id');
 		$this->addCondition($query, 'name', true);
-		$this->addCondition($query, 'surname', true);
+		$this->addCondition($query, 'surname', true); */
 		/* $this->addCondition($query, 'country_id'); */
 	 
 		// filter by name
-		$query->andWhere('name LIKE "%' . $this->nameAndSurname . '%" ' .
+		/* $query->andWhere('name LIKE "%' . $this->nameAndSurname . '%" ' .
 			'OR surname LIKE "%' . $this->nameAndSurname . '%"'
-		);
-	 
+		); */
+		$query->andFilterWhere(['like', 'surname', $this->nameAndSurname]);
 		return $dataProvider;
 	}
 }

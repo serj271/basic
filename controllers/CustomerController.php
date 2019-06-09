@@ -24,12 +24,14 @@ class CustomerController extends \yii\web\Controller
 		
 		$dataProvider = new ActiveDataProvider([
 			'query' => $query,
-			'pagination' => [
+			/* 'pagination' => [
 				'pageSize' => 10,
-			],
+			], */
 		]);
 		if(isset($_GET['CustomerSearch'])){
-			$dataProvider = $searchModel->search($_GET['CustomerSearch']);
+			$dataProvider = $searchModel->search(Yii::$app->request->get());
+//			Yii::info(VarDumper::dumpAsString($_GET['CustomerSearch']));
+//			Yii::info(VarDumper::dumpAsString($dataProvider));
 		}
 		
 		return $this->render('grid', [ 'dataProvider' => $dataProvider,'table_name'=>Customer::tableName(),'searchModel'=>$searchModel ]);

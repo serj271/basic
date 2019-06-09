@@ -56,8 +56,21 @@ class SiteController extends Controller
 							return false;
                             return date('d-m') === '31-10';
                         }
-                    ], 
+                    ],
+					[ // last rules for deny
+                        'actions' => ['contact'],
+                        'allow' => false,
+                        'roles' => ['@', '*'], // all roles
+                        'denyCallback' => function($rule, $action) {
+                            //redirect
+                            Yii::$app->session->setFlash('info', 'Redirect for login');
+                            return $action->controller->redirect('signup');
+                        },
+                    ],				
                 ],
+				/* 'denyCallback' => function($rule, $data) {
+						$this->redirect(['login']);
+					} */
             ],
             'verbs' => [
                 'class' => VerbFilter::className(),
@@ -148,8 +161,8 @@ class SiteController extends Controller
      */
     public function actionContact()
     {
-		if (Yii::$app->user->isGuest)
-			throw new ForbiddenHttpException;
+		/* if (Yii::$app->user->isGuest)
+			throw new ForbiddenHttpException; */
         $model = new ContactForm();
         if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
             Yii::$app->session->setFlash('contactFormSubmitted');

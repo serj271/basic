@@ -38,7 +38,7 @@ class m190525_045244_product_init extends Migration
 			'parent_id'=>Schema::TYPE_INTEGER,
 			'primary_photo_id'=>$this->string(64),
 			'image'=>$this->string(64),
-            'KEY  ([parent_id])',
+            'KEY  ([[parent_id]])',
             'PRIMARY KEY ([[id]])',
         ], $tableOptions);
 		/*  $this->addForeignKey(
@@ -114,6 +114,9 @@ class m190525_045244_product_init extends Migration
 		} 
 		if($this->tableExists($this->table_parcel)){
 			 $this->dropTable($this->table_parcel);
+		}
+		if($this->tableExists($this->product_categories)){
+			 $this->dropTable($this->product_categories);
 		}		
 		if($this->tableExists($this->table_product)){
 			 $this->dropTable($this->table_product);

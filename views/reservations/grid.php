@@ -1,6 +1,7 @@
 <?php
 /* @var $this yii\web\View */
-use yii\grid\GridView;
+//use yii\grid\GridView;
+use app\components\GridViewReservation;
 use yii\helpers\Html;
 ?>
 <h1>reservation/grid</h1>
@@ -9,7 +10,13 @@ use yii\helpers\Html;
     You may change the content of this page by modifying
     the file <code><?= __FILE__; ?></code>.
 </p>
-<?= GridView::widget([
+<?php 
+	if(count($dataProvider->getModels()) > 0){
+		echo "ok models";
+	}
+?>
+
+<?= GridViewReservation::widget([
 		'dataProvider' => $dataProvider,
 		'caption'=>'reservation',
 		'filterModel' => $searchModel,
@@ -20,7 +27,8 @@ use yii\helpers\Html;
 			'customer_id',			
 			[
 				'header' => 'Customer',
-				'attribute' => 'customer.nameAndSurname'
+				'attribute'=>'nameAndSurname',
+				'value' => 'customer.nameAndSurname'
 			],
 			[
 				'attribute'=>'price_per_day',
@@ -41,6 +49,20 @@ use yii\helpers\Html;
 				'class'=>'yii\grid\ActionColumn',
 				'template'=>'{update}{delete}'
 			],
+			[
+            'class' => 'yii\grid\ActionColumn',
+            'template' => '{view} {update} {delete} {link}',
+            'buttons' => [
+                'update' => function ($url,$model) {
+                    return Html::a(
+                    '<span class="glyphicon glyphicon-screenshot"></span>', 
+                    $url);
+                },
+                'link' => function ($url,$model,$key) {
+                    return Html::a('Действие', $url);
+                },
+            ],
+        ],
 			
 		/* 	'name', */
 			/* [

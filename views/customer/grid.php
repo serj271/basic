@@ -17,12 +17,13 @@ use yii\helpers\Html;
 		'columns' => [
 			'id',
 		/* 	'name', */
-			[
+			/* [
 				'header' => 'Name',
 				'content'=>function ($model, $key, $index, $column) {
 					return ucfirst($model->name);
 				}
-			],
+			], */
+			'name:text:Name',
 			'surname',
 			'nameAndSurname',
 			

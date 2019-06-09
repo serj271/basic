@@ -21,7 +21,8 @@
 		"yiisoft/yii2-imagine":"~2.0.0",
 		"yiisoft/yii2-httpclient":"~2.0.0",
 		"2amigos/yii2-transliterator-helper":"*",
-        "dastanaron/yii2-translit": "^1.0"
+        "dastanaron/yii2-translit": "^1.0",
+        "yiisoft/yii2-jui": "^2.0"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",

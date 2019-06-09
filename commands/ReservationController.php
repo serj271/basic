@@ -57,7 +57,8 @@ class ReservationController extends Controller
 //		Yii::info(VarDumper::dumpAsString(\Yii::$app->params['thumbnail.size']));//from params config
 		return ExitCode::OK;
 	}
-	public function actionAddOne($room_id=1,$customer_id=1,$date_from,$date_to){//product-photo/add-one <product_id>
+	public function actionAddOne($room_id=1,$customer_id=1,$date_from,$date_to)
+	{
 //		$product = Reservation::findOne($id);		
 			try{
 				$item = new Reservation();
@@ -93,8 +94,8 @@ class ReservationController extends Controller
 		return ExitCode::OK;
 	}
 	
-	public function actionDeleteOne($id=1){//product/add-one <id>
-		
+	public function actionDeleteOne($id=1)
+	{
 			try{
 				$model = Reservation::findOne($id);
 				if($model){

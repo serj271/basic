@@ -15,7 +15,7 @@ class m190603_061909_customer extends Migration
      */
     public function safeUp()
     {
-		$tableOptions = 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB';
+//		$tableOptions = 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB';
 		
 		$tableOptions = 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB';
 		$this->createTable($this->reservation, [
