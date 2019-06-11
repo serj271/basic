@@ -5,13 +5,15 @@ use Yii;
 use yii\web\Controller;
 use app\models\Reservation;
 use yii\helpers\VarDumper;
+use yii\web\ForbiddenHttpException;
 
 class JuiWidgetsController extends \yii\web\Controller
 {
     public function actionDatePicker()
     {
 		$reservationUpdated = false;
-		$reservation = Reservation::findOne(1);
+		$reservation = Reservation::find()->one();
+		if($reservation == NULL) throw new ForbiddenHttpException('Model not found'); 
 		if(isset($_POST['Reservation']))
 		{
 			$reservation->load( Yii::$app->request->post() );

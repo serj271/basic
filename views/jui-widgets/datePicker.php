@@ -53,9 +53,10 @@ use yii\jui\DatePicker;
 		<?php
 		// Second implementation of DatePicker Widget
 		echo $form->field($reservation, 'date_to')->widget(\yii\jui\DatePicker::classname(), [
-			'language' => 'ru',
+			/* 'language' => 'ru', */
 			'dateFormat' => 'dd/MM/yyyy',
-		]) ?>
+		]) 
+		?>
 		<?php echo Html::submitButton('Send', ['class' => 'btn btn-primary'])?>
 		<?php $form = ActiveForm::end(); ?>
 	</div>
