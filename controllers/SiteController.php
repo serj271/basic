@@ -44,7 +44,7 @@ class SiteController extends Controller
                 'class' => AccessControl::className(),
                 'only' => ['logout'],
                 'rules' => [
-                     [
+                    [
                         'allow' => true,
 						'actions' => ['login', 'signup', 'index'],
 						'roles' => ['?'],
@@ -60,7 +60,7 @@ class SiteController extends Controller
 					[ // last rules for deny
                         'actions' => ['contact'],
                         'allow' => false,
-                        'roles' => ['@', '*'], // all roles
+                        'roles' => ['*'], // all roles
                         'denyCallback' => function($rule, $action) {
                             //redirect
                             Yii::$app->session->setFlash('info', 'Redirect for login');
