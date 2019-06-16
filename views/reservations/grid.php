@@ -4,7 +4,7 @@
 use app\components\GridViewReservation;
 use yii\helpers\Html;
 ?>
-<h1>reservation/grid</h1>
+<h1>reservations/grid</h1>
 
 <p>
     You may change the content of this page by modifying
@@ -14,6 +14,8 @@ use yii\helpers\Html;
 	if(count($dataProvider->getModels()) > 0){
 		echo "ok models";
 	}
+	echo Html::a('create new reservation', ['reservations/create']);
+	
 ?>
 
 <?= GridViewReservation::widget([

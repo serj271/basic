@@ -10,6 +10,7 @@ use yii\web\IdentityInterface;
 use yii\base\NotSupportedException;
 use yii\helpers\ArrayHelper;
 use yii\helpers\VarDumper;
+use app\components\MyBehavior;
 //use yii2mod\user\models\enums\UserStatus;
 //use yii2mod\user\traits\EventTrait;
 /**
@@ -38,6 +39,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      * Triggered with \yii2mod\user\events\CreateUserEvent.
      */
     const AFTER_CREATE = 'afterCreate';
+	const STATUS_ACTIVE = 1;
     /**
      * @var string plain password
      */
@@ -45,6 +47,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
 	public $password_hash;
 	public $type;
 	public $group;
+	public $pass;
 	
     public static function tableName()
     {
@@ -60,12 +63,12 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
             ['username', 'required', 'message' => 'Please choose a username.'],
 			[['type'], 'safe'],
 			['type', 'in', 'range' => ['public','author','admin']],
-            [['date_entered'], 'safe'],
+            [['created_at'], 'safe'],
 			[['password_reset_token', 'auth_key', 'password_hash'], 'string', 'max' => 80],
             [['username'], 'string', 'max' => 45],
             [['email'], 'string', 'max' => 60],
 //            [['pass'], 'string', 'max' => 64],
-//			[['pass'], 'string', 'length' => [2,20] ],
+			[['pass'], 'string', 'length' => [2,20] ],
             [['username'], 'unique'],
             [['email'], 'unique'],
 			['status', 'default', 'value' => self::STATUS_ACTIVE],
@@ -82,8 +85,8 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
             'username' => 'Username',
             'email' => 'E-mail',
             'pass' => 'Pass',
-            'type' => 'Type',
-            'date_entered' => 'Date Entered',
+            'status' => 'status',
+            'created_at' => 'Date created_at',
         ];
     }
 	public function beforeSave($insert)
@@ -99,16 +102,17 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
 	public function behaviors()
 	{
 		return [
+			MyBehavior::className(),
 			[
 				'class' => TimestampBehavior::className(),
 				'attributes' => [
-					ActiveRecord::EVENT_BEFORE_INSERT => ['date_entered'],
-					ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+					ActiveRecord::EVENT_BEFORE_INSERT => ['created_at'],
+//					ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
 				],
 				'value' => new Expression('NOW()'),
 			],
 			TimestampBehavior::className(),
-			
+						
 		];
 	}
 
@@ -273,8 +277,8 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
 			}
 		} */
 //		Yii::info(VarDumper::export($this->getAttributes()));
-		Yii::info(VarDumper::export($this->getOldAttributes()),'----------------------------------', $password);
-		Yii::info('pass'.'-----------'.$password);
+//		Yii::info(VarDumper::export($this->getOldAttributes()),'----------------------------------', $password);
+//		Yii::info('pass'.'-----------'.$password);
         return Yii::$app->security->validatePassword($password, $this->getOldAttributes()['password_hash']);
     }
     /**
@@ -286,6 +290,11 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     {
  //       $this->password_hash = Yii::$app->getSecurity()->generatePasswordHash($password);
 		$this->setAttribute('password_hash',Yii::$app->getSecurity()->generatePasswordHash($password));
+    }
+	public function setPasswordResetToken()
+    {
+ //       $this->password_hash = Yii::$app->getSecurity()->generatePasswordHash($password);
+		$this->setAttribute('password_reset_token',Yii::$app->getSecurity()->generateRandomString());
     }
     /**
      * Generates "remember me" authentication key

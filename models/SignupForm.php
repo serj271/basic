@@ -41,7 +41,7 @@ class SignupForm extends Model
 //			['email', 'unique'],
  //           ['email', 'unique', 'targetClass' => UserModel::class, 'message' => Yii::t('yii2mod.user', 'This email address has already been taken.')],
             ['password', 'required'],
-            ['password', 'string', 'min' => 2],
+            ['password', 'string', 'min' => 1],
         ];
     }
 
@@ -54,6 +54,7 @@ class SignupForm extends Model
         $this->user = new User;
         $this->user->setAttributes($this->attributes);
         $this->user->setPassword($this->password);
+		$this->user->setPasswordResetToken();
 //		$this->user->pass = '33';
 		
  //       $this->user->setLastLogin(time());
@@ -68,6 +69,9 @@ class SignupForm extends Model
      */
     public function getUser()
     {
+		$auth = Yii::$app->authManager;
+
+        $auth->removeAll();
         return $this->user;
     }
 }

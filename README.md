@@ -244,3 +244,5 @@ create module
 #./yii migrate/mark m160101_185401_initial_migration
 # yii migrate --migrationPath=product/migrations/
 # migrate /down --migrationPath=migrtions/
+# add role php yii migrate --migrationPath=@yii/rbac/migrations/
+# gii/form --modelClass=app\\models\\____ --viewName=___/___

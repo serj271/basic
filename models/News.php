@@ -29,7 +29,7 @@ class News extends \yii\db\ActiveRecord
         return [
             [['title'], 'required'],
             [['content'], 'string'],
-            [['title'], 'string', 'max' => 255],
+            [['title'], 'string', 'max' => 5],
         ];
     }
 

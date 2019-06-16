@@ -13,6 +13,7 @@ use app\models\EntryForm;
 use app\models\SignupForm;
 use yii\helpers\VarDumper;
 use yii\web\ForbiddenHttpException;
+use app\components\MyBehavior;
 
 class SiteController extends Controller
 {
@@ -21,26 +22,28 @@ class SiteController extends Controller
      */
     public function behaviors()
     {
+//		Yii::info('============');
         return [
-		/*	'access' => [
-				'class' => AccessControl::className(),
-				'rules' => [
-					[
-						'allow' => true,
-						'actions' => [ 'login'],
-						'roles' => ['guest'],
-					],
-					[
-                        'actions' => ['about','index'],
+			/* access' => [
+                'class' => AccessControl::className(),
+                'only' => ['special-callback'],
+                'rules' => [
+                    [
+                        'actions' => ['special-callback'],
                         'allow' => true,
                         'matchCallback' => function ($rule, $action) {
-							return false;
                             return date('d-m') === '31-10';
                         }
                     ],
-				],
-			],*/
-            'access' => [
+                ],
+            ], */
+			/* [
+				'class' => AccessControl::className(),
+				'denyCallback' => function ($rule, $action) {
+					throw new \Exception('У вас нет доступа к этой странице');
+				}
+			] */
+            /* 'access' => [
                 'class' => AccessControl::className(),
                 'only' => ['logout'],
                 'rules' => [
@@ -68,16 +71,43 @@ class SiteController extends Controller
                         },
                     ],				
                 ],
-				/* 'denyCallback' => function($rule, $data) {
-						$this->redirect(['login']);
-					} */
-            ],
+            ], */
+			'access' => [
+                        'class' => \yii\filters\AccessControl::className(),
+                        'only' => ['contact','about','update','view'],
+                        'rules' => [
+                            // allow authenticated users
+                            [
+                                'allow' => true,
+								'actions' => ['contact','about'],
+                                'roles' => ['@'],
+								
+                            ],
+							/* [
+                                'allow' => true,
+								'actions' => ['about'],
+                                'roles' => ['?'],
+								
+                            ], */
+							/* [
+                                'allow' => true,
+								'actions' => ['about'],                         
+								'matchCallback' => function ($rule, $action) {//$rule => actions['about'];
+									return date('d-m') === '31-10';
+								}
+								
+                            ], */
+                            // everything else is denied
+                        ],
+						
+            ],  
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'logout' => ['post'],
                 ],
             ],
+			
         ];
     }
 
@@ -130,9 +160,7 @@ class SiteController extends Controller
             return $this->goHome();
         }
         $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-			
-			
+        if ($model->load(Yii::$app->request->post()) && $model->login()) {			
             return $this->goBack();
         }
 //	Yii::info('-------------------login');
@@ -186,9 +214,10 @@ class SiteController extends Controller
 // $nameToDisplay = isset($_GET['nameToDisplay'])?$_GET['nameToDisplay']:null;
  //       return $this->render('about',[ 'nameToDisplay' => $nameToDisplay ]);
 //		Yii::info(VarDumper::dump('----------------',\Yii::$app->user->can('admin')));
-		/* if (!\Yii::$app->user->can('admin')) {
+		if (!\Yii::$app->user->can('admin')) {//role admin require
 			throw new ForbiddenHttpException('Access denied');
-		} */
+		}
+		
 		return $this->render('about');
     }
 	
@@ -212,7 +241,7 @@ class SiteController extends Controller
 	public function actionSignup()
     {
         $model = new SignupForm();
-		Yii::info('model---------'); 
+//		Yii::info('model---------'); 
         if ($model->load(Yii::$app->request->post()) ) {
 			
 //			Yii::info(VarDumper::dumpAsString($model)); 

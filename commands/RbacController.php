@@ -96,4 +96,16 @@ class RbacController extends Controller
 		$authManager->addChild($brand, $updateOwnProfile);
 		$authManager->addChild($talent, $updateOwnProfile);
 	}
+	public function actionDeleteAllRoles(){
+        $authManager = \Yii::$app->authManager;
+ //       $this->db = $authManager->db;
+
+        /* $this->dropTable($authManager->assignmentTable);
+        $this->dropTable($authManager->itemChildTable);
+        $this->dropTable($authManager->itemTable);
+        $this->dropTable($authManager->ruleTable); */
+		$authManager->removeAll();
+		
+		return ExitCode::OK;
+	}
 }

@@ -4,6 +4,7 @@ namespace app\controllers;
 use yii\helpers\VarDumper;
 
 use app\models\Reservation;
+use app\models\Customer;
 use yii\base;
 use yii\db\Query;
 use Yii;
@@ -12,6 +13,8 @@ use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\VerbFilter;
 use yii\data\ActiveDataProvider;
+use app\models\ReservationForm;
+use yii\helpers\ArrayHelper;
 
 class ReservationsController extends \yii\web\Controller
 {
@@ -24,10 +27,10 @@ class ReservationsController extends \yii\web\Controller
 //		Yii::info(VarDumper::dumpAsString($searchModel));
 		if(isset($_GET['ReservationSearch']))
 		{
-			Yii::info(VarDumper::dumpAsString(\Yii::$app->request->get()));
+//			Yii::info(VarDumper::dumpAsString(\Yii::$app->request->get()));
 			
 			$searchModel->load( \Yii::$app->request->get() );
-//			Yii::info(VarDumper::dumpAsString($searchModel->nameAndSurname));
+//			Yii::info(VarDumper::dumpAsString($searchModel));
 			/* $query->andFilterWhere([
 			'customer_id' => isset($_GET['Reservation']['customer_id'])?
 			$_GET['Reservation']['customer_id']:null,
@@ -90,9 +93,33 @@ class ReservationsController extends \yii\web\Controller
 		}
 		return $output;
 	}
+	public function actionCreate()
+    {
+		$reservation = new ReservationForm();
+		if(Yii::$app->request->post())
+		{
+//			Yii::info(VarDumper::dumpAsString(Yii::$app->request->post()));
+			$reservation->load( Yii::$app->request->post() );
+			$reservation->date_from = Yii::$app->formatter->asDate(
+				date_create_from_format('d/m/Y', $reservation->date_from), 'php:Y-m-d' );
+			$reservation->date_to = Yii::$app->formatter->asDate(
+				date_create_from_format('d/m/Y', $reservation->date_to), 'php:Y-m-d' );
+//				Yii::info(VarDumper::dumpAsString($_POST['Reservation']));
+//				Yii::info(VarDumper::dumpAsString($reservation));
+			$reservationUpdated = $reservation->save();
+			return Yii::$app->response->redirect(['customer/grid']);
+		}
+		$items = Customer::find()
+			->indexBy('id')
+			->asArray()
+			->all();
+//		Yii::info(VarDumper::dumpAsString(ArrayHelper::map($items, 'id', 'name')));
+        return $this->render('create',['model'=>$reservation,'items'=>ArrayHelper::map($items, 'id', 'name')]);
+    }
 
     public function actionIndex()
     {
+		
         return $this->render('index');
     }
 

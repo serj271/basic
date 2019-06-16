@@ -139,6 +139,22 @@ class UserController extends Controller
 		echo VarDumper::dumpAsString($user); */
 		return ExitCode::OK;
 	}
+	public function actionDeleteRoleAdmin($id){
+		$auth = Yii::$app->authManager;
+		$item = $auth->getRole('admin'); // 
+		$auth->revoke($item,$id);
+		
+		return ExitCode::OK;
+	}
+	public function actionAddRoleAdmin($id){
+		$auth = Yii::$app->authManager;
+		$editor = $auth->getRole('admin'); // 
+		$auth->assign($editor, $id);
+		$auth = Yii::$app->authManager;
+		$login = $auth->getRole('guest'); // 
+		$auth->assign($login, $id);
+		return ExitCode::OK;
+	}
 	
 	
 }

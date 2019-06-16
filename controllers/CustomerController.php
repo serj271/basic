@@ -14,8 +14,18 @@ use yii\filters\VerbFilter;
 use yii\data\ActiveDataProvider;
 use app\models\CustomerSearch;
 
+
 class CustomerController extends \yii\web\Controller
 {
+	/* public function behaviors()
+    {
+        return [
+            'slug' => [
+            'class' => 'Slug', //class
+            'iniciali' => 'post_', //variable
+            ]
+        ];
+    } */
     public function actionGrid()
 	{
 		$query = Customer::find();

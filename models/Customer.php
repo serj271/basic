@@ -1,6 +1,7 @@
 <?php
 
 namespace app\models;
+use app\components\MyBehavior;
 
 use Yii;
 
@@ -54,4 +55,28 @@ class Customer extends \yii\db\ActiveRecord
 	public function getNameAndSurname() {
 		return $this->name.' '.$this->surname;
 	}
+	public function behaviors()
+    {
+        return [
+            // anonymous behavior, behavior class name only
+            MyBehavior::className(),
+
+            // named behavior, behavior class name only
+            'myBehavior2' => MyBehavior::className(),
+
+            // anonymous behavior, configuration array
+            [
+                'class' => MyBehavior::className(),
+                'prop1' => 'value1',
+                'prop2' => 'value2',
+            ],
+
+            // named behavior, configuration array
+            'myBehavior4' => [
+                'class' => MyBehavior::className(),
+                'prop1' => 'value1',
+                'prop2' => 'value2',
+            ]
+        ];
+    }
 }
