@@ -47,6 +47,7 @@ $config = [
                     'class' => 'yii\log\FileTarget',
                     'levels' => ['error', 'warning','info'],
 					'logVars' => [], // don't log global vars 
+					'logFile' => '@app/runtime/logs/'.date("Y").'/'.date("m").'/'.date("d").'.log',
                 ],
             ],
         ],

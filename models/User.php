@@ -98,6 +98,13 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
 		   return false;
 		}
 	}
+	public function fields()
+	{
+		$fields = parent::fields();
+		// 
+		unset($fields[’auth_key’], $fields[’password_hash’], $fields[’password_reset_token’]);
+		return $fields;
+	}
 
 	public function behaviors()
 	{

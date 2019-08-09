@@ -19,7 +19,15 @@ class SiteController extends Controller
 {
     /**
      * {@inheritdoc}
-     */
+    */
+	public function beforeAction($action)
+	{
+//		Yii::info('hello beforeAction');
+		if (in_array($action->id, ['index'])) {
+			$this->enableCsrfValidation = false;
+		}
+		return parent::beforeAction($action);
+	}
     public function behaviors()
     {
 //		Yii::info('============');
@@ -144,6 +152,7 @@ class SiteController extends Controller
     public function actionIndex()
     {
 		$identity = Yii::$app->user->identity;
+		\app\modules\mymodule\MyAsset::register($this->view);
 //		Yii::info('hello');
 //		Yii::info(Yii::$app->params['adminEmail'],'------------------');
         return $this->render('index');

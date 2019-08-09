@@ -7,6 +7,7 @@ $backgroundColor = isset($_REQUEST['bckg'])?$_REQUEST['bckg']:'#FFFFFF';
 $this->params['background_color'] = $backgroundColor;
 
 ?>
+<?= $this->context->id ?>
 <div class="site-index">
 
     <div class="jumbotron">
