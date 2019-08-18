@@ -153,7 +153,7 @@ class SiteController extends Controller
     {
 		$identity = Yii::$app->user->identity;
 		\app\modules\mymodule\MyAsset::register($this->view);
-//		Yii::info('hello');
+		Yii::info('hello');
 //		Yii::info(Yii::$app->params['adminEmail'],'------------------');
         return $this->render('index');
     }

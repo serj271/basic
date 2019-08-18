@@ -246,3 +246,5 @@ create module
 # migrate /down --migrationPath=migrtions/
 # add role php yii migrate --migrationPath=@yii/rbac/migrations/
 # gii/form --modelClass=app\\models\\____ --viewName=___/___
+#composer install
+

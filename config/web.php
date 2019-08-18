@@ -29,9 +29,9 @@ $config = [
             'identityClass' => 'app\models\User',
             'enableAutoLogin' => true,
         ],
-        'errorHandler' => [
-            'errorAction' => 'site/error',
-        ],
+//        'errorHandler' => [
+//            'errorAction' => 'site/error',
+//        ],
         'mailer' => [
             'class' => 'yii\swiftmailer\Mailer',
             // send all mails to a file by default. You have to set
@@ -60,7 +60,8 @@ $config = [
 			'class' => 'yii\web\UrlManager',
             'enablePrettyUrl' => true,
             'showScriptName' => false,
-//			'baseUrl' => '/',
+			'baseUrl' => '/basic/web',
+			'scriptUrl'=>'/basic/web/index.php',
 			'rules' => [
 				'class' => 'yii\web\UrlRule',
 				[
@@ -83,6 +84,7 @@ $config = [
 //				'<controller:\w+>/<action:\w+>' => '<controller>/<action>',
 //				'news/<year:\d{4}/>' => ' news/items-list?year=<year>',
 //				'news/<category:\w+>/items-list' => 'test-rules/items-list',
+//				'debug/<controller>/<action>' => 'debug/<controller>/<action>',
 			],			
         ],
 		'view' => [
@@ -97,6 +99,14 @@ $config = [
 		
         
     ],
+//    'modules' => [
+//        'debug' => [
+//            'class' => 'yii\debug\Module',
+            // uncomment and adjust the following to add your IP if you are not connecting from localhost.
+//            'allowedIPs' => ['127.0.0.1', '::1','192.168.1.2'],
+//        ],
+        // ...
+//    ],
 	/* 'modules' => [
 		'manager' => [
 			'class' => 'manager\Module',
@@ -110,7 +120,6 @@ if (YII_ENV_DEV) {
     $config['bootstrap'][] = 'debug';
     $config['modules']['debug'] = [
         'class' => 'yii\debug\Module',
-        // uncomment the following to add your IP if you are not connecting from localhost.
         'allowedIPs' => ['127.0.0.1', '::1','192.168.1.3','192.168.1.11','192.168.1.10','192.168.1.2'],
     ];
 
