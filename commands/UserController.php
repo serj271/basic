@@ -12,6 +12,9 @@ use yii\console\ExitCode;
 use yii\helpers\Console;
 use Yii;
 use yii\helpers\VarDumper;
+use yii\helpers\ArrayHelper;
+
+
 /**
  * This command echoes the first argument that you have entered.
  *
@@ -99,8 +102,21 @@ class UserController extends Controller
 			->createCommand("SELECT * FROM user where id=:id")
 			->bindValue(':id', $id)
 			->queryOne();
-		Yii::info(VarDumper::dumpAsString($user));		
-		echo VarDumper::dumpAsString($user);
+		Yii::info(VarDumper::dumpAsString($user));
+		$rolesUser = Yii::$app->authManager->getRolesByUser($id);
+		echo VarDumper::dumpAsString($user)."\n";
+		foreach($rolesUser as $role){
+				echo 'role '.$role->name."\n";
+		}
+		$roles = Yii::$app->authmanager->getRoles();
+		$roles3 = [];
+//		$roles2 = Yii::$app->db->createCommand('select * from auth_item')->queryAll();
+//		var_dump($roles);
+		foreach($roles as $key=>$value){
+			$roles3[$key] = $value->name;
+		}
+//		var_dump($roles2);
+		var_dump($roles3);
 	}
 	public function actionDelete($id){
 		$user =  \Yii::$app->db

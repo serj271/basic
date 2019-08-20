@@ -8,6 +8,7 @@ use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
+use app\models\User;
 use app\models\ContactForm;
 use app\models\EntryForm;
 use app\models\SignupForm;
@@ -264,9 +265,37 @@ class SiteController extends Controller
  //               }
             }
         }
- 
+		
         return $this->render('signup', [
             'model' => $model,
         ]);
+    }
+	public function actionCreate()
+    {
+        $user = new User();
+//		Yii::info('model---------'); 
+ //       if ($model->load(Yii::$app->request->post()) ) {
+			
+//			Yii::info(VarDumper::dumpAsString($model)); 
+//			Yii::error('kk', 0);
+//			Yii::debug('start calculating average revenue');
+
+//			return $this->goHome();
+  //          if ($user = $model->signup()) {
+ //               if (Yii::$app->getUser()->login($user)) {
+  //                  return $this->goHome();
+ //               }
+ //           }
+ //       }
+		$userRoles = Yii::$app->authmanager->getRoles();
+		$roles = [];
+//		$roles2 = Yii::$app->db->createCommand('select * from auth_item')->queryAll();
+		
+
+		$authRoles = Yii::$app->authManager->getRolesByUser($user->id);
+		foreach($userRoles as $key=>$value){
+			$roles[$key] = $value->name;
+		}
+        return $this->render('create',['user'=>$user,'roles'=>$roles]);
     }
 }
