@@ -25,10 +25,15 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]); ?>
 
+	<?= $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
+	<?= $form->field($model, 'email') ?>
+	<?= $form->field($model, 'password')->passwordInput() ?>
+	<?= $form->field($model, 'status')->passwordInput() ?>
+
 	<?php 
-		echo Html::checkbox('test', null, ['item'=>['label'=>'a','value'=>'0']]);
-		echo Html::checkboxList('test1', ['a'], ['a'=>'la','b'=>'lb'],['encode'=>true]);
-		echo Html::checkboxList('roles', [], $roles,['encode'=>true]);
+		/* echo Html::checkbox('test', null, ['item'=>['label'=>'a','value'=>'0']]);
+		echo Html::checkboxList('test1', ['a'], ['a'=>'la','b'=>'lb'],['encode'=>true]); */
+		echo Html::checkboxList('roles', $selection, $roles,['encode'=>true]);
 		
 	?>
       

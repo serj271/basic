@@ -24,9 +24,9 @@ class SiteController extends Controller
 	public function beforeAction($action)
 	{
 //		Yii::info('hello beforeAction');
-		if (in_array($action->id, ['index'])) {
-			$this->enableCsrfValidation = false;
-		}
+//		if (in_array($action->id, ['index'])) {
+//			$this->enableCsrfValidation = false;
+//		}
 		return parent::beforeAction($action);
 	}
     public function behaviors()
@@ -88,7 +88,7 @@ class SiteController extends Controller
                             // allow authenticated users
                             [
                                 'allow' => true,
-								'actions' => ['contact','about'],
+								'actions' => ['contact','about','login'],
                                 'roles' => ['@'],
 								
                             ],
@@ -154,7 +154,8 @@ class SiteController extends Controller
     {
 		$identity = Yii::$app->user->identity;
 		\app\modules\mymodule\MyAsset::register($this->view);
-		Yii::info('hello');
+		
+		Yii::info('hello--+');
 //		Yii::info(Yii::$app->params['adminEmail'],'------------------');
         return $this->render('index');
     }
@@ -166,6 +167,7 @@ class SiteController extends Controller
      */
     public function actionLogin()
     {
+//		Yii::info('-------------------login');
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
@@ -173,7 +175,7 @@ class SiteController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->login()) {			
             return $this->goBack();
         }
-//	Yii::info('-------------------login');
+	
         $model->password = '';
         return $this->render('login', [
             'model' => $model,
@@ -272,30 +274,50 @@ class SiteController extends Controller
     }
 	public function actionCreate()
     {
-        $user = new User();
-//		Yii::info('model---------'); 
- //       if ($model->load(Yii::$app->request->post()) ) {
-			
-//			Yii::info(VarDumper::dumpAsString($model)); 
-//			Yii::error('kk', 0);
-//			Yii::debug('start calculating average revenue');
-
-//			return $this->goHome();
-  //          if ($user = $model->signup()) {
- //               if (Yii::$app->getUser()->login($user)) {
-  //                  return $this->goHome();
- //               }
- //           }
- //       }
+        $model = new SignupForm();
+		$errors = [];
+//		Yii::error('actionCreate---------');
+		if ($model->load(Yii::$app->request->post()) ) {
+			$model->validate();
+			if ($this->user->hasErrors()) {
+			// validation fails
+				Yii::info(VarDumper::dumpAsString($this->user->errors)); 
+				
+				return $this->render('create',['model'=>$model,'roles'=>$roles,'selection'=>$selection]);
+			} else {
+				// validation succeeds
+				if ($user = $model->signup()) {
+	//				if (Yii::$app->getUser()->login($user)) {				   
+						$auth = Yii::$app->authManager;
+						if(isset(Yii::$app->request->post()['roles'])){
+							foreach(Yii::$app->request->post()['roles'] as $roleName){
+								$role = $auth->getRole($roleName); // 
+								$auth->assign($role, $user->id);
+		//						$auth = Yii::$app->authManager;
+		//						$login = $auth->getRole('guest'); // 
+		//						$auth->assign($login, $id);
+							}
+						}
+						
+						return $this->goHome();
+	//				}
+				}				
+			}            
+        }	
 		$userRoles = Yii::$app->authmanager->getRoles();
 		$roles = [];
 //		$roles2 = Yii::$app->db->createCommand('select * from auth_item')->queryAll();
+		$selection = [];
 		
-
-		$authRoles = Yii::$app->authManager->getRolesByUser($user->id);
 		foreach($userRoles as $key=>$value){
 			$roles[$key] = $value->name;
 		}
-        return $this->render('create',['user'=>$user,'roles'=>$roles]);
+		
+		/* $authRoles = Yii::$app->authManager->getRolesByUser(1);		
+		foreach($authRoles as $role){
+				$selection[] = $role->name;
+		} */
+
+        return $this->render('create',['model'=>$model,'roles'=>$roles,'selection'=>$selection,'errors'=>$errors]);
     }
 }

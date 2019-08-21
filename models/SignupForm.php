@@ -3,8 +3,13 @@
 namespace app\models;
 
 use Yii;
+use yii\db\ActiveRecord;
 use yii\base\Model;
 use app\models\User;
+use yii\behaviors\TimestampBehavior;
+use yii\db\IntegrityException;
+use yii\db\Expression;
+use yii\behaviors\AttributeTypecastBehavior; 
 use yii\helpers\VarDumper;
 /**
  * LoginForm is the model behind the login form.
@@ -19,6 +24,11 @@ class SignupForm extends Model
 	public $email;
     public $rememberMe = true;
 	public $user;
+	public $status;
+	public $id;
+	public $created_at;
+	public $updated_at;
+	public $role;
 
     private $_user = false;
 
@@ -32,37 +42,69 @@ class SignupForm extends Model
             ['username', 'trim'],
             ['username', 'required'],
 //			['username', 'unique'],
-//            ['username', 'unique', 'targetClass' => UserModel::class, 'message' => Yii::t('yii2mod.user', 'This username has already been taken.')],
-            ['username', 'string', 'min' => 2, 'max' => 255],
+ //           ['username', 'unique', 'targetClass' => UserModel::class, 'message' => Yii::t('yii2mod.user', 'This username has already been taken.')],
+			['username', 'unique', 'targetClass' => '\app\models\User',
+                'on'=>'insert', 'message' => 'This username has already been taken.'],
+			['username', 'string', 'min' => 2, 'max' => 255],
             ['email', 'trim'],
             ['email', 'required'],
             ['email', 'email'],
             ['email', 'string', 'max' => 255],
 //			['email', 'unique'],
+			[['email'],'unique','message'=>'Email already exist. Please try another one.'],
  //           ['email', 'unique', 'targetClass' => UserModel::class, 'message' => Yii::t('yii2mod.user', 'This email address has already been taken.')],
             ['password', 'required'],
             ['password', 'string', 'min' => 1],
+			['status', 'required'],
+            ['status',  'integer', 'min' => 0],
+           	['role', 'required'],
         ];
     }
+	public function behaviors()
+	{
+		return [
+			'timestamp' => [
+				'class' => 'yii\behaviors\TimestampBehavior',
+				'attributes' => [
+					ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
+					ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+				],
+				'value' => new Expression('NOW()'),
+			],
+			'typecast' => [
+                'class' => AttributeTypecastBehavior::className(),
+                'attributeTypes' => [
+                    'id' => AttributeTypecastBehavior::TYPE_INTEGER,
+                    'status' => AttributeTypecastBehavior::TYPE_INTEGER,//TYPE_STRING FLOAT
+					
+                    /* 'path_thumbnail' => AttributeTypecastBehavior::TYPE_STRING,//TYPE_STRING FLOAT
+                    'path_fullsize' => AttributeTypecastBehavior::TYPE_STRING,//TYPE_STRING FLOAT */
+                ],
+ //               'typecastAfterValidate' => true,
+ //               'typecastBeforeSave' => false,
+  //              'typecastAfterFind' => false,
+            ],
+		];
+	} 
 
     public function signup()
     {
 //		Yii::info(VarDumper::export($this->attributes));
-        if (!$this->validate()) {
-            return null;
-        }
+//        if (!$this->validate()) {
+ //           return null;
+ //       }
         $this->user = new User;
         $this->user->setAttributes($this->attributes);
         $this->user->setPassword($this->password);
 		$this->user->setPasswordResetToken();
-//		$this->user->pass = '33';
+		$this->user->validate();
 		
- //       $this->user->setLastLogin(time());
-        $this->user->generateAuthKey();
+		$this->user->generateAuthKey();
 //		Yii::info(VarDumper::dumpAsString(array('q'=>4))); 
 //		Yii::info(VarDumper::dumpAsString('$this->user->password_hash'.$this->user->password_hash));
 //		Yii::info(VarDumper::dump($this->user));
-        return $this->user->save(false) ? $this->user : null;
+		
+		return $this->user->save();
     }
     /**
      * @return UserModel|null

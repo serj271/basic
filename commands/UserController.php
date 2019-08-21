@@ -88,7 +88,7 @@ class UserController extends Controller
 		'password_hash' => Yii::$app->security->generatePasswordHash($password),
 		'password_reset_token'=>'e',
 		'status'=>'1',
-		'role'=>'1',
+	/* 	'role'=>'1', */
 		'username' => $username,
 		'auth_key'=>'',
 		'created_at' => time(),
@@ -102,21 +102,25 @@ class UserController extends Controller
 			->createCommand("SELECT * FROM user where id=:id")
 			->bindValue(':id', $id)
 			->queryOne();
-		Yii::info(VarDumper::dumpAsString($user));
-		$rolesUser = Yii::$app->authManager->getRolesByUser($id);
 		echo VarDumper::dumpAsString($user)."\n";
-		foreach($rolesUser as $role){
+		Yii::info(VarDumper::dumpAsString($user));
+		$userRoles = Yii::$app->authManager->getRolesByUser($id);
+		
+		$userNameRoles = [];
+		foreach($userRoles as $role){
 				echo 'role '.$role->name."\n";
+				$userNameRoles[] = $role->name;
 		}
-		$roles = Yii::$app->authmanager->getRoles();
-		$roles3 = [];
+		$authRoles = Yii::$app->authmanager->getRoles();
+		$nameRoles = [];
 //		$roles2 = Yii::$app->db->createCommand('select * from auth_item')->queryAll();
 //		var_dump($roles);
-		foreach($roles as $key=>$value){
-			$roles3[$key] = $value->name;
+		foreach($authRoles as $key=>$value){
+			$nameRoles[$key] = $value->name;
 		}
 //		var_dump($roles2);
-		var_dump($roles3);
+		var_dump($userNameRoles);
+		return ExitCode::OK;
 	}
 	public function actionDelete($id){
 		$user =  \Yii::$app->db
