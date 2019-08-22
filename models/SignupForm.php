@@ -41,49 +41,42 @@ class SignupForm extends Model
         return [
             ['username', 'trim'],
             ['username', 'required'],
-//			['username', 'unique'],
  //           ['username', 'unique', 'targetClass' => UserModel::class, 'message' => Yii::t('yii2mod.user', 'This username has already been taken.')],
-			['username', 'unique', 'targetClass' => '\app\models\User',
-                'on'=>'insert', 'message' => 'This username has already been taken.'],
+			['username', 'unique', 'targetClass' => '\app\models\User','message' => 'This username has already been taken.'],
 			['username', 'string', 'min' => 2, 'max' => 255],
             ['email', 'trim'],
             ['email', 'required'],
             ['email', 'email'],
             ['email', 'string', 'max' => 255],
-//			['email', 'unique'],
-			[['email'],'unique','message'=>'Email already exist. Please try another one.'],
- //           ['email', 'unique', 'targetClass' => UserModel::class, 'message' => Yii::t('yii2mod.user', 'This email address has already been taken.')],
+            ['email', 'unique', 'targetClass' => '\app\models\User', 'message' => 'This email address has already been taken.'],
             ['password', 'required'],
             ['password', 'string', 'min' => 1],
 			['status', 'required'],
             ['status',  'integer', 'min' => 0],
-           	['role', 'required'],
+ //          	['role', 'required'],
         ];
     }
 	public function behaviors()
 	{
 		return [
-			'timestamp' => [
+			/* 'timestamp' => [
 				'class' => 'yii\behaviors\TimestampBehavior',
 				'attributes' => [
 					ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
 					ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
 				],
 				'value' => new Expression('NOW()'),
-			],
-			'typecast' => [
+			], */
+			/* 'typecast' => [
                 'class' => AttributeTypecastBehavior::className(),
                 'attributeTypes' => [
                     'id' => AttributeTypecastBehavior::TYPE_INTEGER,
                     'status' => AttributeTypecastBehavior::TYPE_INTEGER,//TYPE_STRING FLOAT
-					
-                    /* 'path_thumbnail' => AttributeTypecastBehavior::TYPE_STRING,//TYPE_STRING FLOAT
-                    'path_fullsize' => AttributeTypecastBehavior::TYPE_STRING,//TYPE_STRING FLOAT */
                 ],
  //               'typecastAfterValidate' => true,
  //               'typecastBeforeSave' => false,
   //              'typecastAfterFind' => false,
-            ],
+            ], */
 		];
 	} 
 

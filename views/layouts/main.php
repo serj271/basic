@@ -57,6 +57,7 @@ $backgroundColor = isset($this->params['background_color'])?$this->params['backg
             ['label' => 'About', 'url' => ['/site/about']],
             ['label' => 'Contact', 'url' => ['/site/contact']],
             ['label' => 'Signup', 'url' => ['/site/signup']],
+            ['label' => 'User create', 'url' => ['/useradmin/create']],
 			['label' => 'News', 'url' => ['/news/index']],
 			['label' => 'Comment', 'url' => ['/comment/index']],
 			['label' => 'Customer', 'url' => ['/customer/grid']],
