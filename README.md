@@ -247,4 +247,7 @@ create module
 # add role php yii migrate --migrationPath=@yii/rbac/migrations/
 # gii/form --modelClass=app\\models\\____ --viewName=___/___
 #composer install
-
+# ./yii message/config common/config/i18n.php 
+create config
+# ./yii message common/config/i18n.php 
+write messgaes to translate from $message = \Yii::t('app', 'this message must be translated!')

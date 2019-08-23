@@ -153,6 +153,7 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
+		$message = \Yii::t('app', 'this message must be translated!');
 		$identity = Yii::$app->user->identity;
 		\app\modules\mymodule\MyAsset::register($this->view);
 		
@@ -234,9 +235,10 @@ class SiteController extends Controller
 		return $this->render('about');
     }
 	
-	public function actionSay($message = 'Hello')
+	public function actionSay($name = 'Djon')
 	{
-		return $this->render('say', ['message' => $message]);
+		$text = \Yii::t('app', 'Hello World! I am {name}', ['name' =>$name]);
+		return $this->render('say', ['text' => $text]);
 	}
 	public function actionEntry()
 	{
