@@ -26,8 +26,8 @@ $config = [
 //        ],
 		'authManager' => [
 			'class' => 'yii\rbac\DbManager',
-			'defaultRoles' => ['guest'],
-//			'defaultRoles' => ['admin', 'BRAND', 'TALENT'], // 
+//			'defaultRoles' => ['guest'],
+			'defaultRoles' => ['admin', 'BRAND', 'TALENT'], // 
 		],
         'user' => [
             'identityClass' => 'app\models\User',

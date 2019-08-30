@@ -82,7 +82,7 @@ class UseradminController extends \yii\web\Controller
             ], */
 			'access' => [
                         'class' => \yii\filters\AccessControl::className(),
-                        'only' => ['contact','about','update','view'],
+                        'only' => ['contact','about','update','view','index'],
                         'rules' => [
                             // allow authenticated users
                             [
@@ -91,6 +91,11 @@ class UseradminController extends \yii\web\Controller
                                 'roles' => ['@'],
 								
                             ],
+							[
+								'allow' => true,
+								'actions' => ['index'],
+//								'roles' => ['admin'],
+							],
 							/* [
                                 'allow' => true,
 								'actions' => ['about'],
@@ -148,6 +153,9 @@ class UseradminController extends \yii\web\Controller
     {
 //		$model = new User;
 		$users = User::find()->all();
+		if (!\Yii::$app->user->can('view')) {
+			throw new ForbiddenHttpException('Access denied');
+		}
         return $this->render('index',['userList'=>$users]);
     }
 	
@@ -166,8 +174,10 @@ class UseradminController extends \yii\web\Controller
 			} else {
 				// validation succeeds
 				if ($user = $model->signup()) {
+//					
 	//				if (Yii::$app->getUser()->login($user)) {				   
 						$auth = Yii::$app->authManager;
+//						Yii::info(VarDumper::dumpAsString(Yii::$app->request->post()['roles'])); 
 						if(isset(Yii::$app->request->post()['roles'])){
 							foreach(Yii::$app->request->post()['roles'] as $roleName){
 								$role = $auth->getRole($roleName); // 
@@ -176,8 +186,7 @@ class UseradminController extends \yii\web\Controller
 		//						$login = $auth->getRole('guest'); // 
 		//						$auth->assign($login, $id);
 							}
-						}
-						
+						}						
 						return $this->goHome();
 	//				}
 				}				

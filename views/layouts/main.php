@@ -58,6 +58,8 @@ $backgroundColor = isset($this->params['background_color'])?$this->params['backg
             ['label' => 'Contact', 'url' => ['/site/contact']],
             ['label' => 'Signup', 'url' => ['/site/signup']],
             ['label' => 'User create', 'url' => ['/useradmin/create']],
+            ['label' => 'User admin', 'url' => ['/useradmin']],
+            ['label' => 'Auth admin', 'url' => ['/authorization-manager']],
 			['label' => 'News', 'url' => ['/news/index']],
 			['label' => 'Comment', 'url' => ['/comment/index']],
 			['label' => 'Customer', 'url' => ['/customer/grid']],

@@ -86,7 +86,7 @@ class SignupForm extends Model
 //        if (!$this->validate()) {
  //           return null;
  //       }
-        $this->user = new User;
+		$this->user = new User;
         $this->user->setAttributes($this->attributes);
         $this->user->setPassword($this->password);
 		$this->user->setPasswordResetToken();
@@ -96,8 +96,8 @@ class SignupForm extends Model
 //		Yii::info(VarDumper::dumpAsString(array('q'=>4))); 
 //		Yii::info(VarDumper::dumpAsString('$this->user->password_hash'.$this->user->password_hash));
 //		Yii::info(VarDumper::dump($this->user));
-		
-		return $this->user->save();
+		$this->user->save();
+		return $this->user;
     }
     /**
      * @return UserModel|null

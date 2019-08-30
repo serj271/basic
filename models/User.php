@@ -43,11 +43,11 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     /**
      * @var string plain password
      */
-    public $plainPassword;
+
 	public $password_hash;
 	public $type;
 	public $group;
-	public $pass;
+//	public $pass;
 	
     public static function tableName()
     {
@@ -61,14 +61,14 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     {
         return [
             ['username', 'required', 'message' => 'Please choose a username.'],
-			[['type'], 'safe'],
+////			[['type'], 'safe'],
 			['type', 'in', 'range' => ['public','author','admin']],
             [['created_at'], 'safe'],
 			[['password_reset_token', 'auth_key', 'password_hash'], 'string', 'max' => 80],
             [['username'], 'string', 'max' => 45],
             [['email'], 'string', 'max' => 60],
 //            [['pass'], 'string', 'max' => 64],
-			[['pass'], 'string', 'length' => [2,20] ],
+//			[['pass'], 'string', 'length' => [2,20] ],
             [['username'], 'unique'],
             [['email'], 'unique'],
 			['status', 'default', 'value' => self::STATUS_ACTIVE],
@@ -84,12 +84,12 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
             'id' => 'ID',
             'username' => 'Username',
             'email' => 'E-mail',
-            'pass' => 'Pass',
+ //           'pass' => 'Pass',
             'status' => 'status',
             'created_at' => 'Date created_at',
         ];
     }
-	public function beforeSave($insert)
+	/* public function beforeSave($insert)
 	{
 		if(parent::beforeSave($insert)){
 		   $this->password_hash=$this->setPassword($this->pass);
@@ -97,7 +97,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
 		}else{
 		   return false;
 		}
-	}
+	} */
 	public function fields()
 	{
 		$fields = parent::fields();
