@@ -51,8 +51,8 @@ class ProductController extends \yii\web\Controller
     {
 //		$this->layout = 'home';
 		$product = Product::findOne($id);
-		$photos = $product->getProductPhotos()->asArray()->all();
-        return $this->render('view',['product'=>$product,'photos'=>$photos]);
+		$photos = $product->photos;
+        return $this->render('view',['product'=>$product->getOldAttributes(),'photos'=>$photos]);
     }
 	public function actionCreate()
     {

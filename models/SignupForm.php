@@ -32,7 +32,10 @@ class SignupForm extends Model
 
     private $_user = false;
 
-
+	protected function beforeValidate() {
+		$this->content = trim($this->content);
+		return parent::beforeValidate();
+	}
     /**
      * @return array the validation rules.
      */
@@ -53,7 +56,10 @@ class SignupForm extends Model
             ['password', 'string', 'min' => 1],
 			['status', 'required'],
             ['status',  'integer', 'min' => 0],
+		/* 	['pass', 'match', 'pattern'=>'/^[a-z0-9_-]{6,20}$/'], */
+			/* ['pass', 'compare', 'compareAttribute' => 'passCompare'] */
  //          	['role', 'required'],
+			/* [['username', 'pass'], 'required', 'on'=>'login'], */
         ];
     }
 	public function behaviors()
@@ -87,6 +93,7 @@ class SignupForm extends Model
  //           return null;
  //       }
 		$this->user = new User;
+		$this->user->scenario = 'register';
         $this->user->setAttributes($this->attributes);
         $this->user->setPassword($this->password);
 		$this->user->setPasswordResetToken();

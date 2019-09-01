@@ -43,8 +43,11 @@ $this->title = 'My items list';
 </table>
 <?= Html::a( 'List items by year ',['news/items-list','year'=>'2015']) ?>
 <?= Html::a('Profile', ['user/view', 'id' =>'0'], ['class' => 'profile-link']) ?>
-
-
+<p>
+<?php
+$url = Url::toRoute(['page/view', 'id' => 23]);
+echo Html::a('page 23', ['page/view', 'id' => 23]); ?>
+</p>
 
 
 

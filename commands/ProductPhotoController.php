@@ -77,7 +77,9 @@ class ProductPhotoController extends Controller
 		
 		$photos = ProductPhoto::find()
 			->indexBy('id')
+			->asArray()
 			->all();
+			
 //		Yii::info(VarDumper::dumpAsString($photos));
 		foreach ($photos as $photo){
 			$id = $this->ansiFormat($photo['id'], Console::FG_YELLOW);
@@ -89,13 +91,12 @@ class ProductPhotoController extends Controller
 		return ExitCode::OK;
 	}
 	
-	public function actionAddOne($id=1){//product-photo/add-one <product_id>
+	public function actionAddOne($id=1, $path_fullsize){//product-photo/add-one <product_id>
 		$product = Product::findOne($id);
 		if($product == NULL){
 			echo "not product found $id\n";
 			return ExitCode::OK;
 		}
-		if($id){
 			try{
 				$photo = new ProductPhoto();
 				$modelAttributes = $photo->attributeTypes;
@@ -103,10 +104,13 @@ class ProductPhotoController extends Controller
 				foreach($modelAttributes as $key=>$value){
 					if($value == 'integer'){
 						$photo[$key] = $id;
-					} else if($value == 'string'){
-						$photo[$key] = $key.$id;
+					} elseif($value == 'string'){
+						$photo[$key] = $key.'_'.$id;
 					}
 				}
+				unset($photo->id);
+				$photo->path_fullsize = $path_fullsize;
+				$photo->scenario = ProductPhoto::SCENARIO_INSERT;
 				if ($photo->validate()) {
 					$photo->save();
 					echo "photo add $photo->id\n";
@@ -125,8 +129,7 @@ class ProductPhotoController extends Controller
 //				echo $e->getMessage()."\n";
 				$message_error = $this->ansiFormat($e->errorInfo[2], Console::BOLD);
 				echo $message_error."\n";
-			}			
-		}			
+			}					
 		return ExitCode::OK;
 	}
 	
@@ -138,8 +141,8 @@ class ProductPhotoController extends Controller
 					$model->delete();
 					echo "model delete $id\n";
 				} else {
-					echo "not model with id => ".$id;
-				}
+					echo "not model with id => $id \n";
+				}				
 				
 			} catch(IntegrityException $e){
 				Yii::info(VarDumper::dumpAsString($e));
@@ -148,8 +151,7 @@ class ProductPhotoController extends Controller
 				$message_error = $this->ansiFormat($e->errorInfo[2], Console::BOLD);
 				echo $message_error."\n";
 			}			
-		$this->stdout("Waiting on important thing to happen...\n",
-		Console::BOLD);			
+//		$this->stdout("Waiting on important thing to happen...\n",Console::BOLD);			
 		return ExitCode::OK;
 	}
     // The command "yii example/add test" will call "actionAdd(['test'])"
@@ -172,6 +174,8 @@ class ProductPhotoController extends Controller
 	
 	public function actionGetOne($id){			
 //		Yii::info(VarDumper::dumpAsString($model));
+//		Yii::info(VarDumper::dumpAsString($photo->getDirtyAttributes()));
+//		Yii::info(VarDumper::dumpAsString($photo->getProduct()));
 		$photo = ProductPhoto::findOne($id);
 		if($photo == NULL){
 			echo "id photo not found\n";
@@ -180,39 +184,18 @@ class ProductPhotoController extends Controller
 		$model = new ProductPhoto();
 		$attributes = $model->getAttributes();
 		foreach(array_keys($attributes) as $key){
-			echo "$key => ".$this->ansiFormat($photo[$key], Console::FG_YELLOW).".\n";
+			echo "$key => ".$this->ansiFormat($photo[$key], Console::FG_YELLOW)."\n";
 		}
-//		Yii::info(VarDumper::dumpAsString($photo->product->attributes['name']));
-//		Yii::info(VarDumper::dumpAsString($photo->getDirtyAttributes()));
-//		Yii::info(VarDumper::dumpAsString($photo->getProduct()));
-		$product = $photo->getProduct()->one();//active query to single row result
+
+		$product = $photo->getProduct()->one();//active query to single last row of result
 
 		$attributes = $product->attributes;
 		if(count($attributes) != 0){
-			echo "product name -----".$photo->product->attributes['name']."\n";//from public method name
-			foreach($attributes as $key=>$value){
-				echo "$key => ".$this->ansiFormat($value, Console::FG_YELLOW).".\n";
+			echo "product name -----".$product->getOldAttributes()['name']."\n";//from public method name
+			foreach($product->getOldAttributes() as $key=>$value){
+				echo "$key => ".$this->ansiFormat($value, Console::FG_YELLOW)."\n";
 			}	
 		}
-//		Yii::info(VarDumper::dumpAsString($photo->product-->attributes['name']));
-		
-//		$product = $photo->getProduct();
-		/* 	
-		try {						
-			$product_id = $this->ansiFormat($photo['product_id'], Console::FG_YELLOW);
-			$path_fullsize = $this->ansiFormat($photo['path_fullsize'], Console::FG_YELLOW);
-			$path_thumbnail = $this->ansiFormat($photo['path_thumbnail'], Console::FG_YELLOW);
-			
-			echo "photo id $id product_id uri ".$product_id.' path_fullsize '.$path_fullsize.' path_thumbnail '.$path_thumbnail."\n";
-//			echo "photo id ".$photos[0]['id']."\n";
-			
-		} catch(IntegrityException $e){
-			Yii::info(VarDumper::dumpAsString($e));
-				echo $e->getCode();
-				echo $e->getMessage()."\n";
-			$message_error = $this->ansiFormat($e->errorInfo[2], Console::BOLD);
-			echo $message_error."\n";
-		} */
 		return ExitCode::OK;
 	}
 }

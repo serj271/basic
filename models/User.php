@@ -53,7 +53,17 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     {
         return 'user';
     }
-
+	public function scenarios() {
+		return [
+			'login' => ['username', 'pass'],
+			'register' => ['username', 'email', 'pass']
+		];
+	}
+	protected function beforeSave($insert) {
+	// Do whatever.
+		return parent::beforeSave($insert);
+	}
+	
     /**
      * {@inheritdoc}
      */
@@ -72,6 +82,10 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
             [['username'], 'unique'],
             [['email'], 'unique'],
 			['status', 'default', 'value' => self::STATUS_ACTIVE],
+/* 			['attr', 'filter', 'filter' => function($v) {
+			// Do whatever to $v.
+				return $v;
+			}] */
         ];
     }
 

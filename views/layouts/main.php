@@ -34,6 +34,7 @@ $this->registerJsFile(
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
+	<?= Html::cssFile('@web/css/site2.css'); ?>
 </head>
 <?php
 $backgroundColor = isset($this->params['background_color'])?$this->params['background_color']:'#FFFFFF'; ?>
@@ -55,17 +56,17 @@ $backgroundColor = isset($this->params['background_color'])?$this->params['backg
         'items' => [
             ['label' => 'Home', 'url' => ['/site/index']],
             ['label' => 'About', 'url' => ['/site/about']],
-            ['label' => 'Contact', 'url' => ['/site/contact']],
+            ['label' => 'Cont', 'url' => ['/site/contact']],
             ['label' => 'Signup', 'url' => ['/site/signup']],
-            ['label' => 'User create', 'url' => ['/useradmin/create']],
-            ['label' => 'User admin', 'url' => ['/useradmin']],
-            ['label' => 'Auth admin', 'url' => ['/authorization-manager']],
+            ['label' => 'User cr', 'url' => ['/useradmin/create']],
+            ['label' => 'Adm', 'url' => ['/useradmin']],
+            ['label' => 'Auth ad', 'url' => ['/authorization-manager']],
 			['label' => 'News', 'url' => ['/news/index']],
 			['label' => 'Comment', 'url' => ['/comment/index']],
-			['label' => 'Customer', 'url' => ['/customer/grid']],
+			['label' => 'Cust', 'url' => ['/customer/grid']],
 			['label' => 'Photo', 'url' => ['/product-photo/index']],
 			['label' => 'Picker', 'url' =>['/jui-widgets/date-picker']],
-			['label' => 'Multiple models', 'url' =>['/customers/create-multiple-models']],
+			['label' => 'Mult', 'url' =>['/customers/create-multiple-models']],
             Yii::$app->user->isGuest ? (
                 ['label' => 'Login', 'url' => ['/site/login']]
             ) : (

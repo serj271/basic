@@ -29,7 +29,15 @@ class File extends \yii\db\ActiveRecord
     {
         return 'file';
     }
-
+	public function validateFileType($attr, $params) {
+		// Allow PDFs and Word docs:
+		$allowed = array('application/pdf', 'application/msword');
+		// Make sure this is an allowed type:
+		if (!in_array($this->$attr, $allowed))
+		{
+			$this->addError($attr,'You can only upload PDF files or Word docs.');
+		}
+	} // End of validateFileType() method.
     /**
      * {@inheritdoc}
      */
@@ -42,6 +50,7 @@ class File extends \yii\db\ActiveRecord
             [['date_entered', 'date_updated'], 'safe'],
             [['name'], 'string', 'max' => 80],
             [['type'], 'string', 'max' => 45],
+			['type', 'validateFileType'],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
         ];
     }

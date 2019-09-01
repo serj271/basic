@@ -44,20 +44,38 @@ class ProductController extends Controller
     }
 	public function actionGetAll() {//product/get-all
 		$model = new Product();
-		$products = Product::find()	
+		$products = Product::find()
+			->select('product.*')
+			->joinWith('photos ph', 'INNER JOIN')				
 			->indexBy('id')
+			->orderBy('ph.id')
+//			->asArray()
 			->all();
-		$attributes = $model->getAttributes();
+		$attributes_name = $model->getAttributes();
+//		Yii::info(VarDumper::dumpAsString($products));
 //		Yii::info(VarDumper::dumpAsString($model->attributeTypes));		
 //		Yii::info(VarDumper::dumpAsString($model->getActiveValidators()));//rules()
 		$message = '';
 		if(count($products) !== 0){
 			foreach ($products as $product){
-				foreach(array_keys($attributes) as $key){
-					echo "$key => ".$this->ansiFormat($product[$key], Console::FG_YELLOW).".\n";
-				}	
+//				Yii::info(VarDumper::dumpAsString($product->attributes));
+				foreach(array_keys($attributes_name) as $key){
+					echo "$key => ".$this->ansiFormat($product->getOldAttributes()[$key], Console::FG_YELLOW)."\n";
+				}
+				$photos = $product->photos;
+//				Yii::info(VarDumper::dumpAsString($photos[0]->getOldAttributes()));
+				foreach($photos as $photo){
+					foreach ($photo as $key=>$value){
+						echo "$key => ".$this->ansiFormat($value, Console::FG_YELLOW)."\n";
+					}					
+				}
+//					$path_fullsize = $product->photos[0]->path_fullsize;
+//					echo "photo path_fullsize ".$photo['path_fullsize'].".\n";
+//					echo "photo path_fullsize ".$photo['path_thumbnail'].".\n";					
 			}
 		}
+//		$products = Product::find()->joinWith('photos', false, 'INNER JOIN')->all();
+//		Yii::info(VarDumper::dumpAsString($products[0]->photos[0]->path_fullsize));
 //		Yii::info(VarDumper::dumpAsString(\Yii::$app->params['thumbnail.size']));//from params config
 		return ExitCode::OK;
 	}
@@ -67,16 +85,15 @@ class ProductController extends Controller
 		/* if($product == NULL){
 			echo "not product found $id\n";
 			return ExitCode::OK;
-		}	 */
-		if($id){
+		}	 */		
 			try{
 				$product = new Product();
 //				$attributes = array_keys($photo->getAttributes());
 				$product->id = $id;
-				$product['name'] = 'name'.$id;
-				$product->description = 'description'.$id;
-				$product->uri = 'uri'.$id;
-				$product->visible = $id;
+				$product['name'] = 'name_'.$id;
+				$product->description = 'description_'.$id;
+				$product->uri = 'uri_'.$id;
+				$product->visible = 1;
 				
 				if ($product->validate()) {
 					$last_id = $product->save();
@@ -98,7 +115,7 @@ class ProductController extends Controller
 				$message_error = $this->ansiFormat($e->errorInfo[2], Console::BOLD);
 				echo $message_error."\n";
 			}			
-		}			
+				
 		return ExitCode::OK;
 	}
 	
@@ -142,7 +159,10 @@ class ProductController extends Controller
     } */
 	
 	public function actionGetOne($id){
-		$product = Product::findOne($id);	
+		$product = Product::find($id)
+			->with('photos')
+			->where(['id'=>$id])
+			->one();	
 		if($product == NULL){
 			echo "not found product id $id\n";
 			return ExitCode::OK;
@@ -150,20 +170,27 @@ class ProductController extends Controller
 		$model = new Product();
 		$attributes = $model->getAttributes();
 		foreach(array_keys($attributes) as $key){
-			echo "$key => ".$this->ansiFormat($product[$key], Console::FG_YELLOW).".\n";
+			echo "$key => ".$this->ansiFormat($product->getOldAttributes()[$key], Console::FG_YELLOW)."\n";
 		}
-//		Yii::info(VarDumper::dumpAsString($model->attributeTypes));		
+		$query = new Query();
+		$query
+			->select(['product.*','product_photo.*',new yii\db\Expression('DATE_FORMAT(product.created_at, "%Y-%m-%d") as d')])
+			->from('product')
+			->leftJoin('product_photo','product_photo.product_id')
+			->where(['product.id'=>$id])
+			->orderBy('product.id DESC');
+//			->limit(1);\\one
+//		$command = $query->createCommand();
+//		$rows = $command->queryAll();		
+//		Yii::info(VarDumper::dumpAsString($rows));		
 //		Yii::info(VarDumper::dumpAsString($model->getActiveValidators()));//rules()
-		
-		$photos = $product->getProductPhotos()->all();//active query
-	
-		foreach($photos as $photo){
-			$attributes = $photo->attributes;
-			foreach($attributes as $key=>$value){
-				echo "$key => ".$this->ansiFormat($value, Console::FG_YELLOW).".\n";
-			}
-		}
-		
+		$rows = $query->all();
+		Yii::info(VarDumper::dumpAsString($rows));
+		foreach($rows as  $row){
+			foreach($row as $key=>$value){
+				echo "$key => ".$this->ansiFormat($value, Console::FG_YELLOW)."\n";
+			}				
+		}		
 		return ExitCode::OK;
 	} 
 

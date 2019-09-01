@@ -8,5 +8,5 @@ $this->title = 'My Yii Application';
 <div class="site-index">
 
 <h1>News</h1>
-<?= Html::a('Click Me', ['news/items-list', 'year' => 2015]) ?>
+<?= Html::a('Click Me year 2015', ['news/items-list', 'year' => 2015]) ?>
 </div>

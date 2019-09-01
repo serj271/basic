@@ -1,12 +1,15 @@
 <?php
-
 /* @var $this yii\web\View */
-
+use yii\helpers\URL;
 $this->title = 'My Yii Application';
 $backgroundColor = isset($_REQUEST['bckg'])?$_REQUEST['bckg']:'#FFFFFF';
 $this->params['background_color'] = $backgroundColor;
+$this->params['breadcrumbs'][] = 'My web site';
+$this->beginBlock('blockADV');?>
 
-?>
+..content of block ADV ...
+<?php $this->endBlock(); ?>
+
 <?= $this->context->id ?>
 <div class="site-index">
 

@@ -156,6 +156,7 @@ class SiteController extends Controller
 		$message = \Yii::t('app', 'this message must be translated!');
 		$identity = Yii::$app->user->identity;
 		\app\modules\mymodule\MyAsset::register($this->view);
+
 		
 		Yii::info('hello--+');
 //		Yii::info(Yii::$app->params['adminEmail'],'------------------');

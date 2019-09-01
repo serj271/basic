@@ -29,20 +29,30 @@ class Product extends \yii\db\ActiveRecord
         return 'product';
     }
 	public $title = 'product';
+	public $name;
+	public $description;
+	public $primary_photo_id;
+	public $created_at;
+	public $updated_at;
+	public $visible;
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['name', 'description','uri'], 'required', 'message' => 'Please choose a value.'],
-            [['description'], 'string'],
-			[['visible'], 'number'],
-            [['primary_photo_id','visible'],  'number', 'integerOnly' => true, 'min' => 1, 'max' => 120,
-'tooSmall' => 'You must be at least 13 to use this site.'],      
+            [['name','uri'], 'required', 'message' => 'Please choose a value.'],
+            ['description', 'string', 'max' => 500],
+			['description', 'safe'],//optional description
+			['description', 'default', 'value' => NULL],
+            [['primary_photo_id'],  'number', 'integerOnly' => true, 'min' => 1, 'max' => 120,
+'tooSmall' => 'You must be at least 13 to use this site.'],
+			[['visible'],  'number', 'integerOnly' => true, 'min' => 1, 'max' => 2,
+			'tooSmall' => 'You must be at least 13 to use this site.'],     
             [['name','uri'], 'string', 'max' => 255],
 			[['name','description'], 'filter', 'filter' => 'trim'],
 			[['created_at', 'updated_at'],'number'],
+			/* ['pass', 'string', 'length' => [6,20] ], */
         ];
     }
 
@@ -65,13 +75,13 @@ class Product extends \yii\db\ActiveRecord
 	public function behaviors()
 	{
 		return [
-			/* 'timestamp' => [
-				'class' => 'yii\behaviors\TimestampBehavior',
+			/* [
+				'class' => TimestampBehavior::className(),
 				'attributes' => [
 					ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
 					ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
 				],
-				'value' => new Expression('NOW()'),
+				`value` => new Expression(’NOW()’),
 			], */
 			'typecast' => [
                 'class' => AttributeTypecastBehavior::className(),
@@ -91,8 +101,16 @@ class Product extends \yii\db\ActiveRecord
             ],
 		];
 	}
-	
-	public function getProductPhotos() { 
+	public function relations()
+    {
+        return array(
+            'photo'=>array(self::HAS_MANY, 'product', 'product_id',
+ //                           'order'=>'posts.create_time DESC',
+                            'with'=>'product'),
+            /* 'profile'=>array(self::HAS_ONE, 'Profile', 'owner_id'), */
+        );
+    }
+	public function getPhotos() { 
 		return $this->hasMany(ProductPhoto::className(), ['product_id' => 'id']); //get active query
 	}
 	public function getParcels() { 

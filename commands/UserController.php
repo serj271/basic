@@ -13,6 +13,7 @@ use yii\helpers\Console;
 use Yii;
 use yii\helpers\VarDumper;
 use yii\helpers\ArrayHelper;
+use yii\db\Query;
 
 
 /**
