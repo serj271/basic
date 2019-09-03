@@ -32,7 +32,7 @@ class SignupForm extends Model
 
     private $_user = false;
 
-	protected function beforeValidate() {
+	public function beforeValidate() {
 		$this->content = trim($this->content);
 		return parent::beforeValidate();
 	}

@@ -71,7 +71,7 @@ class ProductController extends Controller
 				}
 //					$path_fullsize = $product->photos[0]->path_fullsize;
 //					echo "photo path_fullsize ".$photo['path_fullsize'].".\n";
-//					echo "photo path_fullsize ".$photo['path_thumbnail'].".\n";					
+//					echo "photo path_fullsize ".$photo['path_thumbnail'].".\n";					//
 			}
 		}
 //		$products = Product::find()->joinWith('photos', false, 'INNER JOIN')->all();
@@ -80,33 +80,30 @@ class ProductController extends Controller
 		return ExitCode::OK;
 	}
 	
-	public function actionAddOne($id=1){//product-photo/add-one <product_id>
-		$product = Product::findOne($id);
-		/* if($product == NULL){
-			echo "not product found $id\n";
-			return ExitCode::OK;
-		}	 */		
+	public function actionAddOne($id)
+	{//product-photo/add-one <product_id>			
 			try{
 				$product = new Product();
-//				$attributes = array_keys($photo->getAttributes());
+//				$attributes = array_keys($photo->getAttributes());						
 				$product->id = $id;
-				$product['name'] = 'name_'.$id;
+				$product->name = 'name_'.$id;
 				$product->description = 'description_'.$id;
 				$product->uri = 'uri_'.$id;
 				$product->visible = 1;
 				
-				if ($product->validate()) {
+//				if ($product->validate()) {
 					$last_id = $product->save();
+//					Yii::info(VarDumper::dumpAsString($product));
 					echo "product add $product->id $last_id\n";
-				} else {				
-					$errors = $product->errors;
-					foreach($errors as $key=>$value){
-						echo "$key=>$value[0]\n";
-					}
+//				} else {				
+//					$errors = $product->errors;
+//					foreach($errors as $key=>$value){
+//						echo "$key => $value[0]\n";
+//					}
 					/* $message_error = $this->ansiFormat($errors['path_fullsize'][0], Console::BOLD);
 					echo $message_error."\n";
 					Yii::info(VarDumper::dumpAsString($attributes)); */					
-				}
+//				}
 				
 			} catch(IntegrityException $e){
 				Yii::info(VarDumper::dumpAsString($e));

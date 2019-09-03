@@ -59,7 +59,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
 			'register' => ['username', 'email', 'pass']
 		];
 	}
-	protected function beforeSave($insert) {
+	public function beforeSave($insert) {
 	// Do whatever.
 		return parent::beforeSave($insert);
 	}
