@@ -32,10 +32,12 @@ class ProductController extends Controller
     }
 	protected function beforeSave($insert) {
 // Do whatever.
+
+		Yii::info(VarDumper::dumpAsString('-----------$insert------'));
 		return parent::beforeSave($insert);
 	}
 	protected function beforeValidate() {
-		$this->content = trim($this->content);
+//		$this->content = trim($this->content);
 		return parent::beforeValidate();
 	} 
     public function actionIndex()
@@ -86,14 +88,16 @@ class ProductController extends Controller
 				$product = new Product();
 //				$attributes = array_keys($photo->getAttributes());						
 				$product->id = $id;
-				$product->name = 'name_'.$id;
+//				$product->name = 'name_'.$id;
 				$product->description = 'description_'.$id;
 				$product->uri = 'uri_'.$id;
 				$product->visible = 1;
 				
 //				if ($product->validate()) {
-					$last_id = $product->save();
+//					$product->setDefaultValues();
 //					Yii::info(VarDumper::dumpAsString($product));
+					$last_id = $product->save();
+//					
 					echo "product add $product->id $last_id\n";
 //				} else {				
 //					$errors = $product->errors;

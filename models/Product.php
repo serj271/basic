@@ -29,19 +29,14 @@ class Product extends \yii\db\ActiveRecord
         return 'product';
     }
 	public $title = 'product';
-	public $name;
-	public $description;
-	public $primary_photo_id;
-	public $created_at;
-	public $updated_at;
-	public $visible;
+
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-//            [['name','uri'], 'required', 'message' => 'Please choose a value.'],
+            [['name','uri'], 'required', 'message' => 'Please choose a value.'],
             ['description', 'string', 'max' => 500],
 			['description', 'safe'],//optional description
 			['description', 'default', 'value' => NULL],
@@ -49,8 +44,8 @@ class Product extends \yii\db\ActiveRecord
 'tooSmall' => 'You must be at least 13 to use this site.'],
 			[['visible'],  'number', 'integerOnly' => true, 'min' => 1, 'max' => 2,
 			'tooSmall' => 'You must be at least 13 to use this site.'],     
-//            [['name','uri'], 'string', 'max' => 255],
-//			[['name','description'], 'filter', 'filter' => 'trim'],
+            [['name','uri'], 'string', 'max' => 255],
+			[['name','description'], 'filter', 'filter' => 'trim'],
 			[['created_at', 'updated_at'],'number'],
 			/* ['pass', 'string', 'length' => [6,20] ], */
         ];

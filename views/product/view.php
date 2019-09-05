@@ -16,7 +16,7 @@ use yii\helpers\Html;
 		foreach($photos as $photo){
 			echo $photo['path_fullsize'];
 			?>
-			<img src="<?php echo Yii::getAlias('@web').'/img/'.$photo['path_fullsize'] ?>" width=200 height=100>
+			<img src="<?php echo Yii::getAlias('@web').$photo['path_fullsize'] ?>" width=200 height=100>
 			<?php
 		}
 	

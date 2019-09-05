@@ -33,6 +33,11 @@ class ProductPhoto extends \yii\db\ActiveRecord
 	public $upload;
 	const SCENARIO_INSERT = 'insert';
 	
+	public function beforeValidate() {
+	
+		return parent::beforeValidate();
+	}
+	
 	public function behaviors()
 	{
 		return [

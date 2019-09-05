@@ -31,11 +31,9 @@ use yii\db\IntegrityException;
  */
 class ProductPhotoController extends Controller
 {
-	public $id=1;
+	
 	public $table_name = 'product';
-	private $_product;
-    private $_photos;
-    
+	    
     public function options($actionID)
     {
         return ['id'];
@@ -45,14 +43,7 @@ class ProductPhotoController extends Controller
     {
         return ['id' => 'id'];
     }
-	protected function beforeSave($insert) {
-// Do whatever.
-	return parent::beforeSave($insert);
-	}
-	protected function beforeValidate() {
-		$this->content = trim($this->content);
-		return parent::beforeValidate();
-	}
+	
     // The command "yii example/create test" will call "actionCreate('test')"
     public function actionCreate() {}
 
@@ -91,7 +82,8 @@ class ProductPhotoController extends Controller
 		return ExitCode::OK;
 	}
 	
-	public function actionAddOne($id=1, $path_fullsize){//product-photo/add-one <product_id>
+	public function actionAddOne($id=1, $path_fullsize)
+	{//product-photo/add-one <product_id>
 		$product = Product::findOne($id);
 		if($product == NULL){
 			echo "not product found $id\n";
@@ -100,16 +92,28 @@ class ProductPhotoController extends Controller
 			try{
 				$photo = new ProductPhoto();
 				$modelAttributes = $photo->attributeTypes;
-				$attributes = array_keys($photo->getAttributes());
+				/* $attributes = array_keys($photo->getAttributes());
 				foreach($modelAttributes as $key=>$value){
 					if($value == 'integer'){
 						$photo[$key] = $id;
 					} elseif($value == 'string'){
 						$photo[$key] = $key.'_'.$id;
 					}
+				} */
+//				unset($photo->id);
+				$path_thumbnail = $path_fullsize;
+				$photo->path_fullsize = '/img/product/'.$path_fullsize;
+				$info = pathinfo(@web.'/product/'.$path_fullsize);
+//				Yii::info(VarDumper::dumpAsString($info));
+				$file_path = \Yii::getAlias('@app').'/'.@web.'/img/product/'.$path_fullsize;
+//				Yii::info(VarDumper::dumpAsString());
+//				Yii::info(VarDumper::dumpAsString(file_exists($file_path)));
+				if(!file_exists($file_path)){
+					echo "not file found $file_path\n";
+					return ExitCode::OK;
 				}
-				unset($photo->id);
-				$photo->path_fullsize = $path_fullsize;
+				$photo->path_thumbnail = '/product/thumbnail/'.$path_thumbnail;
+				$photo->product_id = $id;
 				$photo->scenario = ProductPhoto::SCENARIO_INSERT;
 				if ($photo->validate()) {
 					$photo->save();
@@ -133,11 +137,19 @@ class ProductPhotoController extends Controller
 		return ExitCode::OK;
 	}
 	
-	public function actionDeleteOne($id=1){//product/add-one <id>
+	public function actionDeleteOne($id=1){//product-photo/delete-one <id>
 		
 			try{
 				$model = ProductPhoto::findOne($id);
 				if($model){
+					$file_path = \Yii::getAlias('@app').'/'.@web.'/img'.$model->path_fullsize;
+	//				Yii::info(VarDumper::dumpAsString());
+	//				Yii::info(VarDumper::dumpAsString(file_exists($file_path)));
+					if(!file_exists($file_path)){
+						echo "not file found $file_path\n";
+						return ExitCode::OK;
+					}
+					unlink($file_path);
 					$model->delete();
 					echo "model delete $id\n";
 				} else {
