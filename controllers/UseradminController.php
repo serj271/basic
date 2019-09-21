@@ -151,12 +151,24 @@ class UseradminController extends \yii\web\Controller
 
 	public function actionIndex()
     {
-//		$model = new User;
 		$users = User::find()->all();
-		if (!\Yii::$app->user->can('view')) {
+		Yii::info(VarDumper::dumpAsString(\Yii::getAlias('@editor_lang_dir')));
+		/* if (!\Yii::$app->user->can('view')) {
 			throw new ForbiddenHttpException('Access denied');
+		} */
+		$user_id = Yii::$app->user->getId();
+		if($user_id){
+			$roles =[];
+			$userAssigned = Yii::$app->authManager->getAssignments($user_id);
+			foreach($userAssigned as $userAssign){
+				$roles[] = $userAssign->roleName;
+			}
+			if(in_array('admin',$roles)){
+				return $this->render('index',['userList'=>$users]);	
+			}
+			
 		}
-        return $this->render('index',['userList'=>$users]);
+		throw new ForbiddenHttpException('Access denied');        
     }
 	
 	public function actionCreate()
