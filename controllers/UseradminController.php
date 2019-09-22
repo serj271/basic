@@ -153,6 +153,7 @@ class UseradminController extends \yii\web\Controller
     {
 		$users = User::find()->all();
 		Yii::info(VarDumper::dumpAsString(\Yii::getAlias('@editor_lang_dir')));
+
 		/* if (!\Yii::$app->user->can('view')) {
 			throw new ForbiddenHttpException('Access denied');
 		} */

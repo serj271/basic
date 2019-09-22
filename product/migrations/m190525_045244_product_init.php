@@ -22,12 +22,6 @@ class m190525_045244_product_init extends Migration
     {
         $tableOptions = null;
         $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB';
-		/* if($this->tableExists($this->table_product)){
-			 $this->dropTable($this->table_product);
-		}
-		if($this->tableExists($this->table_product_photo)){
-			 $this->dropTable($this->table_product_photo);
-		} */
 		$this->createTable($this->product_categories, [
 			'id'=>Schema::TYPE_INTEGER  . ' NOT NULL AUTO_INCREMENT',
 			'uri' => $this->string(64)->notNull(),

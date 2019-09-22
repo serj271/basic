@@ -51,13 +51,11 @@ class HelloController extends Controller
         echo $this->message . "\n";
 		Yii::info('message log');
 		Yii::info(VarDumper::dumpAsString(array('q'=>4)));
-		Yii::debug('start calculating average revenue');
+		
 //		 $this->stdout("whatever");
 		$name = $this->ansiFormat('Alex', Console::FG_YELLOW);
 		echo "Hello, my name is $name.\n";
-		
-		
-		
+				
 		
 		return ExitCode::OK;
     }
