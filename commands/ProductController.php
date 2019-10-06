@@ -14,6 +14,7 @@ use app\models\ProductPhoto;
 use yii\db\ActiveRecord;
 //use yii\console\ErrorHandler;
 use yii\db\IntegrityException; 
+use app\models\ProductCategories;
 
 class ProductController extends Controller
 {
@@ -33,7 +34,7 @@ class ProductController extends Controller
 	protected function beforeSave($insert) {
 // Do whatever.
 
-		Yii::info(VarDumper::dumpAsString('-----------$insert------'));
+//		Yii::info(VarDumper::dumpAsString('-----------$insert------'));
 		return parent::beforeSave($insert);
 	}
 	protected function beforeValidate() {
@@ -82,32 +83,37 @@ class ProductController extends Controller
 		return ExitCode::OK;
 	}
 	
-	public function actionAddOne($id)
-	{//product-photo/add-one <product_id>			
+	public function actionAddOne($id, $category_id)
+	{//product-photo/add-one <product_id>
+			if(!ProductCategories::findOne($category_id)){
+				echo "category_id {$category_id} not found\n";
+				return ExitCode::OK;
+			}
 			try{
 				$product = new Product();
 //				$attributes = array_keys($photo->getAttributes());						
 				$product->id = $id;
-//				$product->name = 'name_'.$id;
+				$product->name = 'name_'.$id;
 				$product->description = 'description_'.$id;
 				$product->uri = 'uri_'.$id;
 				$product->visible = 1;
-				
-//				if ($product->validate()) {
+				$product->category_list = [$category_id];
+								
+				if ($product->validate()) {
 //					$product->setDefaultValues();
 //					Yii::info(VarDumper::dumpAsString($product));
 					$last_id = $product->save();
-//					
+					
 					echo "product add $product->id $last_id\n";
-//				} else {				
-//					$errors = $product->errors;
-//					foreach($errors as $key=>$value){
-//						echo "$key => $value[0]\n";
-//					}
+				} else {				
+					$errors = $product->errors;
+					foreach($errors as $key=>$value){
+						echo "$key => $value[0]\n";
+					}
 					/* $message_error = $this->ansiFormat($errors['path_fullsize'][0], Console::BOLD);
 					echo $message_error."\n";
 					Yii::info(VarDumper::dumpAsString($attributes)); */					
-//				}
+				}
 				
 			} catch(IntegrityException $e){
 				Yii::info(VarDumper::dumpAsString($e));
@@ -168,6 +174,7 @@ class ProductController extends Controller
 			echo "not found product id $id\n";
 			return ExitCode::OK;
 		}
+		$categories = $product->getcategory()->all();
 		$model = new Product();
 		$attributes = $model->getAttributes();
 		foreach(array_keys($attributes) as $key){
@@ -191,8 +198,16 @@ class ProductController extends Controller
 			foreach($row as $key=>$value){
 				echo "$key => ".$this->ansiFormat($value, Console::FG_YELLOW)."\n";
 			}				
+		}
+		foreach($categories as $category){
+			echo "category->name  ".$this->ansiFormat($category->name, Console::FG_YELLOW)."\n";
+			echo "category->id  ".$this->ansiFormat($category->id, Console::FG_YELLOW)."\n";
+			
 		}		
 		return ExitCode::OK;
-	} 
+	}
+	public function actionGetByCategory($id){//id category
+		
+	}
 
 }

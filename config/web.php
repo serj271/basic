@@ -79,6 +79,11 @@ $config = [
 					'pattern' => 'news/items-list/<category:\w+>',
 					'route' => 'news/items-list',
 					'defaults' => ['category' => 'shopping']
+				],
+				[
+					'pattern' => 'product-categories/view/<category_id:\w+>',
+					'route' => 'product-categories/view',
+					'defaults' => ['category_id' => 0]
 				],				
 //				'class'=>'yii\filters\AccessRule',
 //				'<controller>/<year:\d{4}>/<action>' => ' <controller>/<action>',

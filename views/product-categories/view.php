@@ -1,13 +1,12 @@
 <?php
 /* @var $this yii\web\View */
 ?>
-<h1>product/index</h1>
+<h1>product-categories/view</h1>
 
 <p>
-    You may change the content of this page by modifying rr
+    You may change the content of this page by modifying
     the file <code><?= __FILE__; ?></code>.
 </p>
-
 <p>
 	<?php foreach($products as $product) { ?>
 	<dl>
@@ -23,5 +22,4 @@
 	<?php } ?> 
 
 
-</p>
-
+</p> 

@@ -7,6 +7,7 @@ use yii\db\IntegrityException;
 use yii\db\Expression;
 use Yii;
 use yii\behaviors\AttributeTypecastBehavior;
+use app\models\ProductCategories;
 
 /**
  * This is the model class for table "products".
@@ -30,6 +31,9 @@ class Product extends \yii\db\ActiveRecord
     }
 	public $title = 'product';
 
+	public $relations = [];
+
+	private $_values = [];
     /**
      * {@inheritdoc}
      */
@@ -47,6 +51,7 @@ class Product extends \yii\db\ActiveRecord
             [['name','uri'], 'string', 'max' => 255],
 			[['name','description'], 'filter', 'filter' => 'trim'],
 			[['created_at', 'updated_at'],'number'],
+			[['category_list'], 'safe']
 			/* ['pass', 'string', 'length' => [6,20] ], */
         ];
     }
@@ -94,6 +99,13 @@ class Product extends \yii\db\ActiveRecord
  //               'typecastBeforeSave' => false,
   //              'typecastAfterFind' => false,
             ],
+		
+				[
+				'class' => \app\components\behaviors\ManyHasManyBehavior::className(),
+					'relations' => [
+						'category' => 'category_list',                   
+					],
+				],
 		];
 	}
 	public function relations()
@@ -102,6 +114,7 @@ class Product extends \yii\db\ActiveRecord
             'photo'=>array(self::HAS_MANY, 'product', 'product_id',
  //                           'order'=>'posts.create_time DESC',
                             'with'=>'product'),
+			'category'=>array(self::HAS_MANY, 'ProductCategories', 'product_id')
             /* 'profile'=>array(self::HAS_ONE, 'Profile', 'owner_id'), */
         );
     }
@@ -110,6 +123,11 @@ class Product extends \yii\db\ActiveRecord
 	}
 	public function getParcels() { 
 		return $this->hasMany(Parcel::className(), ['product_id' => 'id']); 
+	}
+	public function getcategory()
+	{	
+		return $this->hasMany(ProductCategories::className(), ['id' => 'category_id'])
+			->viaTable('product_categories_products', ['product_id' => 'id']);
 	}
 	
 	

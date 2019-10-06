@@ -39,20 +39,25 @@ class ProductController extends \yii\web\Controller
 		$products = [];
 		$products = Product::find()
 				->orderBy('id')
+//				->asArray()
 				->all();
 		$model = Product::findOne(1);
 		$this->view->title = 'product';
+//		Yii::info($products);
 		$test_tmp = $this->render('index.tpl',['param1'=>0, 'param2'=>22]);
-		
-		return $this->render('index', ['products'=>$products,'tmp'=>$test_tmp,'model'=>$model]);
+		return $this->render('index', ['products'=>$products]);
+//		return $this->render('index', ['products'=>$products,'tmp'=>$test_tmp,'model'=>$model]);
 	}
 
     public function actionView($id)
     {
 //		$this->layout = 'home';
 		$product = Product::findOne($id);
-		$photos = $product->photos;
-        return $this->render('view',['product'=>$product->getOldAttributes(),'photos'=>$photos]);
+		if($product == NULL) throw new \yii\web\NotFoundHttpException("Product not found");
+		
+		return $this->render('view',['product'=>$product->getOldAttributes(),'photos'=>$product->photos]);
+		
+        
     }
 	public function actionCreate()
     {

@@ -15,6 +15,7 @@ class m190525_045244_product_init extends Migration
 	public $table_product = 'product';
 	public $table_product_photo = 'product_photo';
 	public $table_parcel = 'parcel';
+	public $product_categories_products = 'product_categories_products';
 	
 	
 
@@ -92,6 +93,26 @@ class m190525_045244_product_init extends Migration
 			'FOREIGN KEY ([[product_id]]) REFERENCES [[product]] '.
 			'([[id]])'.' ON DELETE CASCADE ',
         ], $tableOptions);
+		$this->createTable($this->product_categories_products, [
+			'id'=>Schema::TYPE_INTEGER  . ' NOT NULL AUTO_INCREMENT',
+			'product_id'=>Schema::TYPE_INTEGER  . ' NOT NULL',
+			'category_id'=>Schema::TYPE_INTEGER  . ' NOT NULL',
+            'PRIMARY KEY ([[id]])',
+			'KEY  ([[product_id]])',
+			'KEY  ([[category_id]])'
+			/* 'FOREIGN KEY ([[product_id]]) REFERENCES [[product]] '.
+			'([[id]])'.' ON DELETE CASCADE ', */
+        ], $tableOptions);
+		$this->createIndex(
+            'fk_product',
+            $this->product_categories_products,
+            'product_id'
+        );
+		$this->createIndex(
+            'fk_category_id',
+            $this->product_categories_products,
+            'category_id'
+        );
 		
     }
 
@@ -115,6 +136,9 @@ class m190525_045244_product_init extends Migration
 		if($this->tableExists($this->table_product)){
 			 $this->dropTable($this->table_product);
 		}
+		if($this->tableExists($this->product_categories_products)){
+			 $this->dropTable($this->product_categories_products);
+		}
 		
 		/* $this->dropTable($this->table_product);
 		$this->dropTable($this->table_product_photo); */
@@ -136,19 +160,7 @@ class m190525_045244_product_init extends Migration
     {
         return implode(' ', ['', $delete, $update]);
     }
-
-    /*
-    // Use up()/down() to run migration code without a transaction.
-    public function up()
-    {
-
-    }
-
-    public function down()
-    {
-        echo "m190525_045244_product_init cannot be reverted.\n";
-
-        return false;
-    }
-    */
 }
+//yii migrate/history
+// yii migrate/mark m19
+//yii migrate/down 1 --migrationPath=@app/product/migrations
