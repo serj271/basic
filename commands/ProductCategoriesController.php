@@ -168,7 +168,15 @@ class ProductCategoriesController extends Controller
 		foreach(array_keys($attributes) as $key){
 			echo "$key => ".$this->ansiFormat($category[$key], Console::FG_YELLOW)."\n";
 		}
-
+		$tree = $category->full_tree($id);
+		Yii::info(VarDumper::dumpAsString($tree));
+		$children = \yii\helpers\ArrayHelper::getValue($tree, '0.id');
+	
+		echo "children => ".$this->ansiFormat($children, Console::FG_YELLOW)."\n";
+		/* foreach($tree as $item){
+			
+		} */
+		
 	/* 	$product = $photo->getProduct()->one();//active query to single last row of result
 
 		$attributes = $product->attributes;
@@ -208,7 +216,7 @@ class ProductCategoriesController extends Controller
 		} */
 		return ExitCode::OK;
 	}
-	public function actionAddCategory($product_id, $product_category_id){
+	/* public function actionAddCategory($product_id, $product_category_id){
 		$category = ProductCategories::findOne($product_category_id);
 		$product = Product::findOne($product_id);
 		if($category == NULL){
@@ -221,5 +229,5 @@ class ProductCategoriesController extends Controller
 		}
 		
 		return ExitCode::OK;
-	}
+	} */
 }
