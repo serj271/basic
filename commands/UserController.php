@@ -14,7 +14,7 @@ use Yii;
 use yii\helpers\VarDumper;
 use yii\helpers\ArrayHelper;
 use yii\db\Query;
-
+use app\models\User;
 
 /**
  * This command echoes the first argument that you have entered.
@@ -61,7 +61,8 @@ class UserController extends Controller
 		return ExitCode::OK;
     }
 	
-	public function actionGetAll(){
+	public function actionGetAll()
+	{
 		$users = $users = \Yii::$app->db
 			->createCommand('SELECT * FROM user;')
 			->queryAll();
@@ -81,7 +82,8 @@ class UserController extends Controller
 		return ExitCode::OK;
 	}
 	
-	public function actionCreate($username,$password='1'){
+	public function actionCreate($username,$password='1')
+	{
 		\Yii::$app->db
 		->createCommand()
 		->insert('user', [
@@ -98,7 +100,29 @@ class UserController extends Controller
 		->execute();
 		return ExitCode::OK;
 	}
-	public function actionDetail($id){
+	public function actionAddOne($username)
+	{
+		$user = new User();
+//		$user->id = 12;
+		$user->type = 'public';		
+		$user->username = $username;
+		$user->email = $username.'@example.com';
+		$user->setPassword('1');
+        $user->generateAuthKey();
+		$user->password_reset_token = '11';
+		if ($user->validate()) {
+			$user_id = $user->save();
+
+			echo "user add $user_id $last_id\n";
+		} else {				
+			$errors = $user->errors;
+			foreach($errors as $key=>$value){
+				echo "$key => $value[0]\n";
+			}			
+		}		
+	}	
+	public function actionDetail($id)
+	{
 		$user = \Yii::$app->db
 			->createCommand("SELECT * FROM user where id=:id")
 			->bindValue(':id', $id)
@@ -123,7 +147,8 @@ class UserController extends Controller
 		var_dump($userNameRoles);
 		return ExitCode::OK;
 	}
-	public function actionDelete($id){
+	public function actionDelete($id)
+	{
 		$user =  \Yii::$app->db
 			->createCommand()
 			->delete('user','id=:id',[':id'=>$id])//table condition params
@@ -132,7 +157,8 @@ class UserController extends Controller
 		echo VarDumper::dumpAsString($user);
 		return ExitCode::OK;
 	}
-	public function actionLogin($id, $password='1'){
+	public function actionLogin($id, $password='1')
+	{
 		$user = \Yii::$app->db
 			->createCommand("SELECT * FROM user where id=:id")
 			->bindValue(':id', $id)
@@ -147,7 +173,8 @@ class UserController extends Controller
 		
 		return ExitCode::OK;
 	}
-	public function actionUpdate($id){
+	public function actionUpdate($id)
+	{
 		if (!\Yii::$app->user->can('updateOwnProfile', ['profileId' => \Yii::$app->user->id])) {
 			throw new ForbiddenHttpException('Access denied');
 		}
@@ -160,14 +187,16 @@ class UserController extends Controller
 		echo VarDumper::dumpAsString($user); */
 		return ExitCode::OK;
 	}
-	public function actionDeleteRoleAdmin($id){
+	public function actionDeleteRoleAdmin($id)
+	{
 		$auth = Yii::$app->authManager;
 		$item = $auth->getRole('admin'); // 
 		$auth->revoke($item,$id);
 		
 		return ExitCode::OK;
 	}
-	public function actionAddRoleAdmin($id){
+	public function actionAddRoleAdmin($id)
+	{
 		$auth = Yii::$app->authManager;
 		$editor = $auth->getRole('admin'); // 
 		$auth->assign($editor, $id);

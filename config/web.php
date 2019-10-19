@@ -43,16 +43,28 @@ $config = [
             // for the mailer to send real emails.
             'useFileTransport' => true,
         ],
-        'log' => [
-            'traceLevel' => YII_DEBUG ? 3 : 0,
-//			'traceLevel' =>0,
+       /*  'log' => [
+//            'traceLevel' => YII_DEBUG ? 3 : 0,
+			'traceLevel' =>0,
             'targets' => [
                 [
                     'class' => 'yii\log\FileTarget',
                     'levels' => ['error', 'warning','info'],
-					'logVars' => [], // don't log global vars 
+//					'logVars' => [], // don't log global vars 
 					'logFile' => '@app/runtime/logs/'.date("Y").'/'.date("m").'/'.date("d").'.log',
                 ],
+            ],
+        ], */
+		'log' => [
+            'targets' => [
+                'file' => [
+                    'class' => 'yii\log\FileTarget',
+					'levels' => ['error', 'warning','info'],
+					'logVars' => [], // don't log global vars 
+                ],
+               /*  'db' => [
+                    'class' => 'yii\log\DbTarget',
+                ], */
             ],
         ],
 		'security' => [
@@ -67,30 +79,57 @@ $config = [
 			'baseUrl' => '/basic/web',
 			'scriptUrl'=>'/basic/web/index.php',
 			'rules' => [
+				[
+					'pattern' => 'product',
+					'route' => 'product/index',
+					'suffix' => '/',
+//					'normalizer' => false, // disable normalizer for this rule
+				],				
 				['class' => 'yii\rest\UrlRule', 'controller' => 'customers'],
-				'class' => 'yii\web\UrlRule',
+//				'class' => 'yii\web\UrlRule',
 				[
 					'class' => 'app\components\NewsUrlRule',
+				],
+				[
+					'pattern' => 'categories',
+					'route' => 'product-categories/index',
+					'suffix' => '/',
+//					'normalizer' => false, // disable normalizer for this rule
+				],
+				[
+					'pattern' => 'product-admin',
+					'route' => 'product-admin/index',
+					'suffix' => '/',
+//					'normalizer' => false, // disable normalizer for this rule
+				],	
+				[
+					'class' => 'app\components\CategoryUrlRule',					
+				],
+				[
+					'class' => 'app\components\ProductUrlRule',					
+				],
+				[
+					'class' => 'app\components\ProductAdminUrlRule',					
 				],
 				/* [
 					'class' => 'app\components\CustomerUrlRule',
 				], */
-				[
+				/* [
 					'pattern' => 'news/items-list/<category:\w+>',
 					'route' => 'news/items-list',
 					'defaults' => ['category' => 'shopping']
-				],
-				[
+				], */
+				/* [
 					'pattern' => 'product-categories/view/<category_id:\w+>',
 					'route' => 'product-categories/view',
 					'defaults' => ['category_id' => 0]
-				],				
+				],	 */			
 //				'class'=>'yii\filters\AccessRule',
 //				'<controller>/<year:\d{4}>/<action>' => ' <controller>/<action>',
 //				'<view:(break)>' => 'site/page',
-				'<controller:static>/<view:.*>' => '<controller>',
+				/* '<controller:static>/<view:.*>' => '<controller>',
 				'<controller:\w+>/<id:\d+>' => '<controller>/view',
-				'<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
+				'<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>', */
 //				'<controller:\w+>/<action:\w+>' => '<controller>/<action>',
 //				'news/<year:\d{4}/>' => ' news/items-list?year=<year>',
 //				'news/<category:\w+>/items-list' => 'test-rules/items-list',

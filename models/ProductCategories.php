@@ -6,6 +6,7 @@ use yii\base;
 use yii\db\Query;
 use yii\helpers\VarDumper; 
 use yii\db\ActiveRecord;
+use app\components\UriValidator;
 
 /**
  * This is the model class for table "product_categories".
@@ -38,10 +39,19 @@ class ProductCategories extends \yii\db\ActiveRecord
             [['uri', 'name', 'order'], 'required'],
             [['description'], 'string'],
             [['parent_id'], 'integer'],
-            [['uri', 'name', 'order', 'primary_photo_id', 'image'], 'string', 'max' => 64],
+            [['uri', 'name', 'order', 'primary_photo_id', 'image'], 'string', 'max' => 64,
+				'message'=>'Please enter a value for {attribute} too long'
+			],
+			['uri','unique', 'message'=>'{attribute} not unique']
+//			['uri', 'validateUri'],
         ];
     }
-
+	public function validateUri($attribute, $params)
+    {
+//        if (!in_array($this->$attribute, ['USA', 'Indonesia'])) {
+            $this->addError($attribute, "$attribute not unique.");
+//        }
+    }
     /**
      * {@inheritdoc}
      */
@@ -70,13 +80,13 @@ class ProductCategories extends \yii\db\ActiveRecord
 	 * @param   array  $order_by
 	 * @return  array
 	 */
-	public function full_tree($start = NULL, $stop = NULL, array $order_by = array('name', 'ASC'))//order
+	public static function full_tree($start = NULL, $stop = NULL, array $order_by = array('name', 'ASC'))//order
 	{
 		$tree = array();
 		$query = new Query();
 		$query
-			->select(['id','name','parent_id'])
-			->from($this->tableName())
+			->select(['id','name','parent_id','uri'])
+			->from('product_categories')
 //			->leftJoin('product_photo','product_photo.product_id')
 			->where(['parent_id' => $start])
 			->orderBy($order_by[0], $order_by[1]);
@@ -94,7 +104,7 @@ class ProductCategories extends \yii\db\ActiveRecord
 				continue;
 //			Yii::info(VarDumper::dumpAsString($category));
 			$tree[] = $category + array(
-				'children' => $this->full_tree($category['id'], $stop, $order_by)
+				'children' => self::full_tree($category['id'], $stop, $order_by)
 			);
 		}
 		return $tree;
@@ -107,19 +117,24 @@ class ProductCategories extends \yii\db\ActiveRecord
 	 * @param   int   $start
 	 * @return  array
 	 */
-	/* public function reverse_tree($start)
+	public static function reverse_tree($start)
 	{
 		$tree = array();
 
-		$category = ORM::factory('Product_Category', $start);
-		$tree[] = $category;
+		$category = ProductCategories::findOne($start);
+
+//		$tree[] = [$category->name];
 
 		while ($category->parent_id)
 		{
-			$category = ORM::factory('Product_Category', $category->parent_id);
-			$tree[] = $category;
+			$category = ProductCategories::findOne($category->parent_id);
+			$tree[] = ['label' => $category->name,'url' => $category->uri];
 		}
 
 		return array_reverse($tree);
-	}  */
+	}
+	public static function getCategories()
+	{
+		return ProductCategories::find()->all();
+	}
 }

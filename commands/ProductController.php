@@ -49,7 +49,7 @@ class ProductController extends Controller
 		$model = new Product();
 		$products = Product::find()
 			->select('product.*')
-			->joinWith('photos ph', 'INNER JOIN')				
+			->joinWith('photos ph', 'INNER JOIN')
 			->indexBy('id')
 			->orderBy('ph.id')
 //			->asArray()
@@ -147,23 +147,6 @@ class ProductController extends Controller
 					
 		return ExitCode::OK;
 	}
-    // The command "yii example/add test" will call "actionAdd(['test'])"
-    // The command "yii example/add test1,test2" will call "actionAdd(['test1', 'test2'])"
- 
-		
-	/* public function getProduct()
-    {
-        return $this->_product;
-    }
-	
-	public function setProduct($product)
-    {
-        if ($product instanceof Product) {
-            $this->_product = $product;
-        } else if (is_array($product)) {
-            $this->_product->setAttributes($product);
-        }
-    } */
 	
 	public function actionGetOne($id){
 		$product = Product::find($id)
@@ -174,11 +157,13 @@ class ProductController extends Controller
 			echo "not found product id $id\n";
 			return ExitCode::OK;
 		}
-		$categories = $product->getcategory()->all();
+	
+//		Yii::info(VarDumper::dumpAsString('getcategory'));
+//		Yii::info(VarDumper::dumpAsString($product->category));
 		$model = new Product();
 		$attributes = $model->getAttributes();
 		foreach(array_keys($attributes) as $key){
-			echo "$key => ".$this->ansiFormat($product->getOldAttributes()[$key], Console::FG_YELLOW)."\n";
+			echo "OldAttributes $key => ".$this->ansiFormat($product->getOldAttributes()[$key], Console::FG_YELLOW)."\n";
 		}
 		$query = new Query();
 		$query
@@ -193,11 +178,16 @@ class ProductController extends Controller
 //		Yii::info(VarDumper::dumpAsString($rows));		
 //		Yii::info(VarDumper::dumpAsString($model->getActiveValidators()));//rules()
 		$rows = $query->all();
-		Yii::info(VarDumper::dumpAsString($rows));
+//		Yii::info(VarDumper::dumpAsString($rows));
 		foreach($rows as  $row){
 			foreach($row as $key=>$value){
 				echo "$key => ".$this->ansiFormat($value, Console::FG_YELLOW)."\n";
 			}				
+		}
+		$categories = $product->category;
+		if(empty($categories)){
+			echo "not categories\n";
+			return ExitCode::OK;
 		}
 		foreach($categories as $category){
 			echo "category->name  ".$this->ansiFormat($category->name, Console::FG_YELLOW)."\n";
@@ -206,8 +196,80 @@ class ProductController extends Controller
 		}		
 		return ExitCode::OK;
 	}
-	public function actionGetByCategory($id){//id category
+	public function actionGetByCategory($uri){//id category
 		
+	}
+	public function actionUpdateCategory($id, $category_id){//id category
+		if(!ProductCategories::findOne($category_id)){
+				echo "category_id {$category_id} not found\n";
+				return ExitCode::OK;
+			}
+			try{
+				$product = Product::findOne($id);
+//				Yii::info(VarDumper::dumpAsString($product)); 
+				if($product == NULL){
+					echo "id product {$id} not found\n";
+					return ExitCode::OK;
+				}					
+//				$attributes = array_keys($photo->getAttributes());
+				$product->category_list = [$category_id];
+								
+				if ($product->validate()) {
+//					$product->setDefaultValues();					
+					$last_id = $product->update();					
+					echo "product update $product->id $last_id\n";
+				} else {				
+					$errors = $product->errors;
+					Yii::info(VarDumper::dumpAsString('$product'));
+					Yii::info(VarDumper::dumpAsString($product));
+					foreach($errors as $key=>$value){
+						echo "$key => $value[0]\n";
+					}
+					/* $message_error = $this->ansiFormat($errors['path_fullsize'][0], Console::BOLD);
+					echo $message_error."\n";
+					Yii::info(VarDumper::dumpAsString($attributes)); */					
+				}
+				
+			} catch(IntegrityException $e){
+				Yii::info(VarDumper::dumpAsString($e));
+//				echo $e->getCode();
+//				echo $e->getMessage()."\n";
+				$message_error = $this->ansiFormat($e->errorInfo[2], Console::BOLD);
+				echo $message_error."\n";
+			}			
+				
+		return ExitCode::OK;
+	}
+	public function actionUpdateName($id, $name){//id category
+		
+		$product = Product::findOne($id);
+//				Yii::info(VarDumper::dumpAsString($product)); 
+		if($product == NULL){
+			echo "id product {$id} not found\n";
+			return ExitCode::OK;
+		}					
+//				$attributes = array_keys($photo->getAttributes());
+		$product->name = $name;
+						
+		if ($product->validate()) {
+//					$product->setDefaultValues();					
+			$last_id = $product->update();					
+			echo "product update $product->id $last_id\n";
+		} else {				
+			$errors = $product->errors;
+//			Yii::info(VarDumper::dumpAsString('$product'));
+//			Yii::info(VarDumper::dumpAsString($product));
+			foreach($errors as $key=>$value){
+				echo "$key => $value[0]\n";
+			}
+			/* $message_error = $this->ansiFormat($errors['path_fullsize'][0], Console::BOLD);
+			echo $message_error."\n";
+			Yii::info(VarDumper::dumpAsString($attributes)); */					
+		}
+				
+				
+				
+		return ExitCode::OK;
 	}
 
 }

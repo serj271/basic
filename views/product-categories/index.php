@@ -14,7 +14,8 @@
 		<dd>
 			<?=$category['name'] ?> 
 			<?=$category['description'] ?>
-			
+			<a href="<?php echo Yii::$app->urlManager->createUrl(['categories' ,
+			'url' => $category['uri']]) ?>"><?php echo $category['name'] ?></a> 
 		</dd>
 	
 	</dl>

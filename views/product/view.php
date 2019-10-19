@@ -9,6 +9,8 @@ $this->registerJsFile(Yii::$app->request->baseUrl.'/js/product.js', [
     ]
 ]);
 /* @var $this yii\web\View */
+$this->params['breadcrumbs'] = $breadcrumbs;
+
 ?>
 <h1>product/view</h1>
 

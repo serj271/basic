@@ -4,3 +4,6 @@ defined('YII_DEBUG') or define('YII_DEBUG', true);
 
 require_once __DIR__ . '/../vendor/yiisoft/yii2/Yii.php';
 require __DIR__ .'/../vendor/autoload.php';
+
+Yii::setAlias('@tests', __DIR__);
+Yii::setAlias('@data', __DIR__ . DIRECTORY_SEPARATOR . '_data');

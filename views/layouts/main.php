@@ -67,6 +67,8 @@ $backgroundColor = isset($this->params['background_color'])?$this->params['backg
 			['label' => 'Photo', 'url' => ['/product-photo/index']],
 			['label' => 'Picker', 'url' =>['/jui-widgets/date-picker']],
 			['label' => 'Mult', 'url' =>['/customers/create-multiple-models']],
+			['label' => 'Category', 'url' =>['/categories/']],
+			['label' => 'Product admin', 'url' =>['/product-admin/']],
             Yii::$app->user->isGuest ? (
                 ['label' => 'Login', 'url' => ['/site/login']]
             ) : (

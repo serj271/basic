@@ -8,7 +8,8 @@ use yii\db\Expression;
 use Yii;
 use yii\behaviors\AttributeTypecastBehavior;
 use app\models\ProductCategories;
-
+use yii\helpers\VarDumper;
+use \Datetime;
 /**
  * This is the model class for table "products".
  *
@@ -41,16 +42,21 @@ class Product extends \yii\db\ActiveRecord
     {
         return [
             [['name','uri'], 'required', 'message' => 'Please choose a value.'],
+			/* [['uri'], 'unique','when' => function ($model, $attribute) {
+               return $model->{$attribute} !== $model->getOldAttribute($attribute);
+			}], */
+			[['uri'], 'unique','targetAttribute' => ['uri'], 'message' => ' {attribute} not unique {value}'],
             ['description', 'string', 'max' => 500],
 			['description', 'safe'],//optional description
 			['description', 'default', 'value' => NULL],
             [['primary_photo_id'],  'number', 'integerOnly' => true, 'min' => 1, 'max' => 120,
 'tooSmall' => 'You must be at least 13 to use this site.'],
 			[['visible'],  'number', 'integerOnly' => true, 'min' => 1, 'max' => 2,
-			'tooSmall' => 'You must be at least 13 to use this site.'],     
+			'tooSmall' => 'You must be from 0 to 2 use this site.'],     
             [['name','uri'], 'string', 'max' => 255],
 			[['name','description'], 'filter', 'filter' => 'trim'],
-			[['created_at', 'updated_at'],'number'],
+//			[['created_at', 'updated_at'],'number'],
+			[['created_at', 'updated_at'],'datetime', 'format' => 'php:Y-m-d H:i:s','message' => 'Format is wrong'],
 			[['category_list'], 'safe']
 			/* ['pass', 'string', 'length' => [6,20] ], */
         ];
@@ -75,14 +81,14 @@ class Product extends \yii\db\ActiveRecord
 	public function behaviors()
 	{
 		return [
-			/* [
+			[
 				'class' => TimestampBehavior::className(),
 				'attributes' => [
 					ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
 					ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
 				],
-				`value` => new Expression(’NOW()’),
-			], */
+				'value' => new Expression('NOW()'),
+			],
 			'typecast' => [
                 'class' => AttributeTypecastBehavior::className(),
                 'attributeTypes' => [
@@ -92,8 +98,16 @@ class Product extends \yii\db\ActiveRecord
                     'primary_photo_id' => AttributeTypecastBehavior::TYPE_INTEGER,//TYPE_STRING FLOAT
  //                   'is_active' => AttributeTypecastBehavior::TYPE_BOOLEAN,
                     'visible' => AttributeTypecastBehavior::TYPE_INTEGER,
-					'created_at'=>AttributeTypecastBehavior::TYPE_INTEGER,
-					'updated_at'=>AttributeTypecastBehavior::TYPE_INTEGER,
+					/* 'created_at' => function ($value) {
+						$date = DateTime::createFromFormat('Y-m-d H:i:s', $value);
+						if($date instanceof DateTime){
+							$new_value = $date->getTimestamp();
+						} else {
+							$new_value = (int)$value;
+						}						
+						return $new_value;
+					},
+					*/
                 ],
  //               'typecastAfterValidate' => true,
  //               'typecastBeforeSave' => false,
@@ -124,10 +138,15 @@ class Product extends \yii\db\ActiveRecord
 	public function getParcels() { 
 		return $this->hasMany(Parcel::className(), ['product_id' => 'id']); 
 	}
-	public function getcategory()
+	/* public function getcategory()
 	{	
 		return $this->hasMany(ProductCategories::className(), ['id' => 'category_id'])
 			->viaTable('product_categories_products', ['product_id' => 'id']);
+	} */
+	public function getCategory()
+	{
+	  return $this->hasMany(ProductCategories::className(), 
+	  ['id' => 'category_id'])->viaTable('product_categories_products', ['product_id' => 'id']);
 	}
 	
 	

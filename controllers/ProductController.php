@@ -11,6 +11,8 @@ use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\VerbFilter;
+use app\models\ProductCategories;
+use yii\helpers\ArrayHelper;
 
 class ProductController extends \yii\web\Controller
 {
@@ -49,17 +51,33 @@ class ProductController extends \yii\web\Controller
 //		return $this->render('index', ['products'=>$products,'tmp'=>$test_tmp,'model'=>$model]);
 	}
 
-    public function actionView($id)
+    public function actionView($uri)
     {
 //		$this->layout = 'home';
-		$product = Product::findOne($id);
+		$product = Product::find()->where(['uri' => $uri])->one();
 		if($product == NULL) throw new \yii\web\NotFoundHttpException("Product not found");
+		$categories = $product->category;
+		$categories_id = ArrayHelper::map($categories,'id','name');
+		$breadcrumbs = [];
+		foreach($categories_id as $key=>$value){
+			$breadcrumbs[] = ProductCategories::reverse_tree($key);
+		}
 		
-		return $this->render('view',['product'=>$product->getOldAttributes(),'photos'=>$product->photos]);
-		
+		$route = Yii::$app->getUrlManager()->createUrl('categories');
+		$links = [];
+		if(count($breadcrumbs)){
+			foreach ($breadcrumbs[0] as $breadcrumb){
+				$links[] = ['label'=>$breadcrumb['label'], 'url'=>$route.$breadcrumb['url']];
+			}
+		}		
+		return $this->render('view',[
+			'product'=>$product->getOldAttributes(),
+			'photos'=>$product->photos,
+			'breadcrumbs' => $links,
+		]);		
         
     }
-	public function actionCreate()
+	/* public function actionCreate()
     {
         $model = new ProductForm();
         $model->product = new Product;
@@ -71,28 +89,8 @@ class ProductController extends \yii\web\Controller
             return $this->redirect(['update', 'id' => $model->product->id]);
         }
         return $this->render('create', ['model' => $model]);
-    }
+    } */
     
-    public function actionUpdate($id)
-    {
-        $model = new ProductForm();
-        $model->product = $this->findModel($id);
-        $model->setAttributes(Yii::$app->request->post());
-        
-        if (Yii::$app->request->post() && $model->save()) {
-            Yii::$app->getSession()->setFlash('success', 'Product has been updated.');
-            return $this->redirect(['update', 'id' => $model->product->id]);
-        }
-        return $this->render('update', ['model' => $model]);
-    }
-    
-    protected function findModel($id)
-    {
-        if (($model = Product::findOne($id)) !== null) {
-            return $model;
-        }
-        throw new HttpException(404, 'The requested page does not exist.');
-    }
 	public function actionJson()
 	{
 		$models = Product::find()->all();

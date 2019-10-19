@@ -54,10 +54,15 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
         return 'user';
     }
 	public function scenarios() {
-		return [
+		$scenarios = parent::scenarios();
+		$scenarios['login'] = ['username', 'pass'];
+		$scenarios['register'] = ['username', 'email', 'pass'];
+		/* return [
 			'login' => ['username', 'pass'],
 			'register' => ['username', 'email', 'pass']
-		];
+		]; */
+		return $scenarios;
+
 	}
 	public function beforeSave($insert) {
 	// Do whatever.
@@ -79,7 +84,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
             [['email'], 'string', 'max' => 60],
 //            [['pass'], 'string', 'max' => 64],
 //			[['pass'], 'string', 'length' => [2,20] ],
-            [['username'], 'unique'],
+            [['username'], 'unique', 'message'=>'{attribute} not unique'],
             [['email'], 'unique'],
 			['status', 'default', 'value' => self::STATUS_ACTIVE],
 /* 			['attr', 'filter', 'filter' => function($v) {
@@ -198,7 +203,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      */
     public static function findIdentityByAccessToken($token, $type = null)
 	{
-	return static::findOne(['auth_key' => $token]);
+		return static::findOne(['auth_key' => $token]);
 	}
     /**
      * @return string current user auth key
@@ -364,5 +369,9 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
         $this->setPassword($password);
         return $this->save(true, ['password_hash']);
     }
+	public function getUsername()
+	{
+		return $this->username;
+	}
 	
 }

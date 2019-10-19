@@ -1,5 +1,6 @@
 <?php
 /* @var $this yii\web\View */
+$this->params['breadcrumbs'][] = 'Products';
 ?>
 <h1>product/index</h1>
 

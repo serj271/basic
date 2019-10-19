@@ -19,7 +19,7 @@ use app\models\ProductCategories;
 use yii\db\ActiveRecord;
 //use yii\console\ErrorHandler;
 use yii\db\IntegrityException;
-//   \yii\helpers\VarDumper::dump
+use yii\helpers\ArrayHelper;
 
 /**
  * This command echoes the first argument that you have entered.
@@ -82,21 +82,34 @@ class ProductCategoriesController extends Controller
 		return ExitCode::OK;
 	}
 	
-	public function actionAddOne($name,$parent_id)
+	public function actionAddOne($id,$parent_id)
 	{//product-photo/add-one <product_id>
 //		$category = ProductCategories::findOne($id);
 //		Yii::info(VarDumper::dumpAsString($category));
-		
+		if($id == '0'){
+			echo "not set id 0\n";
+			return ExitCode::OK;
+		}
 			try{
 				$model = new ProductCategories();
-				$model->uri = 'uri_'.$name;
+				$model->uri = 'uri_'.$id;
+				$model->setAttribute('id',$id);
 	
-				$model->name =$name;
-				$model->description = 'description '.$name;
-				$model->order = 'order '.$name;
+				$model->name ='category_name_'.$id;
+				$model->description = 'description '.$id;
+				$model->order = 'order_'.$id;
 				$model->parent_id = $parent_id;
-				$model->save(false);
-				
+				$model->validate('uri');
+				$message_error = '';
+				if($model->hasErrors()){
+					foreach($model->errors['uri'] as $key=>$value){
+						$message_error .= $value;
+					}
+					echo $message_error."\n";
+//					Yii::info(VarDumper::dumpAsString(ArrayHelper::getValue($model->errors, 'uri')));
+					return ExitCode::OK;					
+				}
+				$model->save(true);				
 			} catch(IntegrityException $e){
 				Yii::info(VarDumper::dumpAsString($e));
 //				echo $e->getCode();
@@ -136,10 +149,6 @@ class ProductCategoriesController extends Controller
 //		$this->stdout("Waiting on important thing to happen...\n",Console::BOLD);			
 		return ExitCode::OK;
 	}
-    // The command "yii example/add test" will call "actionAdd(['test'])"
-    // The command "yii example/add test1,test2" will call "actionAdd(['test1', 'test2'])"
- 
-		
 	/* public function getProduct()
     {
         return $this->_product;
@@ -165,27 +174,47 @@ class ProductCategoriesController extends Controller
 		}
 		$model = new ProductCategories();
 		$attributes = $model->getAttributes();
+		echo $this->ansiFormat('category', Console::BOLD)."\n";
 		foreach(array_keys($attributes) as $key){
 			echo "$key => ".$this->ansiFormat($category[$key], Console::FG_YELLOW)."\n";
 		}
-		$tree = $category->full_tree($id);
-		Yii::info(VarDumper::dumpAsString($tree));
-		$children = \yii\helpers\ArrayHelper::getValue($tree, '0.id');
-	
-		echo "children => ".$this->ansiFormat($children, Console::FG_YELLOW)."\n";
-		/* foreach($tree as $item){
-			
-		} */
-		
-	/* 	$product = $photo->getProduct()->one();//active query to single last row of result
-
-		$attributes = $product->attributes;
-		if(count($attributes) != 0){
-			echo "product name -----".$product->getOldAttributes()['name']."\n";//from public method name
-			foreach($product->getOldAttributes() as $key=>$value){
-				echo "$key => ".$this->ansiFormat($value, Console::FG_YELLOW)."\n";
-			}	
-		} */
+		$tree = ProductCategories::full_tree($id);
+//		Yii::info(VarDumper::dumpAsString($tree));
+//		$children = \yii\helpers\ArrayHelper::getValue($tree, '0.id');
+		foreach($tree as $item)
+		{
+			echo "children => ".$this->ansiFormat($item['name'], Console::FG_YELLOW)."\n";
+		}
+		echo $this->ansiFormat('breadcrumb', Console::BOLD)."\n";
+		$breadcrumb = ProductCategories::reverse_tree($id);
+		foreach($breadcrumb as $item){
+			echo "label =>  ".$item['label']." url =>  ".$item['url']." \n";
+		}
+		$products = $category->products;
+		if(count($products)){
+			echo $this->ansiFormat('product', Console::BOLD)."\n";
+		}
+		foreach ($products as $product){
+			echo "name of product $product->name\n";
+		}
+		return ExitCode::OK;
+	}
+	public function actionUpdateParent($id, $parent_id){
+		$category = ProductCategories::findOne($id);
+		if($category == NULL){
+			echo "id {$id} category not found\n";
+			return ExitCode::OK;
+		}
+		$parent_old = $category->parent_id;
+		$category_parent = ProductCategories::findOne($parent_id);
+		if($category_parent == NULL){
+			echo "parent_id {$parent_id} not found\n";
+			return ExitCode::OK;
+		}		
+		$category->parent_id = $parent_id;
+		$latest_id = $category->save(true);
+//		$category = ProductCategories::findOne($latest_id);
+		echo "update parent {$id} category from $parent_old to  $parent_id\n";
 		return ExitCode::OK;
 	}
 	public function actionGetProducts($category_id){//

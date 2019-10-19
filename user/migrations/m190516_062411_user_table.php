@@ -14,7 +14,7 @@ class m190516_062411_user_table extends Migration
     public function safeUp()
     {
 		$this->createTable('user', [
-			'id' => Schema::TYPE_PK. ' NOT NULL AUTO_INCREMENT',
+			'id' => Schema::TYPE_PK,
 			// $this->primaryKey()
 			'username' => $this->string(64)->notNull(),
 			'email' => $this->string(64)->notNull(),
@@ -27,7 +27,7 @@ class m190516_062411_user_table extends Migration
 			'created_at' => Schema::TYPE_INTEGER,
 			// $this->integer()
 			'updated_at' => Schema::TYPE_INTEGER,
-			'PRIMARY KEY ([[id]])',
+//			'PRIMARY KEY ([[id]])', // already exists
 		]);
     }
 
@@ -40,7 +40,7 @@ class m190516_062411_user_table extends Migration
  //       return false;
 		$tableName = $this->db->tablePrefix . 'user';
 		if ($this->db->getTableSchema($tableName, true) != null){
-			$this->dropTable('users');
+			$this->dropTable('user');
 		}
     }
 }
