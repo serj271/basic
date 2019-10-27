@@ -13,6 +13,7 @@ $config = [
     ],
 	'language' => 'ru',
 	'timeZone' => 'Asia/Yekaterinburg',
+//	'controllerNamespace' => 'app\controllers\json',
     'components' => [
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
@@ -20,7 +21,10 @@ $config = [
 			'parsers' => [
 				'application/json' => 'yii\web\JsonParser',
 			]	
-	   ],
+		],
+		'assetManager' => [
+            'appendTimestamp' => true,
+        ],
 //        'cache' => [
 //            'class' => 'yii\caching\FileCache',
 //        ],
@@ -111,6 +115,15 @@ $config = [
 				[
 					'class' => 'app\components\ProductAdminUrlRule',					
 				],
+				[
+					'class' => 'app\components\JsonUrlRule',					
+				],
+				
+			/* 	[
+					'pattern' => 'json/<controller:\w+>/<action>/<id:\d+>',
+					'route' => 'json/<controller>/<action>',
+//					'defaults' => ['controller' => 'user']
+				], */
 				/* [
 					'class' => 'app\components\CustomerUrlRule',
 				], */
@@ -128,9 +141,11 @@ $config = [
 //				'<controller>/<year:\d{4}>/<action>' => ' <controller>/<action>',
 //				'<view:(break)>' => 'site/page',
 				/* '<controller:static>/<view:.*>' => '<controller>',
-				'<controller:\w+>/<id:\d+>' => '<controller>/view',
-				'<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>', */
-//				'<controller:\w+>/<action:\w+>' => '<controller>/<action>',
+				'<controller:\w+>/<id:\d+>' => '<controller>/view',*/
+//				'<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
+//				'<path:\w+>/<controller:\w+>/<action:\w+>'=>'<path>/<controller>/<action>',
+//				'json/<controller:[A-Za-z0-9 -_.]+>/<action:\w+>/<id:\d+>' => 'json/<controller>/<action>',
+//				 'json/<view:\S+>' => 'site/page',
 //				'news/<year:\d{4}/>' => ' news/items-list?year=<year>',
 //				'news/<category:\w+>/items-list' => 'test-rules/items-list',
 //				'debug/<controller>/<action>' => 'debug/<controller>/<action>',

@@ -1,16 +1,41 @@
+
 <?php
 /* @var $this yii\web\View */
 use yii\grid\GridView;
 use yii\helpers\Html; 
 use yii\helpers\ArrayHelper;
-use yii\helpers\VarDumper; 
-?>
-<h1>product-admin/index</h1>
+use yii\helpers\VarDumper;
+use app\assets\ProductAdminAsset;
+use Yii;
 
+ProductAdminAsset::register($this);
+$uri = Yii::$app->urlManager->createUrl(['json','controller'=>'json-product', 'action'=>'view']);
+		$url = 'http://192.168.1.1'.$uri;
+?>
+<script>
+    function myFunction()
+    {
+        $.ajax({
+            url: '<?php echo Yii::$app->request->baseUrl. '/json/json-product/view' ?>',
+           type: 'post',
+           data: {id: $("#searchname").val()},
+           success: function (data) {
+              console.log(data);
+
+           }
+
+      });
+    }
+</script>
+<h1>product-admin/index</h1>
+<input type="text" value ="" name="searchname", id="searchname">
+<button onclick="myFunction()">Search</button>
 <p>
     You may change the content of this page by modifying
     the file <code><?= __FILE__; ?></code>.
 </p>
+
+
 <?= GridView::widget([
 		'dataProvider' => $dataProvider,
 		'filterModel' => $searchModel,

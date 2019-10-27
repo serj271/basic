@@ -1,7 +1,7 @@
 "use strict";
 
 
-alert('ok product');
+//alert('ok');
 
 $(function(){
 	$(document).on('click', '.showModalButton', function(){

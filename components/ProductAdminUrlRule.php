@@ -35,7 +35,7 @@ class ProductAdminUrlRule extends BaseObject  implements UrlRuleInterface
     {
         $pathInfo = $request->getPathInfo();
 //		Yii::info(VarDumper::dumpAsString($pathInfo));
-        if (preg_match('%^product-admin\/(?P<action>[A-Za-z]+)\/(?P<id>[_A-Za-z-0-9-]+)?%', $pathInfo, $matches)) {
+        if (preg_match('%^product-admin\/(?P<action>[A-Za-z-]+)\/(?P<id>[_A-Za-z-0-9-]+)?%', $pathInfo, $matches)) {
 			if(!isset($matches['action'])){
 				return false;
 			}

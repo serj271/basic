@@ -15,6 +15,8 @@ use yii\db\ActiveRecord;
 //use yii\console\ErrorHandler;
 use yii\db\IntegrityException; 
 use app\models\ProductCategories;
+use app\common\components\CurlGetHelpers;
+use yii\helpers\BaseUrl;
 
 class ProductController extends Controller
 {
@@ -143,8 +145,7 @@ class ProductController extends Controller
 //				echo $e->getMessage()."\n";
 				$message_error = $this->ansiFormat($e->errorInfo[2], Console::BOLD);
 				echo $message_error."\n";
-			}			
-					
+			}					
 		return ExitCode::OK;
 	}
 	
@@ -193,7 +194,9 @@ class ProductController extends Controller
 			echo "category->name  ".$this->ansiFormat($category->name, Console::FG_YELLOW)."\n";
 			echo "category->id  ".$this->ansiFormat($category->id, Console::FG_YELLOW)."\n";
 			
-		}		
+		}
+		$photos = $product->photos;
+//		Yii::info(VarDumper::dumpAsString($product));
 		return ExitCode::OK;
 	}
 	public function actionGetByCategory($uri){//id category
@@ -265,11 +268,52 @@ class ProductController extends Controller
 			/* $message_error = $this->ansiFormat($errors['path_fullsize'][0], Console::BOLD);
 			echo $message_error."\n";
 			Yii::info(VarDumper::dumpAsString($attributes)); */					
-		}
-				
-				
-				
+		}				
 		return ExitCode::OK;
 	}
-
+	
+	public function actionCurlGetAll()
+	{
+		$uri = Yii::$app->urlManager->createUrl(['json','controller'=>'json-product', 'action'=>'index']);
+		$url = 'http://192.168.1.1'.$uri;
+//		$key = Yii::$app->request->csrfParam;
+//		$value = Yii::$app->request->csrfToken;
+		list($products, $getinfo) = CurlGetHelpers::get($url, null);
+		if($getinfo['http_code'] != 200){
+//			Yii::info(VarDumper::dumpAsString($getinfo)); 
+			echo "code {$getinfo['http_code']}\n";
+			return ExitCode::OK;
+		}
+		if(count($products) !== 0){
+			if(is_array($products)){
+				foreach ($products as $product){
+					foreach($product as $key => $value){
+						echo "$key => ".$this->ansiFormat($value, Console::FG_YELLOW)."\n";
+					}
+				}	
+			}			
+		}
+//		echo $data;
+//		echo Yii::$app->urlManager->createUrl(['json','controller'=>'json-product', 'action'=>'index'])."\n"; 
+		return ExitCode::OK;
+	}
+	public function actionCurlGetOne($id=null)
+	{
+//		$session = Yii::$app->session->get('session');
+		
+	
+		$uri = Yii::$app->urlManager->createUrl(['json','controller'=>'json-product', 'action'=>'view']);
+		$url = 'http://192.168.1.1'.$uri;
+		list($product, $getinfo) = CurlGetHelpers::get($url, $id);
+		if($getinfo['http_code'] != 200)
+		{
+			echo "code {$getinfo['http_code']}\n";
+			return ExitCode::OK;
+		}
+		
+		foreach($product as $key => $value){
+			echo "$key => ".$this->ansiFormat($value, Console::FG_YELLOW)."\n";
+		}
+		return ExitCode::OK;
+	}
 }

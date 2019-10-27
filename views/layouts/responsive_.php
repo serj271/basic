@@ -17,11 +17,11 @@ $this->registerCssFile("@web/css/test.css", [
     'media' => 'print',
 ], 'css-print-theme');//View: : POS _ HEAD
 
-$this->registerJsFile(
-    '@web/js/test.js',
-	 ['position' => \yii\web\View::POS_END]
+//$this->registerJsFile(
+//    '@web/js/test.js',
+//	 ['position' => \yii\web\View::POS_END]
 #    ['depends' => [\yii\web\JqueryAsset::className()]]
-);
+//);
 
 ?>
 <?php $this->beginPage() ?>

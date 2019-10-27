@@ -15,6 +15,8 @@ use yii\helpers\VarDumper;
 use yii\helpers\ArrayHelper;
 use yii\db\Query;
 use app\models\User;
+use app\common\components\CurlAuthHelpers;
+use yii\helpers\BaseUrl;
 
 /**
  * This command echoes the first argument that you have entered.
@@ -205,6 +207,33 @@ class UserController extends Controller
 		$auth->assign($login, $id);
 		return ExitCode::OK;
 	}
+	public function actionCurlGetAll()
+	{
+		$uri = Yii::$app->urlManager->createUrl(['json','controller'=>'json-user', 'action'=>'index']);
+		$url = 'http://192.168.1.1'.$uri;
+		$user = User::findByUsername('test');
+		$auth_token = $user->getAuthKey();
+/* 		Yii::info(VarDumper::dumpAsString('$auth_token'));
+		Yii::info(VarDumper::dumpAsString($auth_token)); */
+		list($users, $getinfo) = CurlAuthHelpers::get($url,$auth_token);
+		if($getinfo['http_code'] != 200)
+		{
+			echo "code {$getinfo['http_code']}\n";
+			return ExitCode::OK;
+		}	
+		echo VarDumper::dumpAsString($users); 
+		/* if(count($users) !== 0){
+			foreach ($products as $product){
+				foreach($product as $key => $value){
+					echo "$key => ".$this->ansiFormat($value, Console::FG_YELLOW)."\n";
+				}
+			}
+		} */
+//		echo $data;
+//		echo Yii::$app->urlManager->createUrl(['json','controller'=>'json-product', 'action'=>'index'])."\n"; 
+		return ExitCode::OK;
+	}
+	
 	
 	
 }

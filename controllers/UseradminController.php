@@ -30,7 +30,6 @@ class UseradminController extends \yii\web\Controller
 	}
     public function behaviors()
     {
-//		Yii::info('============');
         return [
 			/* access' => [
                 'class' => AccessControl::className(),

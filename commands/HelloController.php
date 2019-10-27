@@ -13,6 +13,9 @@ use yii\helpers\Console;
 use Yii;
 use yii\base;
 use yii\helpers\VarDumper;
+use app\common\components\MyHelpers;
+
+
 /**
  * This command echoes the first argument that you have entered.
  *
@@ -59,5 +62,11 @@ class HelloController extends Controller
 		
 		return ExitCode::OK;
     }
+	public function actionMyhelper()
+	{
+		$message  = MyHelpers::hello("John");
+		echo $message."\n";
+		return ExitCode::OK;		
+	}
 }
 //./yii hello hello --message="hello all"

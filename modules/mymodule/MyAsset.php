@@ -19,13 +19,16 @@ class MyAsset extends AssetBundle
 {
     public $basePath = '@webroot';
     public $baseUrl = '@web';
+	
+//public $sourcePath = '@app/modules/mymodule/assets';
+//public $css = ['/yii2-cheatsheets/146-yii2-asset-bundle.html/css/some.css'];	
     public $css = [
         'css/site1.css',
     ];
     public $js = [
     ];
     public $depends = [
-        'yii\web\YiiAsset',
-        'yii\bootstrap\BootstrapAsset',
+ //       'yii\web\YiiAsset',
+ //       'yii\bootstrap\BootstrapAsset',
     ];
 }

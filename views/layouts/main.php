@@ -12,10 +12,10 @@ use app\assets\AppAsset;
 use yii\web\View;
 
 AppAsset::register($this);
-$this->registerCssFile("@web/css/test.css", [
-    'depends' => [\yii\bootstrap\BootstrapAsset::className()],
-    'media' => 'print',
-], 'css-print-theme');//View: : POS _ HEAD
+//$this->registerCssFile("@web/css/test.css", [
+//    'depends' => [\yii\bootstrap\BootstrapAsset::className()],
+//    'media' => 'print',
+//], 'css-print-theme');//View: : POS _ HEAD
 
 $this->registerJsFile(
     '@web/js/test.js',

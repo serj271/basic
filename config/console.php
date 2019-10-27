@@ -40,6 +40,50 @@ $config = [
         'session' => [ // for use session in console application
             'class' => 'yii\web\Session'
         ],
+		'urlManager' => [
+			'class' => 'yii\web\UrlManager',
+            'enablePrettyUrl' => true,
+            'showScriptName' => false,
+			'baseUrl' => '/basic/web',
+			'scriptUrl'=>'/basic/web/index.php',
+			'rules' => [
+				[
+					'pattern' => 'product',
+					'route' => 'product/index',
+					'suffix' => '/',
+//					'normalizer' => false, // disable normalizer for this rule
+				],				
+				['class' => 'yii\rest\UrlRule', 'controller' => 'customers'],
+//				'class' => 'yii\web\UrlRule',
+				[
+					'class' => 'app\components\NewsUrlRule',
+				],
+				[
+					'pattern' => 'categories',
+					'route' => 'product-categories/index',
+					'suffix' => '/',
+//					'normalizer' => false, // disable normalizer for this rule
+				],
+				[
+					'pattern' => 'product-admin',
+					'route' => 'product-admin/index',
+					'suffix' => '/',
+//					'normalizer' => false, // disable normalizer for this rule
+				],	
+				[
+					'class' => 'app\components\CategoryUrlRule',					
+				],
+				[
+					'class' => 'app\components\ProductUrlRule',					
+				],
+				[
+					'class' => 'app\components\ProductAdminUrlRule',					
+				],
+				[
+					'class' => 'app\components\JsonUrlRule',					
+				],
+			]
+		]
     ],
     'params' => $params,
     /*
@@ -58,6 +102,10 @@ if (YII_ENV_DEV) {
     $config['bootstrap'][] = 'gii';
     $config['modules']['gii'] = [
         'class' => 'yii\gii\Module',
+    ];
+	$config['modules']['debug'] = [
+        'class' => 'yii\debug\Module',
+        'allowedIPs' => ['127.0.0.1', '::1','192.168.1.3','192.168.1.11','192.168.1.10','192.168.1.2'],
     ];
 }
 

@@ -7,9 +7,91 @@ use yii\web\Controller;
 use yii\filters\AccessControl;
 use app\models\User;
 use app\models\LoginForm;
+use yii\filters\VerbFilter;
+use yii\web\ForbiddenHttpException;
+use yii\helpers\VarDumper;
 
 class AuthorizationManagerController extends \yii\web\Controller
 {
+	public function beforeAction($action)
+	{
+//		Yii::info('hello beforeAction');
+//		if (in_array($action->id, ['index'])) {
+//			$this->enableCsrfValidation = false;
+//		}
+		return parent::beforeAction($action);
+	}
+    public function behaviors()
+    {
+        return [
+			/* access' => [
+                'class' => AccessControl::className(),
+                'only' => ['special-callback'],
+                'rules' => [
+                    [
+                        'actions' => ['special-callback'],
+                        'allow' => true,
+                        'matchCallback' => function ($rule, $action) {
+                            return date('d-m') === '31-10';
+                        }
+                    ],
+                ],
+            ], */
+			/* [
+				'class' => AccessControl::className(),
+				'denyCallback' => function ($rule, $action) {
+					throw new \Exception('У вас нет доступа к этой странице');
+				}
+			] */
+            
+			'access' => [
+                        'class' => \yii\filters\AccessControl::className(),
+                        'only' => ['contact','about','update','view','index'],
+                        'rules' => [
+                            // allow authenticated users
+							[
+								'allow' => false,
+								'verbs' => ['POST']
+							],
+                            [
+                                'allow' => true,
+								'actions' => ['contact','about','login','index'],
+                                'roles' => ['@'],
+								
+                            ],
+							/*[
+								'allow' => true,
+								'actions' => ['index'],
+								'roles' => ['admin'],
+							], */
+							/* [
+                                'allow' => true,
+								'actions' => ['about'],
+                                'roles' => ['?'],
+								
+                            ], */
+							/* [
+                                'allow' => true,
+								'actions' => ['about'],                         
+								'matchCallback' => function ($rule, $action) {//$rule => actions['about'];
+									return date('d-m') === '31-10';
+								}
+								
+                            ], */
+                            // everything else is denied
+                        ],
+						
+            ],  
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'logout' => ['post'],
+                ],
+            ],
+			
+        ];
+    }
+
 	public function InitializeAuthorizations(){
 		$auth = Yii::$app->authManager;
 		$permissions = [

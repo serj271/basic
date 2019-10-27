@@ -6,26 +6,26 @@
  */
 
 namespace app\assets;
-
+ 
 use yii\web\AssetBundle;
-
+ 
 /**
- * Main application asset bundle.
- *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @since 2.0
  */
-class AppAsset extends AssetBundle
+class ProductAsset extends AssetBundle
 {
     public $basePath = '@webroot';
     public $baseUrl = '@web';
-    public $css = [
-        'css/site.css',
-    ];
+    public $css = [];
     public $js = [
+//      '/js/jquery.simplyCountable.js',
+//      '/js/twitter-text.js',
+//      '/js/twitter_count.js',  
+      'js/product.js',
     ];
     public $depends = [
-////        'yii\web\YiiAsset',
-  //      'yii\bootstrap\BootstrapAsset',
-    ];
+            'yii\web\YiiAsset',
+            'yii\bootstrap\BootstrapAsset',
+        ];
 }
