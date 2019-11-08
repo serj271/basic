@@ -36,7 +36,7 @@ class PhotoController extends Controller
     }
     public function actionIndex()
     {
-		$filename = realpath(Yii::$app->basePath).'/web/uploads/csv.csv';
+		$filename = realpath(Yii::$app->basePath).'/web/uploads/mvz_update.csv';
 
 		if (file_exists($filename)) {
 			echo "The file $filename exists\n";
@@ -45,14 +45,16 @@ class PhotoController extends Controller
 		}
 //		$file = new \SplFileObject(Yii::$app->basePath.'/web/uploads/csv.csv');
 		$model = new CsvBasic([
-			'filename' =>realpath(Yii::$app->basePath).'/web/uploads/csv.csv',
+			'filename' =>realpath(Yii::$app->basePath).'/web/uploads/mvz.csv',
 			'pagination'=> [
-				'pageSize'=>200,
+				'pageSize'=>2,
 				
 			]
 		]);
 //		$model = new CsvData();
 		$model->setCsvControl("	",' ','\\');
+		$model->setPageCount(2);
+//		$model->key = 2;
 //		Yii::info(VarDumper::dumpAsString( $model->getCsvControl()));
 //		Yii::info(VarDumper::dumpAsString( $model->getColNames()));
 		Yii::info(VarDumper::dumpAsString( $model->parse()));
