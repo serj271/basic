@@ -3,13 +3,13 @@
 namespace app\models;
 use yii\db\ActiveRecord;
 use yii\behaviors\TimestampBehavior;
-use yii\db\IntegrityException;
+//use yii\db\IntegrityException;
 use yii\db\Expression;
-use Yii;
+//use Yii;
 use yii\behaviors\AttributeTypecastBehavior;
-use app\models\ProductCategories;
-use yii\helpers\VarDumper;
-use \Datetime;
+//use app\models\ProductCategories;
+//use yii\helpers\VarDumper;
+//use \Datetime;
 /**
  * This is the model class for table "products".
  *
@@ -22,7 +22,9 @@ use \Datetime;
  * @property int $visible
  */
 class Product extends \yii\db\ActiveRecord
-{	
+{
+    const HAS_MANY = 'has_many';
+
     /**
      * {@inheritdoc}
      */
@@ -138,16 +140,12 @@ class Product extends \yii\db\ActiveRecord
 	public function getParcels() { 
 		return $this->hasMany(Parcel::className(), ['product_id' => 'id']); 
 	}
-	/* public function getcategory()
-	{	
-		return $this->hasMany(ProductCategories::className(), ['id' => 'category_id'])
-			->viaTable('product_categories_products', ['product_id' => 'id']);
-	} */
+
 	public function getCategory()
 	{
-	  return $this->hasMany(ProductCategories::className(), 
-	  ['id' => 'category_id'])->viaTable('product_categories_products', ['product_id' => 'id']);
+	  return $this->hasMany(ProductCategory::className(),
+	  ['id' => 'category_id'])->viaTable('product_category_product', ['product_id' => 'id']);
 	}
-	
+
 	
 }

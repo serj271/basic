@@ -2,6 +2,7 @@
 
 namespace app\commands;
 
+use phpDocumentor\Reflection\Types\Integer;
 use yii\console\Controller;
 use yii\console\ExitCode;
 use yii\helpers\Console;
@@ -21,8 +22,8 @@ use yii\helpers\BaseUrl;
 class ProductController extends Controller
 {
 	public $table_name = 'product';
-	private $_product;
-    private $_photos;
+/*	private $_product;
+    private $_photos;*/
     
     public function options($actionID)
     {
@@ -85,12 +86,12 @@ class ProductController extends Controller
 		return ExitCode::OK;
 	}
 	
-	public function actionAddOne($id, $category_id)
+	public function actionAddOne($id)
 	{//product-photo/add-one <product_id>
-			if(!ProductCategories::findOne($category_id)){
+			/*if(!ProductCategories::findOne($category_id)){
 				echo "category_id {$category_id} not found\n";
 				return ExitCode::OK;
-			}
+			}*/
 			try{
 				$product = new Product();
 //				$attributes = array_keys($photo->getAttributes());						
@@ -99,7 +100,7 @@ class ProductController extends Controller
 				$product->description = 'description_'.$id;
 				$product->uri = 'uri_'.$id;
 				$product->visible = 1;
-				$product->category_list = [$category_id];
+			/*	$product->category_list = [$category_id];*/
 								
 				if ($product->validate()) {
 //					$product->setDefaultValues();
@@ -150,10 +151,11 @@ class ProductController extends Controller
 	}
 	
 	public function actionGetOne($id){
-		$product = Product::find($id)
-			->with('photos')
-			->where(['id'=>$id])
-			->one();	
+        /** @var Integer $id */
+        $product = Product::findOne($id);
+		/*	->with('photos')*/
+		/*	->where(['id'=>$id])
+			->one();	*/
 		if($product == NULL){
 			echo "not found product id $id\n";
 			return ExitCode::OK;

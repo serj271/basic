@@ -78,9 +78,7 @@ class CustomerController extends Controller
 					foreach($errors as $key=>$value){
 						echo "$key=>$value[0]\n";
 					}
-					/* $message_error = $this->ansiFormat($errors['path_fullsize'][0], Console::BOLD);
-					echo $message_error."\n";
-					Yii::info(VarDumper::dumpAsString($attributes)); */					
+
 				}
 				
 			} catch(IntegrityException $e){

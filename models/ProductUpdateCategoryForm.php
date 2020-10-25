@@ -29,6 +29,11 @@ class ProductUpdateCategoryForm extends Model
     private $_productCategories;
     private $_categories;
     /**
+     * @var \app\models\Product|mixed|null
+     */
+     private $product;
+
+    /**
      * {@inheritdoc}
      */
     public function rules()

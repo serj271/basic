@@ -20,14 +20,14 @@ use app\components\UriValidator;
  * @property string $primary_photo_id
  * @property string $image
  */
-class ProductCategories extends \yii\db\ActiveRecord
+class ProductCategory extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'product_categories';
+        return 'product_category';
     }
 
     /**
@@ -36,10 +36,10 @@ class ProductCategories extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['uri', 'name', 'order'], 'required'],
+            [['uri', 'name'], 'required'],
             [['description'], 'string'],
             [['parent_id'], 'integer'],
-            [['uri', 'name', 'order', 'primary_photo_id', 'image'], 'string', 'max' => 64,
+            [['uri', 'name', 'image'], 'string', 'max' => 64,
 				'message'=>'Please enter a value for {attribute} too long'
 			],
 			['uri','unique', 'message'=>'{attribute} not unique']
@@ -62,7 +62,7 @@ class ProductCategories extends \yii\db\ActiveRecord
             'uri' => 'Uri',
             'name' => 'Name',
             'description' => 'Description',
-            'order' => 'Order',
+          /*  'order' => 'Order',*/
             'parent_id' => 'Parent ID',
             'primary_photo_id' => 'Primary Photo ID',
             'image' => 'Image',
@@ -70,7 +70,7 @@ class ProductCategories extends \yii\db\ActiveRecord
     }
 	public function getProducts() { 
 		return $this->hasMany(Product::className(), ['id' => 'product_id'])
-			->viaTable('product_categories_products', ['category_id' => 'id']); 
+			->viaTable('product_category_products', ['category_id' => 'id']);
 	}
 	/**
 	 * Returns a full tree of nested product categories started at a category
@@ -86,10 +86,10 @@ class ProductCategories extends \yii\db\ActiveRecord
 		$query = new Query();
 		$query
 			->select(['id','name','parent_id','uri'])
-			->from('product_categories')
+			->from('product_category')
 //			->leftJoin('product_photo','product_photo.product_id')
 			->where(['parent_id' => $start])
-			->orderBy($order_by[0], $order_by[1]);
+			->orderBy([$order_by[0] => $order_by[1]]);
 //			->asArray()
 //			->all();
 	/* 	$product_categories = ORM::factory('Product_Category')
@@ -121,13 +121,13 @@ class ProductCategories extends \yii\db\ActiveRecord
 	{
 		$tree = array();
 
-		$category = ProductCategories::findOne($start);
+		$category = ProductCategory::findOne($start);
 
 //		$tree[] = [$category->name];
 
 		while ($category->parent_id)
 		{
-			$category = ProductCategories::findOne($category->parent_id);
+			$category = ProductCategory::findOne($category->parent_id);
 			$tree[] = ['label' => $category->name,'url' => $category->uri];
 		}
 
@@ -135,6 +135,9 @@ class ProductCategories extends \yii\db\ActiveRecord
 	}
 	public static function getCategories()
 	{
-		return ProductCategories::find()->all();
+		return ProductCategory::find()->all();
 	}
+	public function addProduct($prosuct_id, $categori_id){
+
+    }
 }

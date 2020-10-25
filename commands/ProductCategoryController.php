@@ -1,9 +1,4 @@
 <?php
-/**
- * @link http://www.yiiframework.com/
- * @copyright Copyright (c) 2008 Yii Software LLC
- * @license http://www.yiiframework.com/license/
- */
 
 namespace app\commands;
 
@@ -15,7 +10,7 @@ use yii\base;
 use yii\db\Query;
 use yii\helpers\VarDumper; 
 use app\models\Product;
-use app\models\ProductCategories;
+use app\models\ProductCategory;
 use yii\db\ActiveRecord;
 //use yii\console\ErrorHandler;
 use yii\db\IntegrityException;
@@ -31,10 +26,10 @@ use yii\helpers\BaseUrl;
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @since 2.0
  */
-class ProductCategoriesController extends Controller
+class ProductCategoryController extends Controller
 {
 	
-	public $table_name = 'product_categories';
+	public $table_name = 'product_category';
 	    
     public function options($actionID)
     {
@@ -43,7 +38,7 @@ class ProductCategoriesController extends Controller
     
     public function optionAliases()
     {
-        return ['id' => 'id'];
+        return ['id' => 'ID'];
     }
 	
     // The command "yii example/create test" will call "actionCreate('test')"
@@ -68,7 +63,7 @@ class ProductCategoriesController extends Controller
 //		Yii::info(VarDumper::dumpAsString($model->getAttributes()));
 //		Yii::info(VarDumper::dumpAsString($model->attributeTypes));
 		
-		$categories = ProductCategories::find()
+		$categories = ProductCategory::find()
 			->indexBy('id')
 			->asArray()
 			->all();
@@ -93,13 +88,13 @@ class ProductCategoriesController extends Controller
 			return ExitCode::OK;
 		}
 			try{
-				$model = new ProductCategories();
-				$model->uri = 'uri_'.$id;
+				$model = new ProductCategory();
+				$model->uri = 'uri_'.$id.'_'.$parent_id;
 				$model->setAttribute('id',$id);
 	
 				$model->name ='category_name_'.$id;
 				$model->description = 'description '.$id;
-				$model->order = 'order_'.$id;
+			/*	$model->order = 'order_'.$id;*/
 				$model->parent_id = $parent_id;
 				$model->validate('uri');
 				$message_error = '';
@@ -108,6 +103,7 @@ class ProductCategoriesController extends Controller
 						$message_error .= $value;
 					}
 					echo $message_error."\n";
+                    Yii::info(VarDumper::dumpAsString($model->errors));
 //					Yii::info(VarDumper::dumpAsString(ArrayHelper::getValue($model->errors, 'uri')));
 					return ExitCode::OK;					
 				}
@@ -122,10 +118,8 @@ class ProductCategoriesController extends Controller
 		return ExitCode::OK;
 	}
 	
-	public function actionDeleteOne($id=1){//product-categories/delete-one <id>
-		
-			try{
-				$model = ProductCategories::findOne($id);
+	public function actionDeleteOne($id=1){//product-category/delete-one <id>
+				$model = ProductCategory::findOne($id);
 				if($model){
 	//				$file_path = \Yii::getAlias('@app').'/'.@web.'/img'.$model->path_fullsize;
 	//				Yii::info(VarDumper::dumpAsString());
@@ -135,19 +129,19 @@ class ProductCategoriesController extends Controller
 						return ExitCode::OK;
 					}
 					unlink($file_path);*/
-					$model->delete();
-					echo "model delete $id\n";
-				} else {
-					echo "not model with id => $id \n";
-				}				
-				
-			} catch(IntegrityException $e){
-				Yii::info(VarDumper::dumpAsString($e));
+                    try {
+                        $model->delete();
+                        echo "model delete $id\n";
+                    } catch (IntegrityException $e) {
+                        Yii::info(VarDumper::dumpAsString($e));
 //				echo $e->getCode();
 //				echo $e->getMessage()."\n";
-				$message_error = $this->ansiFormat($e->errorInfo[2], Console::BOLD);
-				echo $message_error."\n";
-			}			
+                        $message_error = $this->ansiFormat($e->errorInfo[2], Console::BOLD);
+                        echo $message_error . "\n";
+                    }
+				} else {
+					echo "not model with id => $id \n";
+				}
 //		$this->stdout("Waiting on important thing to happen...\n",Console::BOLD);			
 		return ExitCode::OK;
 	}
@@ -156,26 +150,26 @@ class ProductCategoriesController extends Controller
 //		Yii::info(VarDumper::dumpAsString($model));
 //		Yii::info(VarDumper::dumpAsString($photo->getDirtyAttributes()));
 //		Yii::info(VarDumper::dumpAsString($photo->getProduct()));
-		$category = ProductCategories::findOne($id);
+		$category = ProductCategory::findOne($id);
 		if($category == NULL){
 			echo "id {$id} category not found\n";
 			return ExitCode::OK;
 		}
-		$model = new ProductCategories();
+		$model = new ProductCategory();
 		$attributes = $model->getAttributes();
 		echo $this->ansiFormat('category', Console::BOLD)."\n";
 		foreach(array_keys($attributes) as $key){
 			echo "$key => ".$this->ansiFormat($category[$key], Console::FG_YELLOW)."\n";
 		}
-		$tree = ProductCategories::full_tree($id);
+		//$tree = ProductCategory::full_tree($id);
 //		Yii::info(VarDumper::dumpAsString($tree));
 //		$children = \yii\helpers\ArrayHelper::getValue($tree, '0.id');
-		foreach($tree as $item)
+		/*foreach($tree as $item)
 		{
 			echo "children => ".$this->ansiFormat($item['name'], Console::FG_YELLOW)."\n";
 		}
 		echo $this->ansiFormat('breadcrumb', Console::BOLD)."\n";
-		$breadcrumb = ProductCategories::reverse_tree($id);
+		$breadcrumb = ProductCategory::reverse_tree($id);
 		foreach($breadcrumb as $item){
 			echo "label =>  ".$item['label']." url =>  ".$item['url']." \n";
 		}
@@ -185,17 +179,17 @@ class ProductCategoriesController extends Controller
 		}
 		foreach ($products as $product){
 			echo "name of product $product->name\n";
-		}
+		}*/
 		return ExitCode::OK;
 	}
 	public function actionUpdateParent($id, $parent_id){
-		$category = ProductCategories::findOne($id);
+		$category = ProductCategory::findOne($id);
 		if($category == NULL){
 			echo "id {$id} category not found\n";
 			return ExitCode::OK;
 		}
 		$parent_old = $category->parent_id;
-		$category_parent = ProductCategories::findOne($parent_id);
+		$category_parent = ProductCategory::findOne($parent_id);
 		if($category_parent == NULL){
 			echo "parent_id {$parent_id} not found\n";
 			return ExitCode::OK;
@@ -207,12 +201,12 @@ class ProductCategoriesController extends Controller
 		return ExitCode::OK;
 	}
 	public function actionGetProducts($category_id){//
-		$category = ProductCategories::findOne($category_id);
+		$category = ProductCategory::findOne($category_id);
 		if($category == NULL){
 			echo "category_id {$category_id} category not found\n";
 			return ExitCode::OK;
 		}
-		$model = new ProductCategories();
+		$model = new ProductCategory();
 		$attributes = $model->getAttributes();
 		foreach(array_keys($attributes) as $key){
 			echo "$key => ".$this->ansiFormat($category[$key], Console::FG_YELLOW)."\n";
