@@ -1,12 +1,18 @@
 <?php
 
 namespace app\models;
+use phpDocumentor\Reflection\Types\Integer;
+use Yii;
+use yii\base\InvalidConfigException;
 use yii\db\ActiveRecord;
 use yii\behaviors\TimestampBehavior;
 //use yii\db\IntegrityException;
+use yii\db\Exception;
 use yii\db\Expression;
 //use Yii;
 use yii\behaviors\AttributeTypecastBehavior;
+use yii\helpers\VarDumper;
+
 //use app\models\ProductCategories;
 //use yii\helpers\VarDumper;
 //use \Datetime;
@@ -130,7 +136,7 @@ class Product extends \yii\db\ActiveRecord
             'photo'=>array(self::HAS_MANY, 'product', 'product_id',
  //                           'order'=>'posts.create_time DESC',
                             'with'=>'product'),
-			'category'=>array(self::HAS_MANY, 'ProductCategories', 'product_id')
+			'category'=>array(self::HAS_MANY, 'ProductCategory', 'product_id')
             /* 'profile'=>array(self::HAS_ONE, 'Profile', 'owner_id'), */
         );
     }
@@ -143,9 +149,47 @@ class Product extends \yii\db\ActiveRecord
 
 	public function getCategory()
 	{
-	  return $this->hasMany(ProductCategory::className(),
-	  ['id' => 'category_id'])->viaTable('product_category_product', ['product_id' => 'id']);
-	}
+        try {
+            return $this->hasMany(ProductCategory::className(),
+                ['id' => 'category_id'])->viaTable('product_category_product', ['product_id' => 'id']);
+        } catch (InvalidConfigException $e) {
+                //echo $e->getName();
+            throw new \yii\web\HttpException(404, $e->getName());
+        }
+    }
+    public function addCategory($category_id){
+        try {
+            /** @var Integer $id */
+            \Yii::$app->db
+                ->createCommand()
+                ->insert('product_category_product', [
+                    'product_id' => $this->id,
+                    'category_id' => $category_id
+                ])
+                ->execute();
+            return 0;
+        } catch (Exception $e) {
+         //   Yii::info(VarDumper::dumpAsString($e->getMessage()));
+            return $e->getMessage();
+        }
+    }
+    public function updateCategory($category_id){
+        try {
+            /** @var Integer $id */
+            \Yii::$app->db
+                ->createCommand()
+                ->update('product_category_product', ['category_id'=>$category_id],
+                    [
+                    'product_id' => $this->id
+                    ]
+                )
+                ->execute();
+            return 0;
+        } catch (Exception $e) {
+            //   Yii::info(VarDumper::dumpAsString($e->getMessage()));
+            return $e->getMessage();
+        }
+    }
 
 	
 }

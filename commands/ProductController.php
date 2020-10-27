@@ -2,6 +2,7 @@
 
 namespace app\commands;
 
+use app\models\ProductCategory;
 use phpDocumentor\Reflection\Types\Integer;
 use yii\console\Controller;
 use yii\console\ExitCode;
@@ -48,44 +49,7 @@ class ProductController extends Controller
     {
         return ExitCode::OK; 
     }
-	public function actionGetAll() {//product/get-all
-		$model = new Product();
-		$products = Product::find()
-			->select('product.*')
-			->joinWith('photos ph', 'INNER JOIN')
-			->indexBy('id')
-			->orderBy('ph.id')
-//			->asArray()
-			->all();
-		$attributes_name = $model->getAttributes();
-//		Yii::info(VarDumper::dumpAsString($products));
-//		Yii::info(VarDumper::dumpAsString($model->attributeTypes));		
-//		Yii::info(VarDumper::dumpAsString($model->getActiveValidators()));//rules()
-		$message = '';
-		if(count($products) !== 0){
-			foreach ($products as $product){
-//				Yii::info(VarDumper::dumpAsString($product->attributes));
-				foreach(array_keys($attributes_name) as $key){
-					echo "$key => ".$this->ansiFormat($product->getOldAttributes()[$key], Console::FG_YELLOW)."\n";
-				}
-				$photos = $product->photos;
-//				Yii::info(VarDumper::dumpAsString($photos[0]->getOldAttributes()));
-				foreach($photos as $photo){
-					foreach ($photo as $key=>$value){
-						echo "$key => ".$this->ansiFormat($value, Console::FG_YELLOW)."\n";
-					}					
-				}
-//					$path_fullsize = $product->photos[0]->path_fullsize;
-//					echo "photo path_fullsize ".$photo['path_fullsize'].".\n";
-//					echo "photo path_fullsize ".$photo['path_thumbnail'].".\n";					//
-			}
-		}
-//		$products = Product::find()->joinWith('photos', false, 'INNER JOIN')->all();
-//		Yii::info(VarDumper::dumpAsString($products[0]->photos[0]->path_fullsize));
-//		Yii::info(VarDumper::dumpAsString(\Yii::$app->params['thumbnail.size']));//from params config
-		return ExitCode::OK;
-	}
-	
+
 	public function actionAddOne($id)
 	{//product-photo/add-one <product_id>
 			/*if(!ProductCategories::findOne($category_id)){
@@ -201,21 +165,90 @@ class ProductController extends Controller
 //		Yii::info(VarDumper::dumpAsString($product));
 		return ExitCode::OK;
 	}
-	public function actionGetByCategory($uri){//id category
-		
-	}
-	public function actionUpdateCategory($id, $category_id){//id category
-		if(!ProductCategories::findOne($category_id)){
+    public function actionGetAll() {//product/get-all
+        $model = new Product();
+        $products = Product::find()
+            ->select('product.*')
+            ->joinWith('photos ph', 'INNER JOIN')
+            ->indexBy('id')
+            ->orderBy('ph.id')
+//			->asArray()
+            ->all();
+        $attributes_name = $model->getAttributes();
+//		Yii::info(VarDumper::dumpAsString($products));
+//		Yii::info(VarDumper::dumpAsString($model->attributeTypes));
+//		Yii::info(VarDumper::dumpAsString($model->getActiveValidators()));//rules()
+        $message = '';
+        if(count($products) !== 0){
+            foreach ($products as $product){
+//				Yii::info(VarDumper::dumpAsString($product->attributes));
+                foreach(array_keys($attributes_name) as $key){
+                    echo "$key => ".$this->ansiFormat($product->getOldAttributes()[$key], Console::FG_YELLOW)."\n";
+                }
+                $photos = $product->photos;
+//				Yii::info(VarDumper::dumpAsString($photos[0]->getOldAttributes()));
+                foreach($photos as $photo){
+                    foreach ($photo as $key=>$value){
+                        echo "$key => ".$this->ansiFormat($value, Console::FG_YELLOW)."\n";
+                    }
+                }
+//					$path_fullsize = $product->photos[0]->path_fullsize;
+//					echo "photo path_fullsize ".$photo['path_fullsize'].".\n";
+//					echo "photo path_fullsize ".$photo['path_thumbnail'].".\n";					//
+            }
+        }
+//		$products = Product::find()->joinWith('photos', false, 'INNER JOIN')->all();
+//		Yii::info(VarDumper::dumpAsString($products[0]->photos[0]->path_fullsize));
+//		Yii::info(VarDumper::dumpAsString(\Yii::$app->params['thumbnail.size']));//from params config
+        return ExitCode::OK;
+    }
+
+    public function actionAddCategory($product_id, $category_id){
+        $product = Product::findOne($product_id);
+        $result = $product->addCategory($category_id);
+        if($result === 0){
+            echo "category id =$category_id added to product id $product_id \n";
+        } else {
+            echo "error from add category $result\n";
+        }
+        return ExitCode::OK;
+    }
+
+    public function actionGetCategory($product_id){
+        $product = Product::findOne($product_id);
+        if($product == NULL){
+            echo "id product {$product_id} not found\n";
+            return ExitCode::OK;
+        }
+        $categories = $product->category;
+        foreach ($categories as $category){
+            echo "category name ".$this->ansiFormat($category->name, Console::FG_YELLOW)."\n";
+            echo "category parent ".$this->ansiFormat($category->parent_id, Console::FG_YELLOW)."\n";
+            echo "category uri ".$this->ansiFormat($category->uri, Console::FG_YELLOW)."\n";
+        }
+        //    Yii::info(VarDumper::dumpAsString($categories));
+        return ExitCode::OK;
+    }
+
+	public function actionUpdateCategory($product_id, $category_id){//id category
+        $category = ProductCategory::findOne($category_id);
+        $product = Product::findOne($product_id);
+
+		if(!$category){
 				echo "category_id {$category_id} not found\n";
 				return ExitCode::OK;
-			}
-			try{
-				$product = Product::findOne($id);
-//				Yii::info(VarDumper::dumpAsString($product)); 
-				if($product == NULL){
-					echo "id product {$id} not found\n";
-					return ExitCode::OK;
-				}					
+		}
+        if(!$product){
+            echo "product {$product_id} not found\n";
+            return ExitCode::OK;
+        }
+        $result = $product->updateCategory($category_id);
+        if($result === 0){
+            echo "category id =$category_id updated to product id $product_id \n";
+        } else {
+            echo "error from add category $result\n";
+        }
+			/*try{
 //				$attributes = array_keys($photo->getAttributes());
 				$product->category_list = [$category_id];
 								
@@ -230,9 +263,8 @@ class ProductController extends Controller
 					foreach($errors as $key=>$value){
 						echo "$key => $value[0]\n";
 					}
-					/* $message_error = $this->ansiFormat($errors['path_fullsize'][0], Console::BOLD);
 					echo $message_error."\n";
-					Yii::info(VarDumper::dumpAsString($attributes)); */					
+					Yii::info(VarDumper::dumpAsString($attributes));
 				}
 				
 			} catch(IntegrityException $e){
@@ -241,10 +273,11 @@ class ProductController extends Controller
 //				echo $e->getMessage()."\n";
 				$message_error = $this->ansiFormat($e->errorInfo[2], Console::BOLD);
 				echo $message_error."\n";
-			}			
+			}			*/
 				
 		return ExitCode::OK;
 	}
+
 	public function actionUpdateName($id, $name){//id category
 		
 		$product = Product::findOne($id);

@@ -70,7 +70,7 @@ class ProductCategory extends \yii\db\ActiveRecord
     }
 	public function getProducts() { 
 		return $this->hasMany(Product::className(), ['id' => 'product_id'])
-			->viaTable('product_category_products', ['category_id' => 'id']);
+			->viaTable('product_category_product', ['category_id' => 'id']);
 	}
 	/**
 	 * Returns a full tree of nested product categories started at a category

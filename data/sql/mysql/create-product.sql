@@ -148,6 +148,7 @@ CREATE TABLE `product_category_product` (
   PRIMARY KEY (`id`),
   KEY `fk_product` (`product_id`),
   KEY `fk_category_id` (`category_id`),
+  UNIQUE KEY `ix_category` (`product_id`, `category_id`),
   CONSTRAINT `product_categories_products_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `product` (`id`) ON DELETE CASCADE,
   CONSTRAINT `product_categories_products_ibfk_2` FOREIGN KEY (`category_id`) REFERENCES `product_category` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

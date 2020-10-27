@@ -39,11 +39,12 @@ class ProductUpdateCategoryForm extends Model
     public function rules()
     {
         return [
-            [['Product'], 'required'],
-            [['ProductCategories'], 'safe'],
+            [['product'], 'required'],
+            [['productCategories'], 'safe'],
         ];
     }
-	 public function afterValidate()
+
+    public function afterValidate()
     {
         $error = false;
         if (!$this->product->validate()) {
@@ -120,7 +121,7 @@ class ProductUpdateCategoryForm extends Model
     {
         if ($this->_productCategories === null) {
             if ($this->product->isNewRecord) {
-                $this->_productCategories = new ProductCategories();
+                $this->_productCategories = new ProductCategory();
   //              $this->_productCategories = ProductCategories::findOne(1);
  //               $this->_productCategories->loadDefaultValues();
             } else {
@@ -133,12 +134,12 @@ class ProductUpdateCategoryForm extends Model
     public function setProductCategories($productCategories)
     {
 //		Yii::info(VarDumper::dumpAsString($productCategories));
-        if (is_array($productCategories)) {
-			$this->_productCategories = ProductCategories::findOne($productCategories['id']);
+      /*  if (is_array($productCategories)) {
+			$this->_productCategories = ProductCategory::findOne($productCategories['id']);
             $this->productCategories->setAttributes($productCategories);
-        } elseif ($productCategories instanceof ProductCategories) {
+        } elseif ($productCategories instanceof ProductCategory) {
             $this->_productCategories = $productCategories;
-        }
+        }*/
     }
 
     public function errorSummary($form)

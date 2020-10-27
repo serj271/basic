@@ -1,7 +1,8 @@
 <?php
 
 namespace app\controllers;
-use yii\helpers\VarDumper; 
+use app\models\ProductCategory;
+use yii\helpers\VarDumper;
 use app\models\ProductForm;
 use app\models\ProductUpdateCategoryForm;
 use app\models\Product;
@@ -10,6 +11,7 @@ use yii\db\Query;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
+use yii\web\HttpException;
 use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\ProductCategories;
@@ -117,15 +119,15 @@ class ProductAdminController extends \yii\web\Controller
 //		$model = new ProductForm();
 		$productUpdatecategoryForm = new ProductUpdateCategoryForm();
 		$productUpdatecategoryForm->product = new Product();
-		$productUpdatecategoryForm->productCategories = new ProductCategories();
+		$productUpdatecategoryForm->productCategories = new ProductCategory();
 		
-		$categories = ProductCategories::getCategories();
+		$categories = ProductCategory::getCategories();
 		if (Yii::$app->request->post()) {
             
 	//		Yii::info(VarDumper::dumpAsString(Yii::$app->request->post()));
 //			$productUpdatecategoryForm->load(Yii::$app->request->post());
 			$productUpdatecategoryForm->product->attributes = Yii::$app->request->post()['Product'];
-			$productUpdatecategoryForm->productCategories = ProductCategories::findOne(Yii::$app->request->post()['ProductCategories']['id']);
+			$productUpdatecategoryForm->productCategories = ProductCategory::findOne(Yii::$app->request->post()['ProductCategories']['id']);
 //			$productUpdatecategoryForm->product->id = 26;
 //			Yii::info(VarDumper::dumpAsString($productUpdatecategoryForm));
 			if($productUpdatecategoryForm->save()){
@@ -133,12 +135,9 @@ class ProductAdminController extends \yii\web\Controller
 				return $this->redirect(['index']);
 			}            
 			
-        } elseif (!Yii::$app->request->isPost) {
-  //          $productUpdatecategoryForm->load(Yii::$app->request->get());//id=>1
-//			Yii::info(VarDumper::dumpAsString(Yii::$app->request->get()));
         }
-		
-		return $this->render('create', [
+
+        return $this->render('create', [
 			'productUpdatecategoryForm' => $productUpdatecategoryForm,
 			'categories' => ArrayHelper::map($categories, 'id', 'name'),
 		]);
@@ -194,30 +193,35 @@ class ProductAdminController extends \yii\web\Controller
 	public function actionUpdatecategory($id)
     {
         $productUpdatecategoryForm = new ProductUpdateCategoryForm();
-        $productUpdatecategoryForm->product = $this->findModel($id);
-		$productUpdatecategoryForm->productCategories = new ProductCategories();
-		$productUpdatecategoryFormCategories = new ProductCategories();
-		$categories = ProductCategories::getCategories();
+
+        try {
+            $productUpdatecategoryForm->product = $this->findModel($id);
+        } catch (HttpException $e) {
+            throw new \HttpException("error");
+        }
+        $productUpdatecategoryForm->productCategories = ProductCategory::getCategories();
+	//	$productUpdatecategoryFormCategories = new ProductCategories();
+		$categories = ProductCategory::getCategories();
 		$selected = empty($productUpdatecategoryForm->product->category) ? $categories[0]->id : $productUpdatecategoryForm->product->category[0]->id;
-						
+
 //		Yii::info(VarDumper::dumpAsString($productUpdatecategoryForm));
-        $productUpdatecategoryForm->setAttributes(Yii::$app->request->post());
+ //       $productUpdatecategoryForm->setAttributes(Yii::$app->request->post());
 		
-        if (Yii::$app->request->post()) {           
+ //       if (Yii::$app->request->post()) {
 //			Yii::info(VarDumper::dumpAsString(Yii::$app->request->post()));
-			$productUpdatecategoryForm->load(Yii::$app->request->post());
+		/*	$productUpdatecategoryForm->load(Yii::$app->request->post());
 			if($productUpdatecategoryForm->update()){
 				Yii::$app->getSession()->setFlash('success', 'Product has been updated.');
 				return $this->redirect(['index']);
-			}			
+			}	*/
 //			
 			
-        } elseif (!Yii::$app->request->isPost) {
-            $productUpdatecategoryForm->load(Yii::$app->request->get());//id=>1
+  //      } elseif (!Yii::$app->request->isPost) {
+    //        $productUpdatecategoryForm->load(Yii::$app->request->get());//id=>1
 //			Yii::info(VarDumper::dumpAsString(Yii::$app->request->get()));
-        }
+    //    }
         return $this->render('updatecategory', [
-			'productUpdatecategoryForm' => $productUpdatecategoryForm,
+			'productUpdatecategoryForm' =>$productUpdatecategoryForm,
 			'categories' => ArrayHelper::map($categories, 'id', 'name'),
 			'selected' => $selected
 		]);

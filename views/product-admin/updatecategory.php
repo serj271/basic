@@ -7,7 +7,10 @@
     You may change the content of this page by modifying
     the file <code><?= __FILE__; ?></code>.
 </p>
-<?php echo $this->context->renderPartial('_formupdatecategory',[
+<?php /** @var object $productUpdatecategoryForm */
+/** @var array $categories */
+/** @var int $selected */
+echo $this->context->renderPartial('_updatecategoryForm',[
 	'productUpdatecategoryForm'=>$productUpdatecategoryForm,
 	'categories' => $categories,
 	'selected'=> $selected
