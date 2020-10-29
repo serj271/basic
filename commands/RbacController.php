@@ -83,8 +83,8 @@ class RbacController extends Controller
     }
 	public function actionAddUserProfile(){
 		$userGroupRule = new UserGroupRule();
-		$brand->ruleName  = $userGroupRule->name;
-        $talent->ruleName = $userGroupRule->name;
+	/*	$brand->ruleName  = $userGroupRule->name;
+        $talent->ruleName = $userGroupRule->name;*/
 		$authManager = \Yii::$app->authManager;
 		$userProfileOwnerRule = new UserProfileOwnerRule();
 		$authManager->add($userProfileOwnerRule);
@@ -93,8 +93,8 @@ class RbacController extends Controller
 		$updateOwnProfile->ruleName = $userProfileOwnerRule->name;
 		$authManager->add($updateOwnProfile);
 		 
-		$authManager->addChild($brand, $updateOwnProfile);
-		$authManager->addChild($talent, $updateOwnProfile);
+		/*$authManager->addChild($brand, $updateOwnProfile);
+		$authManager->addChild($talent, $updateOwnProfile);*/
 	}
 	public function actionDeleteAllRoles(){
         $authManager = \Yii::$app->authManager;

@@ -9,6 +9,7 @@ namespace app\commands;
 
 use yii\console\Controller;
 use yii\console\ExitCode;
+use yii\db\Exception;
 use yii\helpers\Console;
 use Yii;
 use yii\helpers\VarDumper;
@@ -86,42 +87,55 @@ class UserController extends Controller
 	
 	public function actionCreate($username,$password='1')
 	{
-		\Yii::$app->db
-		->createCommand()
-		->insert('user', [
-		'email' => $username.'@example.com',
-		'password_hash' => Yii::$app->security->generatePasswordHash($password),
-		'password_reset_token'=>'e',
-		'status'=>'1',
-	/* 	'role'=>'1', */
-		'username' => $username,
-		'auth_key'=>'',
-		'created_at' => time(),
-		'updated_at' => time()
-		])
-		->execute();
-		return ExitCode::OK;
+        try {
+            \Yii::$app->db
+                ->createCommand()
+                ->insert('user', [
+                    'email' => $username . '@example.com',
+                    'password_hash' => Yii::$app->security->generatePasswordHash($password),
+                    'password_reset_token' => 'e',
+                    'status' => '1',
+                    /* 	'role'=>'1', */
+                    'username' => $username,
+                    'auth_key' => '',
+                    'created_at' => time(),
+                    'updated_at' => time()
+                ])
+                ->execute();
+        } catch (\yii\base\Exception $e) {
+            Yii::info(VarDumper::dumpAsString($e));
+            $message_error = 'error';
+//				echo $e->getCode();
+//				echo $e->getMessage()."\n";
+            if (isset($e->errorInfo[2])) {
+                $message_error = $this->ansiFormat($e->errorInfo[2], Console::BOLD);
+            }
+            echo $message_error."\n";
+        }
+        return ExitCode::OK;
 	}
 	public function actionAddOne($username)
 	{
 		$user = new User();
 //		$user->id = 12;
-		$user->type = 'public';		
+//		$user->type = 'public';
 		$user->username = $username;
 		$user->email = $username.'@example.com';
 		$user->setPassword('1');
         $user->generateAuthKey();
 		$user->password_reset_token = '11';
+        $user->auth_key = \Yii::$app->security->generateRandomString();
+        Yii::info(VarDumper::dumpAsString($user));
 		if ($user->validate()) {
-			$user_id = $user->save();
+			$user->save();
 
-			echo "user add $user_id $last_id\n";
-		} else {				
+			echo "user add \n";
+		} else {
 			$errors = $user->errors;
 			foreach($errors as $key=>$value){
 				echo "$key => $value[0]\n";
 			}			
-		}		
+		}
 	}	
 	public function actionDetail($id)
 	{

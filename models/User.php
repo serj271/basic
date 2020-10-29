@@ -23,7 +23,6 @@ use app\components\MyBehavior;
  * @property string $type
  * @property string $date_entered
  *
- * @property Comment[] $comments
  * @property File[] $files
  * @property Page[] $pages
  */
@@ -44,11 +43,15 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      * @var string plain password
      */
 
-	public $password_hash;
-	public $type;
-	public $group;
+    public ?string $password_hash = null;
+
+
 //	public $pass;
-	
+    /**
+     * @var mixed|string|null
+     */
+    private string $auth_key;
+
     public static function tableName()
     {
         return 'user';
@@ -67,6 +70,8 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
 	public function beforeSave($insert) {
 	// Do whatever.
 		return parent::beforeSave($insert);
+
+
 	}
 	
     /**
@@ -77,7 +82,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
         return [
             ['username', 'required', 'message' => 'Please choose a username.'],
 ////			[['type'], 'safe'],
-			['type', 'in', 'range' => ['public','author','admin']],
+//			['type', 'in', 'range' => ['public','author','admin']],
             [['created_at'], 'safe'],
 			[['password_reset_token', 'auth_key', 'password_hash'], 'string', 'max' => 80],
             [['username'], 'string', 'max' => 45],
@@ -108,6 +113,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
             'created_at' => 'Date created_at',
         ];
     }
+
 	/* public function beforeSave($insert)
 	{
 		if(parent::beforeSave($insert)){
@@ -117,13 +123,13 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
 		   return false;
 		}
 	} */
-	public function fields()
+	/*public function fields()
 	{
 		$fields = parent::fields();
-		// 
+		//
 //		unset($fields[’auth_key’], $fields[’password_hash’], $fields[’password_reset_token’]);
 		return $fields;
-	}
+	}*/
 
 	public function behaviors()
 	{
@@ -174,12 +180,12 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
 			}
 		}
 	} */
-	public function create()
+	public function create($plainPassword)
     {
-            $this->setPassword($this->plainPassword);
+            $this->setPassword($plainPassword);
             $this->generateAuthKey();
             if (!$this->save()) {
-                $transaction->rollBack();
+       //         $transaction->rollBack();
                 return null;
             }
           
@@ -264,12 +270,14 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
 			'status_id' => self::STATUS_ACTIVE,
 		]);
 	}
+
     /**
      * Finds out if password reset token is valid
      *
      * @param string $token password reset token
      *
      * @return bool
+     * @throws \Exception
      */
     public static function isPasswordResetTokenValid($token)
     {
@@ -287,14 +295,15 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     {
         return $this->getPrimaryKey();
     }
+
     /**
      * Validates password
      *
-     * @param  string $password password to validate
+     * @param string $password password to validate
      *
      * @return bool if password provided is valid for current user
      */
-    public function validatePassword($password)//validatePassword($attribute, $params)
+    public function validatePassword(string $password)//validatePassword($attribute, $params)
     {
 		/* if (!$this->hasErrors()) {
 			$user = $this->getUser();
@@ -307,12 +316,13 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
 //		Yii::info('pass'.'-----------'.$password);
         return Yii::$app->security->validatePassword($password, $this->getOldAttributes()['password_hash']);
     }
+
     /**
      * Generates password hash from password and sets it to the model
      *
      * @param string $password
      */
-    public function setPassword($password)
+    public function setPassword(string $password)
     {
  //       $this->password_hash = Yii::$app->getSecurity()->generatePasswordHash($password);
 		$this->setAttribute('password_hash',Yii::$app->getSecurity()->generatePasswordHash($password));
@@ -357,6 +367,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     {
         $this->updateAttributes(['last_login' => time()]);
     }
+
     /**
      * Resets password.
      *
@@ -364,7 +375,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      *
      * @return bool
      */
-    public function resetPassword($password)
+    public function resetPassword(string $password)
     {
         $this->setPassword($password);
         return $this->save(true, ['password_hash']);

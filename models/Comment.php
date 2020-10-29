@@ -27,7 +27,7 @@ use app\models\CommentModel;
  * @property Page $page
  * @property User $user
  */
-class CommentModel extends \yii\db\ActiveRecord
+class Comment extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
