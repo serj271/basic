@@ -13,7 +13,7 @@ use yii\helpers\Console;
 use Yii;
 use yii\base;
 use yii\helpers\VarDumper;
-use app\common\components\MyHelpers;
+use app\common\components\HelloHelpers;
 
 
 /**
@@ -64,7 +64,7 @@ class HelloController extends Controller
     }
 	public function actionMyhelper()
 	{
-		$message  = MyHelpers::hello("John");
+		$message  = HelloHelpers::hello("John");
 		echo $message."\n";
 		return ExitCode::OK;		
 	}

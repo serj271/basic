@@ -20,13 +20,13 @@ class JsonUrlRule extends BaseObject  implements UrlRuleInterface
         $url = 'json/';
 		if ($route === 'json'){
 			if (array_key_exists('controller', $params) && !empty($params['controller'])) {
-				$url .= $params['controller'];
+				$url .= $params['controller'].'/';
 			}
 			if (array_key_exists('action', $params) && !empty($params['action'])) {
-				$url .= '/'.$params['action'];
+				$url .= $params['action'].'/';
 			}
 			if (array_key_exists('id', $params) && !empty($params['id'])) {
-				$url .= '/'.$params['id'];
+				$url .= $params['id'];
 			}
 			return $url;
 		}
@@ -39,25 +39,26 @@ class JsonUrlRule extends BaseObject  implements UrlRuleInterface
     public function parseRequest($manager, $request)//for controller
     {
         $pathInfo = $request->getPathInfo();
-//		Yii::info(VarDumper::dumpAsString($pathInfo));
+	//	Yii::info(VarDumper::dumpAsString($pathInfo));
 		
-        if (preg_match('%^json/(?P<controller>[A-Za-z-]+)\/(?P<action>[A-Za-z]+)\/(?P<id>\d+)?%', $pathInfo, $matches)) {			
-			if(!isset($matches['controller'])){
+        if (preg_match('%^json/(?P<controller>[A-Za-z-]+)\/(?P<action>[A-Za-z-]+)\/(?P<id>[0-9]+)?%', $pathInfo, $matches)) {
+            if(!isset($matches['controller'])){
+                return false;
+            }
+            /*if(!in_array($matches['controller'], array('help'))){
+                return false;
+            }*/
+            if(!isset($matches['action'])){
+                return false;
+            }
+			/*if(!isset($matches['id'])){
 				return false;
-			}
-			if(!in_array($matches['controller'], array('json-product','json-user'))){
-				return false;
-			}
-			if(!isset($matches['action'])){
-				return false;
-			}
-			if(!isset($matches['id'])){
-				return false;
-			}
+			}*/
+
 			/* $category = Product::find()->where(['uri' => $matches['url']])->one();
 			if($category == NULL)
 				return false; */
-//			Yii::info(VarDumper::dumpAsString($matches));
+//		Yii::info(VarDumper::dumpAsString($matches));
            /*  $route = Route::findRouteByUrl($matches['url']);
             if (!$route) {
                 return false;
@@ -65,7 +66,9 @@ class JsonUrlRule extends BaseObject  implements UrlRuleInterface
             $params = $route['params'];
             $params['url'] = $route['url']; */
 //			return ['json/json-product/index'];
-			return ['json/'.$matches['controller'].'/'.$matches['action'],['id'=> $matches['id']]];
+			return ['json/'.$matches['controller'].'/'.$matches['action'],
+                ['id'=>$matches['id']]
+            ];
         }
 		
        /*  if (preg_match('%^json/(?P<controller>[A-Za-z-]+)\/(?P<action>[A-Za-z]+)?%', $pathInfo, $matches)) {			

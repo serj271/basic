@@ -7,6 +7,11 @@
 
 namespace app\commands;
 
+use app\common\components\CurlGetHelpers;
+use app\common\components\CurlHelper;
+use app\common\components\HelloHelpers;
+use yii\httpclient\Client;
+
 use yii\console\Controller;
 use yii\console\ExitCode;
 use yii\db\Exception;
@@ -66,10 +71,22 @@ class UserController extends Controller
 	
 	public function actionGetAll()
 	{
-		$users = $users = \Yii::$app->db
-			->createCommand('SELECT * FROM user;')
-			->queryAll();
-		Yii::info(VarDumper::dumpAsString($users));
+        try {
+            $users = $users = \Yii::$app->db
+                ->createCommand('SELECT * FROM user;')
+                ->queryAll();
+        } catch (Exception $e) {
+            Yii::info(VarDumper::dumpAsString($e));
+            $message_error = 'error';
+//				echo $e->getCode();
+//				echo $e->getMessage()."\n";
+            if (isset($e->errorInfo[2])) {
+                $message_error = $this->ansiFormat($e->errorInfo[2], Console::BOLD);
+            }
+            echo $message_error."\n";
+            return ExitCode::OK;
+        }
+//		Yii::info(VarDumper::dumpAsString($users));
 		$count = \Yii::$app->db
 			->createCommand('SELECT COUNT(*) FROM user')
 			->queryScalar();
@@ -221,21 +238,21 @@ class UserController extends Controller
 		$auth->assign($login, $id);
 		return ExitCode::OK;
 	}
-	public function actionCurlGetAll()
-	{
-		$uri = Yii::$app->urlManager->createUrl(['json','controller'=>'json-user', 'action'=>'index']);
-		$url = 'http://192.168.1.1'.$uri;
-		$user = User::findByUsername('test');
+//	public function actionCurlGetAll()
+//	{
+//		$uri = Yii::$app->urlManager->createUrl(['json','controller'=>'json-user', 'action'=>'index']);
+		//$url = 'http://192.168.1.1'.$uri;
+		/*$user = User::findByUsername('test');
 		$auth_token = $user->getAuthKey();
-/* 		Yii::info(VarDumper::dumpAsString('$auth_token'));
-		Yii::info(VarDumper::dumpAsString($auth_token)); */
+ 		Yii::info(VarDumper::dumpAsString('$auth_token'));
+		Yii::info(VarDumper::dumpAsString($auth_token));
 		list($users, $getinfo) = CurlAuthHelpers::get($url,$auth_token);
 		if($getinfo['http_code'] != 200)
 		{
 			echo "code {$getinfo['http_code']}\n";
 			return ExitCode::OK;
-		}	
-		echo VarDumper::dumpAsString($users); 
+		}	*/
+	//	echo VarDumper::dumpAsString($users);
 		/* if(count($users) !== 0){
 			foreach ($products as $product){
 				foreach($product as $key => $value){
@@ -245,10 +262,60 @@ class UserController extends Controller
 		} */
 //		echo $data;
 //		echo Yii::$app->urlManager->createUrl(['json','controller'=>'json-product', 'action'=>'index'])."\n"; 
-		return ExitCode::OK;
-	}
+//		return ExitCode::OK;
+//	}
 	
-	
-	
+	public function actionCurlHello()
+    {
+        $uri = Yii::$app->urlManager->createUrl(['json','controller'=>'hello', 'action'=>'index']);
+        $url = Yii::$app->params['server'].$uri;
+        $hello = CurlGetHelpers::get($url);
+  //      Yii::info(VarDumper::dumpAsString($hello));
+        echo $hello;
+        return ExitCode::OK;
+    }
+    public function actionCurlGetAll()
+    {
+        $uri = Yii::$app->urlManager->createUrl(['json','controller'=>'user', 'action'=>'get-all']);
+        $url = Yii::$app->params['server'].$uri;
+        $hello = CurlHelper::getAll($url);
+        //      Yii::info(VarDumper::dumpAsString($hello));
+        echo $hello;
+        return ExitCode::OK;
+    }
+    public function actionCurlGetOne()
+    {
+        $uri = Yii::$app->urlManager->createUrl(['json','controller'=>'user',
+            'action'=>'get-one'
+        ]);
+   //     echo Yii::$app->security->maskToken('input');
+   //     echo \yii\web\Request::getCsrfToken;
+        $url = Yii::$app->params['server'].$uri;
+        $hello = CurlHelper::getOne($url,1);
+        //      Yii::info(VarDumper::dumpAsString($hello));
+        echo $hello;
+        return ExitCode::OK;
+    }
+	public function actionClientGetOne()
+    {
+        $uri = Yii::$app->urlManager->createUrl(['json','controller'=>'user',
+            'action'=>'get-one'
+        ]);
+        $url = Yii::$app->params['server'].$uri;
+        $client = new Client();
+        $response = $client->createRequest()
+            ->setMethod('POST')
+            ->setUrl($url)
+            ->setData(['id' => 1])
+            ->send();
+        if ($response->isOk) {
+            $newUserId = $response->data['id'];
+          //  echo $response->getHeaders()->get('content-type');
+            echo $newUserId."\n";
+            Yii::info(VarDumper::dumpAsString($response->data));
+        }
+
+        return ExitCode::OK;
+    }
 }
 //./yii hello user/index --message="hello all"

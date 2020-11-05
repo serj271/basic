@@ -11,7 +11,7 @@ $config = [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
     ],
-	'language' => 'ru',
+	'language' => 'en',
 	'timeZone' => 'Asia/Yekaterinburg',
 //	'controllerNamespace' => 'app\controllers\json',
     'components' => [
@@ -20,14 +20,20 @@ $config = [
             'cookieValidationKey' => 'dgdgdgdf888###sdf@#FFFfffff&&&@@!MMKMMKlmkmklfdlgdlfkgklfd',
 			'parsers' => [
 				'application/json' => 'yii\web\JsonParser',
-			]	
+			],
+            /*'csrfParam' => '_basicCSRF', // Modified params
+            'csrfCookie' => [
+                'httpOnly' => true,
+                'path' => '/backend',
+            ],*/
+   //         'enableCsrfValidation' => false,
 		],
 		'assetManager' => [
             'appendTimestamp' => true,
         ],
-//        'cache' => [
-//            'class' => 'yii\caching\FileCache',
-//        ],
+        'cache' => [
+            'class' => 'yii\caching\FileCache',
+        ],
 		'authManager' => [
 			'class' => 'yii\rbac\DbManager',
 //			'defaultRoles' => ['guest'],
@@ -115,9 +121,7 @@ $config = [
 				[
 					'class' => 'app\components\ProductAdminUrlRule',					
 				],
-				[
-					'class' => 'app\components\JsonUrlRule',					
-				],
+                'json/<controller:[A-Za-z0-9 -_.]+>/<action:\w+>/<id:\d+>' => 'json/<controller>/<action>',
 				
 			/* 	[
 					'pattern' => 'json/<controller:\w+>/<action>/<id:\d+>',
@@ -184,7 +188,7 @@ if (YII_ENV_DEV) {
     $config['bootstrap'][] = 'debug';
     $config['modules']['debug'] = [
         'class' => 'yii\debug\Module',
-        'allowedIPs' => ['127.0.0.1', '::1','192.168.1.3','192.168.1.11','192.168.1.10','192.168.1.2'],
+        'allowedIPs' => ['127.0.0.1', '::1','192.168.1.3','192.168.1.11','192.168.1.10','192.168.1.1'],
     ];
 
     $config['bootstrap'][] = 'gii';

@@ -8,11 +8,17 @@ use yii\web\Response;
 use yii\filters\ContentNegotiator;
 use yii\filters\auth\HttpBearerAuth;
 
-class JsonUserController extends \yii\web\Controller
+class UserController extends \yii\web\Controller
 {
 	public $modelClass = 'modules\models\User';
-	
-	public function behaviors()
+
+    public function beforeAction($action)
+    {
+        $this->enableCsrfValidation = false;
+        return parent :: beforeAction($action);
+    }
+
+    public function behaviors()
     {
         $behaviors = parent::behaviors();
         $behaviors['corsFilter' ] = [
@@ -35,7 +41,7 @@ class JsonUserController extends \yii\web\Controller
 				],
 			],
 		]; */
-		$behaviors['authenticator'] = [
+		/*$behaviors['authenticator'] = [
             'class' => HttpBearerAuth::className()
         ];
 		$behaviors['access'] = [
@@ -48,7 +54,7 @@ class JsonUserController extends \yii\web\Controller
 					'roles' => ['@'],
 				],
 			],
-		];
+		];*/
         return $behaviors;
     }
 	
@@ -64,9 +70,7 @@ class JsonUserController extends \yii\web\Controller
 
     public function actionIndex()
     {
-		$data = User::find()->all();
-		
-        return $data;
+      return 'ok';
     }
 
     public function actionUpdate()
@@ -74,10 +78,43 @@ class JsonUserController extends \yii\web\Controller
         return $this->render('update');
     }
 
-    public function actionView($id)
+    public function actionGetOne()
     {
-		$data = User::findOne($id);
-        return $data;
+        /** @var int $user */
+        $id =1;
+        ;
+  //      if (Yii::$app->request->isAjax){
+            $request = Yii::$app->request;
+            if ($request->isPost){
+                $id = $request->getBodyParam('id');
+    //            echo "$id\n";
+                $user = User::findOne($id);
+                return $user;
+
+   //         } else {
+   //             return ['message'=>'hello post ajax'];
+            }
+    //    }
+        return ['message'=>'hello get ajax'];
+
+    }
+    public function actionGetAll()
+    {
+        /** @var array $users */
+        $users = User::find()->all();
+        return $users;
     }
 
 }
+//curl -i -H 'Content-Type: application/json' http://192.168.1.1/basic/web/json/user/get-all
+//echo Html :: hiddenInput(\Yii :: $app->getRequest()->csrfParam, \Yii :: $app->getRequest()->getCsrfToken(), []);
+
+/*$.ajax({
+    url: urlAjax,
+    type: 'POST',
+    data: {"id": 1, "_csrf": yii.getCsrfToken()},
+    dataType: 'json',
+}).done(function (response) {
+    console.log(response);
+});*/
+
