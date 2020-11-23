@@ -285,8 +285,7 @@ class UserController extends Controller
     }
     public function actionCurlGetOne()
     {
-        $uri = Yii::$app->urlManager->createUrl(['json','controller'=>'user',
-            'action'=>'get-one'
+        $uri = Yii::$app->urlManager->createUrl(['controller'=>'user'
         ]);
    //     echo Yii::$app->security->maskToken('input');
    //     echo \yii\web\Request::getCsrfToken;

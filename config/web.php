@@ -27,7 +27,7 @@ $config = [
                 'path' => '/backend',
             ],*/
    //         'enableCsrfValidation' => false,
-		],
+	],
 		'assetManager' => [
             'appendTimestamp' => true,
         ],
@@ -41,7 +41,9 @@ $config = [
 		],
         'user' => [
             'identityClass' => 'app\models\User',
-            'enableAutoLogin' => true,
+            'enableAutoLogin' => false,
+            'enableSession' => false,
+            'loginUrl' =>'',
         ],
 //        'errorHandler' => [
 //            'errorAction' => 'site/error',
@@ -89,6 +91,7 @@ $config = [
 			'baseUrl' => '/basic/web',
 			'scriptUrl'=>'/basic/web/index.php',
 			'rules' => [
+                ['class' => 'yii\rest\UrlRule', 'controller' => 'user'],
 				[
 					'pattern' => 'product',
 					'route' => 'product/index',

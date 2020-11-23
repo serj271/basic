@@ -78,24 +78,24 @@ class UserController extends \yii\web\Controller
         return $this->render('update');
     }
 
-    public function actionGetOne()
+    public function actionGetOne($id)
     {
         /** @var int $user */
         $id =1;
         ;
   //      if (Yii::$app->request->isAjax){
             $request = Yii::$app->request;
-            if ($request->isPost){
-                $id = $request->getBodyParam('id');
+    //        if ($request->isPost){
+     //           $id = $request->getBodyParam('id');
     //            echo "$id\n";
                 $user = User::findOne($id);
                 return $user;
 
    //         } else {
    //             return ['message'=>'hello post ajax'];
-            }
+     //       }
     //    }
-        return ['message'=>'hello get ajax'];
+    //    return ['message'=>'hello get ajax'];
 
     }
     public function actionGetAll()

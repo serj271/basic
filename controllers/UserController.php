@@ -11,9 +11,15 @@ use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\VerbFilter;
+use yii\rest\ActiveController;
 
-class UserController extends \yii\web\Controller
+class UserController extends ActiveController
 {
+    /**
+     * @var string
+     */
+    public $modelClass = 'app\models\User';
+
     public function actionCreate()
     {
         return $this->render('create');
@@ -44,9 +50,9 @@ class UserController extends \yii\web\Controller
         return $this->render('login');
     }
 
-    public function actionSinup()
+    public function actionSignup()
     {
-        return $this->render('sinup');
+        return $this->render('signup');
     }
 
 }

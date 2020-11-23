@@ -6,6 +6,10 @@ use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
+use yii\filters\auth\CompositeAuth;
+use yii\filters\auth\HttpBasicAuth;
+use yii\filters\auth\HttpBearerAuth;
+use yii\filters\auth\QueryParamAuth;
 use yii\web\IdentityInterface;
 use yii\base\NotSupportedException;
 use yii\helpers\ArrayHelper;
@@ -38,7 +42,8 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      * Triggered with \yii2mod\user\events\CreateUserEvent.
      */
     const AFTER_CREATE = 'afterCreate';
-	const STATUS_ACTIVE = 1;
+    const STATUS_DELETED = 0;
+    const STATUS_ACTIVE = 10;
     /**
      * @var string plain password
      */
@@ -51,10 +56,14 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      * @var mixed|string|null
      */
     private string $auth_key;
+    /**
+     * @var mixed|string|null
+     */
+    private string $password_reset_token;
 
     public static function tableName()
     {
-        return 'user';
+        return '{{%user}}';
     }
 	public function scenarios() {
 		$scenarios = parent::scenarios();
@@ -70,8 +79,6 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
 	public function beforeSave($insert) {
 	// Do whatever.
 		return parent::beforeSave($insert);
-
-
 	}
 	
     /**
@@ -133,7 +140,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
 
 	public function behaviors()
 	{
-		return [
+		/*return [
 			MyBehavior::className(),
 			[
 				'class' => TimestampBehavior::className(),
@@ -144,8 +151,25 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
 				'value' => new Expression('NOW()'),
 			],
 			TimestampBehavior::className(),
-						
-		];
+		];*/
+        $behaviors = parent::behaviors();
+     /*   $behaviors['authenticator'] = [
+            'class' => CompositeAuth::className(),
+            'except' => ['login', 'register','regenerate'],
+            'authMethods' => [
+                HttpBasicAuth::className(),
+                HttpBearerAuth::className(),
+                QueryParamAuth::className(),
+            ],
+        ];*/
+        $behaviors['authenticator']['class'] = HttpBasicAuth::className();
+        $behaviors['authenticator']['auth'] = function ($username, $password) {
+            return \app\models\User::findOne([
+                'username' => $username,
+                'password' => $password,
+            ]);
+        };
+        return $behaviors;
 	}
 
     /**
@@ -205,6 +229,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      * Finds an identity by the given token.
      *
      * @param string $token the token to be looked for
+     * @param null $type
      * @return IdentityInterface|null the identity object that matches the given token.
      */
     public static function findIdentityByAccessToken($token, $type = null)

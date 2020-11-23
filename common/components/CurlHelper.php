@@ -71,19 +71,19 @@ class CurlHelper
         curl_setopt_array($curl, array(
             CURLOPT_HTTPPROXYTUNNEL => false,
             CURLOPT_URL => $url,
-            CURLOPT_POST => true,
+            CURLOPT_POST => false,
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_POSTFIELDS => json_encode(
+            /*CURLOPT_POSTFIELDS => json_encode(
                 array_merge(
                     [
                         'id'=>1,
                     ],[]
-                    /*[
+                    [
                         "_csrf"=>Yii::$app->request->getCsrfToken()
-                    ]*/
+                    ]
                 )
 
-            ), //converting $data to JSON.
+            ), *///converting $data to JSON.
             CURLOPT_HTTPHEADER => array(
                 "accept: application/json",
                 "content-type: application/json",
