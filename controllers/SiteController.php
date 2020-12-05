@@ -84,7 +84,7 @@ class SiteController extends Controller
             ], */
 			'access' => [
                         'class' => \yii\filters\AccessControl::className(),
-                        'only' => ['contact','about','update','view'],
+                        'only' => ['update','view'],
                         'rules' => [
                             // allow authenticated users
                             [
@@ -207,11 +207,11 @@ class SiteController extends Controller
 		/* if (Yii::$app->user->isGuest)
 			throw new ForbiddenHttpException; */
         $model = new ContactForm();
-        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
+      /*  if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
             Yii::$app->session->setFlash('contactFormSubmitted');
 
             return $this->refresh();
-        }
+        }*/
         return $this->render('contact', [
             'model' => $model,
         ]);
