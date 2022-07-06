@@ -239,6 +239,6 @@ add PHPUNIT extension for database testing
 model test create
 # vendor/bin/codecept generate:test unit models/Car
 build test
-# vendor/bin/codecept build
+# vendor/bin/codecept build test
 run test
 # vendor/bin/codecept run unit | functional -v
